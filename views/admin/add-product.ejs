@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Product - Admin Dashboard</title>
+  <link rel="stylesheet" href="/style/admin/sidebar.css">
+  <link rel="stylesheet" href="/style/admin/header.css">
+  <link rel="stylesheet" href="/style/admin/add-product.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
+
+</head>
+<body>
+  <div class="admin-layout">
+    <%- include('partial/sidebar') %>
+    <div class="main-content">
+      <%- include('partial/header') %>
+      <br><br>
+      <div class="page-content">
+        <h1 class="content-head"><a href="/admin/products"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#666666"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/></svg></a>Add Products</h1>
+
+        <div class="form-container">
+
+          <!-- Image Upload Section with Cropping -->
+          <div class="image-upload-container">
+            <div class="form-group">
+              <img id="productImage1" src="https://via.placeholder.com/100" alt="Product Image 1">
+              <input type="file" id="imageUpload1" style="display: none;" accept="image/*" onchange="showCropper(event, 1)">
+              <div class="upload-photo" onclick="document.getElementById('imageUpload1').click();">Upload Photo 1</div>
+            </div>
+
+            <div class="form-group">
+              <img id="productImage2" src="https://via.placeholder.com/100" alt="Product Image 2">
+              <input type="file" id="imageUpload2" style="display: none;" accept="image/*" onchange="showCropper(event, 2)">
+              <div class="upload-photo" onclick="document.getElementById('imageUpload2').click();">Upload Photo 2</div>
+            </div>
+
+            <div class="form-group">
+              <img id="productImage3" src="https://via.placeholder.com/100" alt="Product Image 3">
+              <input type="file" id="imageUpload3" style="display: none;" accept="image/*" onchange="showCropper(event, 3)">
+              <div class="upload-photo" onclick="document.getElementById('imageUpload3').click();">Upload Photo 3</div>
+            </div>
+          </div>
+          <span id="imageError" style="color: red;"></span>
+          <br><br>
+
+          <!-- Product Information Input Fields -->
+          
+          <div class="input-field-container">
+            <div class="errore">
+              <div class="innerdiv"><span id="nameErrore"></span></div>
+              <div class="innerdiv"><span id="brandErrore"></span></div>
+            </div>
+            <div class="form-group">
+                <input type="text" placeholder="Product Name" name="productName" id="productName" onkeyup="validateName()">
+                <input type="text" placeholder="Brand" name="brand" id="brand" onkeyup="validateBrand()">
+            </div>
+            
+            
+            <div class="errore">
+              <div class="innerdiv"><span id="priceErrore"></span></div>
+              <div class="innerdiv"><span id="ingredientErrore"></span></div>
+            </div>
+            <div class="form-group">
+              <input type="number" placeholder="Price" name="price" id="price" oninput="validatePrice()">
+              <input type="text" placeholder="Ingredients" name="ingredients" id="ingredients" onkeyup="validateingredients()">
+            </div>
+
+
+
+            <div class="errore1">
+              <div class="innerdiv"><span id="stockErrore"></span></div>
+              <div class="innerdiv"><span id="categoryErrore"></span></div>
+            </div>
+            <div class="form-group">
+              <input type="number" placeholder="Stock Count" name="quantity" id="stockCount" oninput="validateStock()">
+              <select id="category" name="category" onchange="validateCategory()">
+                  <option value="">Select Category</option>
+                  <% categories.forEach(category => { %>
+                      <option value="<%= category.categoryName %>"><%= category.categoryName %></option>
+                  <% }) %>
+              </select>
+            </div>
+
+
+
+              
+            <div class="errore">
+              <div class="innerdiv"><span id="DescriptionErrore"></span></div>
+            </div>
+            <div class="form-group">
+              <textarea name="description" placeholder="Description" id="description" onkeyup="validateDescription()"></textarea>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button class="add-btn" id="submit-btn" onclick="submitProduct(false)">Add Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Crop Modal for Image Cropping -->
+  <div id="cropModal">
+    <div class="crop-container">
+      <img id="cropImage" src="">
+      <div class="crop-actions">
+        <button onclick="cropImage()">Crop</button>
+        <button onclick="closeCropModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+  <script src="/script/admin/add-product.js"></script>
+  <script src="/script/admin/header.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+</html>

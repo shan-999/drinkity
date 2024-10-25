@@ -1,0 +1,69 @@
+<!-- <aside class="sidebar">
+    <div class="profile">
+        <div class="profile-image"><%= user.email.charAt(0).toUpperCase() %></div>
+        <div class="profile-details">
+            <p><%= user.userName %></p>
+            <p><span class="bonus"><%= user.email %></span></p>
+        </div>
+    </div>
+    <ul class="menu">
+        <li><a href="/account-orders" class="<%= activePage === 'orders' ? 'active' : '' %>">Orders</a></li>
+        <li><a href="#" class="<%= activePage === 'Wallet' ? 'active' : '' %>">Wallet</a></li>
+        <li><a href="#">My reviews</a></li>
+
+        <li class="manage-account-title">Manage account</li>
+
+        <li><a href="#" class="<%= activePage === 'Personal-info' ? 'active' : '' %>">Personal info</a></li>
+        <li><a href="/account-address" class="<%= activePage === 'address' ? 'active' : '' %>">Addresses</a></li>
+
+        <li class="customer-service-title">Customer service</li>
+
+        <li><a href="#" class="<%= activePage === 'help' ? 'active' : '' %>">Help center</a></li>
+        <li><a href="#" class="<%= activePage === 'terms' ? 'active' : '' %>">Terms and conditions</a></li>
+        <li><a href="#" class="logout">Log out</a></li>
+    </ul>
+</aside> -->
+
+
+
+
+<aside class="sidebar">
+    <div class="profile">
+      <div class="profile-pic">
+        <span class="initial"><%= user.email.charAt(0).toUpperCase() %></span>
+      </div>
+      <div class="profile-info">
+        <p class="name"><%= user.userName %></p>
+        <p class="bonuses"><span class="material-icons"><%= user.email %></span></p>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul>
+        <li class="<%= activePage === 'order' ? 'active' : '' %>"><a href="/account-orders"><span class="material-icons"></span> Orders</a></li>
+        <li class="<%= activePage === 'Wallet' ? 'active' : '' %>"><a href="#"><span class="material-icons"></span> Wallet</a></li>
+        <li class="<%= activePage === 'reviews' ? 'active' : '' %>"><a href="#"><span class="material-icons"></span> My reviews</a></li>
+      </ul>
+    </nav>
+
+    <section class="manage-account">
+      <h3>Manage account</h3>
+      <ul>
+        <li class="<%= activePage === 'Personal-info' ? 'active' : '' %>"><a href="/account-personal-info"><span class="material-icons"></span> Personal info</a></li>
+        <li class="<%= activePage === 'address' ? 'active' : '' %>"><a href="/account-address"><span class="material-icons"></span> Addresses</a></li>
+      </ul>
+    </section>
+
+    <section class="customer-service">
+      <h3>Customer service</h3>
+      <ul>
+        <li class="<%= activePage === 'help' ? 'active' : '' %>"><a href="#"><span class="material-icons"></span> Help center</a></li>
+        <li class="<%= activePage === 'terms' ? 'active' : '' %>"><a href="#"><span class="material-icons"></span> Terms and conditions</a></li>
+      </ul>
+    </section>
+
+    <div class="logout">
+      <a href="#"><span class="material-icons"></span> Log out</a>
+    </div>
+</aside>
+  

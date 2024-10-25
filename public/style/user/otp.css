@@ -1,0 +1,123 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #e2e0b5; 
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.left {
+    flex: 1;
+    background-color: #e2e0b5; 
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; 
+}
+
+.brand {
+    display: flex;
+    justify-content: center; 
+}
+
+h1 {
+    font-family: 'Dancing Script', cursive; 
+    font-size: 48px; 
+    color: #e04e39;
+    margin-bottom: 20px;
+}
+
+.verification {
+    max-width: 400px; 
+    text-align: center;
+}
+
+h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+p {
+    margin-bottom: 20px;
+    color: #555;
+}
+
+.code-inputs {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px; 
+}
+
+input[type="text"] {
+    width: 40px; 
+    height: 40px;
+    border: 2px solid #e04e39; 
+    border-radius: 5px;
+    text-align: center;
+    font-size: 24px; 
+    outline: none; 
+}
+
+.verify-button {
+    background-color: #e04e39; 
+    color: white; 
+    border: none;
+    padding: 10px 20px; 
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.verify-button:hover {
+    background-color: #c43e32; 
+}
+
+.back-to-register {
+    margin-top: 15px;
+}
+
+.back-to-register a {
+    color: #e04e39;
+    text-decoration: none;
+}
+
+.logo-container {
+    text-align: center;
+}
+
+.logo-container img {
+    width: 150px;
+    margin-bottom: 20px;
+}
+
+.logo-container h2 {
+    color: #D04A02;
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+.logo-container p {
+    font-size: 18px;
+    color: #D04A02;
+}
+.register-right {
+    flex: 1;
+    background-color: #FFF6D4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.resend a{
+    color: #555;
+}

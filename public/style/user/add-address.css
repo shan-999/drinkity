@@ -1,0 +1,26 @@
+form {
+    background-color: #fff;
+    border-radius: 8px; 
+}
+
+form .form-label {
+    font-weight: bold;
+}
+
+form .form-check-label {
+    margin-left: 10px;
+}
+
+form .btn {
+    background-color: #e63946;
+    border-color: #e63946;
+}
+
+form .btn:hover {
+    background-color: #d62828;
+    border-color: #d62828;
+}
+
+.form-control{
+    border: solid #bab6b6;
+}

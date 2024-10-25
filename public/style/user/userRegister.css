@@ -1,0 +1,139 @@
+/* Layout styles */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #FAF9F6;
+  }
+  
+  .register-container {
+    display: flex;
+    height: 100%;
+  }
+  
+  .register-left {
+    flex: 1;
+    background-color: #E2E0A5;
+    padding: 0 100px 40px 100px;
+  }
+  
+  .register-right {
+    flex: 1;
+    background-color: #FFF6D4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Form styles */
+  h1 {
+    font-family: 'Pacifico', cursive;
+    color: #D04A02;
+    margin-bottom: 40px;
+  }
+  
+  h2 {
+    margin-bottom: 10px;
+  }
+  
+  p {
+    margin-bottom: 30px;
+    color: #6F6F6F;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  label {
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  input[type="text"], input[type="password"] {
+    padding: 12px;
+    /* margin-bottom: 20px; */
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+  }
+  
+  small {
+    margin-top: -15px;
+    margin-bottom: 20px;
+    color: #6F6F6F;
+    font-size: 12px;
+  }
+  
+  .terms {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .terms input {
+    margin-right: 10px;
+  }
+  
+  .terms a {
+    color: #D04A02;
+    text-decoration: none;
+  }
+  
+  /* Buttons */
+  .register-btn {
+    padding: 15px;
+    background-color: #D04A02;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+  
+  .google-btn {
+    padding: 15px;
+    background-color: white;
+    color: black;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .signin {
+    margin-top: 20px;
+  }
+  
+  .signin a {
+    color: #D04A02;
+    text-decoration: none;
+  }
+  
+  /* Logo on the right side */
+  .logo-container {
+    text-align: center;
+  }
+  
+  .logo-container img {
+    width: 150px;
+    margin-bottom: 20px;
+  }
+  
+  .logo-container h2 {
+    color: #D04A02;
+    font-size: 36px;
+    margin-bottom: 10px;
+  }
+  
+  .logo-container p {
+    font-size: 18px;
+    color: #D04A02;
+  }
+  
+
+  .form span{
+    color: red;
+  }

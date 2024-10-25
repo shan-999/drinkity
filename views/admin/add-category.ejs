@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Category</title>
+  <link rel="stylesheet" href="/style/admin/sidebar.css">
+  <link rel="stylesheet" href="/style/admin/header.css">
+  <link rel="stylesheet" href="/style/admin/add-category.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> 
+</head>
+<body>
+  <div class="admin-layout">
+    <%- include('partial/sidebar') %> 
+
+    <div class="main-content">
+      <%- include('partial/header') %> 
+        <br><br>
+      <div class="page-content">
+        <h1 class="page-title" style="display: flex;"><a href="/admin/category">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#666666">
+            <path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/>
+          </svg></a> Add Category
+        </h1>
+        
+        <div class="form-container">
+          <form id="category-form" >
+            <div class="form-group">
+              <label for="categoryName">Category Name</label>
+              <input onkeyup="validateName()" type="text" id="categoryName" name="name" placeholder="Enter name" />
+              <span style="color: red;" id="name-error"></span>
+            </div>
+      
+            <button type="submit" class="submit-btn">Add Now</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <script src="/script/admin/add-category.js"></script>
+  <script src="/script/admin/header.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+</html>

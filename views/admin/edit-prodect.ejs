@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Product - Admin Dashboard</title>
+  <link rel="stylesheet" href="/style/admin/sidebar.css">
+  <link rel="stylesheet" href="/style/admin/header.css">
+  <link rel="stylesheet" href="/style/admin/add-product.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
+
+  <style>
+    /* Hide cropped image canvas initially */
+    #cropModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .crop-container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 90%;
+      overflow-y: auto;
+    }
+
+    .crop-container img {
+      max-width: 100%;
+      max-height: 400px;
+    }
+
+    .crop-actions {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .crop-actions button {
+      padding: 8px 16px;
+      margin: 5px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .crop-actions button:hover {
+      background-color: #0056b3;
+    }
+
+    .content-head{
+      display: flex;
+    }
+
+
+
+  
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <%- include('partial/sidebar') %>
+    <div class="main-content">
+      <%- include('partial/header') %>
+      <br><br>
+      <div class="page-content">
+        <h1 class="content-head"><a href="/admin/products"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#666666"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/></svg></a>Edit Products</h1>
+
+        <div class="form-container">
+         
+          <div class="image-upload-container">
+            <% product.images.forEach((image, index) => { %>
+              <div class="form-group">
+                <img id="productImage<%= index + 1 %>" src="<%= image || 'https://via.placeholder.com/100' %>" alt="Product Image <%= index + 1 %>">
+                <input type="file" id="imageUpload<%= index + 1 %>" style="display: none;" accept="image/*" onchange="showCropper(event, '<%= index + 1 %>')">
+                <div class="upload-photo" onclick="document.getElementById('imageUpload<%= index + 1 %>').click();">
+                  Change Photo <%= index + 1 %>
+                </div>
+              </div>
+            <% }) %>
+
+          </div>
+
+
+          
+          <div class="input-field-container">
+            <div class="errore">
+              <div class="innerdiv"><span id="nameErrore"></span></div>
+              <div class="innerdiv"><span id="brandErrore"></span></div>
+            </div>
+            <div class="form-group">
+              <input type="text" onclick="validateName()" placeholder="Product Name" name="productName" id="productName" value="<%= product.productName %>">
+              <input type="text" onclick="validateBrand()" placeholder="Brand" name="brand" id="brand" value="<%= product.brand %>">
+            </div>
+
+
+            <div class="errore">
+              <div class="innerdiv"><span id="priceErrore"></span></div>
+              <div class="innerdiv"><span id="ingredientErrore"></span></div>
+            </div>
+            <div class="form-group">
+              <input type="number" onclick="validatePrice()" placeholder="Price" name="price" id="price" value="<%= product.price %>">
+              <input type="text" onclick="validateingredients()" placeholder="ingredients" id="ingredients" value="<%= product.ingredients %>">
+            </div>
+
+
+
+            <div class="errore1">
+              <div class="innerdiv"><span id="stockErrore"></span></div>
+              <div class="innerdiv"><span id="categoryErrore"></span></div>
+            </div>
+            <div class="form-group">
+              <input type="number" onclick="validateStock()" placeholder="Stock Count" name="quantity" id="stockCount" value="<%= product.quantity %>">
+              <select id="category" name="category">
+                <option value="" disabled>Select Category</option>
+                <% categories.forEach(category => { %>
+                  <option value="<%= category.categoryName %>" <%= product.category === category.categoryName ? 'selected' : '' %>>
+                    <%= category.categoryName %>
+                  </option>
+                <% }) %>
+                </select>              
+            </div>
+
+
+            <div class="errore">
+              <div class="innerdiv"><span id="DescriptionErrore"></span></div>
+            </div>
+            <div class="form-group">
+              <textarea name="description" onclick="validateDescription()" id="description" placeholder="Description"><%= product.description %></textarea>
+            </div>
+          </div>
+
+          
+          <button class="add-btn" id="submit-btn" onclick="submitProduct(true, '<%= product._id %>')">Edit Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div id="cropModal">
+    <div class="crop-container">
+      <img id="cropImage" src="">
+      <div class="crop-actions">
+        <button onclick="cropImage()">Crop</button>
+        <button onclick="closeCropModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- <script>
+    function handleSubmit() {
+        submitProduct(true, '<%= product._id %>');
+    }
+  </script> -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+  <script src="/script/admin/add-product.js"></script>
+  <script src="/script/admin/header.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+</html>

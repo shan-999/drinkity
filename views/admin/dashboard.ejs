@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="/style/admin/sidebar.css">
+  <link rel="stylesheet" href="/style/admin/header.css">
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> -->
+  <link rel="stylesheet" href="/public/style/font-awesome.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <%- include('partial/sidebar') %> 
+    
+    <div class="main-content">
+      <%- include('partial/header') %> 
+      
+      <div class="page-content">
+        <h1>Dashboard</h1>
+      </div> 
+    </div>
+  </div>
+  <script src="/script/admin/header.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+</html>

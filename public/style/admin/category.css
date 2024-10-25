@@ -1,0 +1,91 @@
+.page-title {
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+  
+.add-btn {
+    float: right;
+    margin-bottom: 10px;
+    padding: 8px 16px;
+    background-color: #4A90E2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.category-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+  
+.category-table th, .category-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+  
+.category-table th {
+  background-color: #f4f4f4;
+}
+  
+.no-category {
+    text-align: center;
+    color: #888;
+}
+
+
+
+/* Modal styles */
+/* Modal styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-color: rgba(0, 0, 0, 0.5); /* Black background with opacity */
+    display: flex; /* Use flexbox to center */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional: add some shadow for better appearance */
+}
+
+.modal-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.cancel-btn, .confirm-btn {
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.cancel-btn {
+    background-color: #ccc;
+}
+
+.confirm-btn {
+    background-color: #d9534f;
+    color: white;
+}
+
+/* .list-unlist-btn{
+    background-color: red;
+    color: white;
+} */
+  
+  

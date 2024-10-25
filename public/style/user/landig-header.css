@@ -1,0 +1,41 @@
+
+.btn-login, .btn-signup {
+    padding: 0.5rem 1.5rem;
+    border: none;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    text-decoration: none;
+  }
+  
+
+  .btn-login {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .btn-login:hover {
+    background-color: #45a049;
+  }
+  
+
+  .btn-signup {
+    background-color: #ff9800;
+    color: white;
+  }
+  
+  .btn-signup:hover {
+    background-color: #e68a00;
+  }
+  
+
+  .search-bar {
+    background-color: #f1f1f1;
+    border-radius: 25px;
+  }
+  
+  .search-bar input {
+    background-color: transparent;
+    border: none;
+  }
+  

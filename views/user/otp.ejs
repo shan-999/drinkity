@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drinkity Verification</title>
+    <link rel="stylesheet" href="/style/user/otp.css">
+</head>
+<body>
+    <div class="container">
+        <div class="left">
+            <div class="brand">
+                <h1>Drinkity</h1>
+            </div>
+            <div class="verification">
+                <form action="/otp" method="post">
+                    <p><%= msg %></p>
+                    <h2>Verification Code</h2>
+                    <p>We have sent the verification code to your email</p>
+                    <div class="code-inputs">
+                        <input type="text" maxlength="1" name="one" id="input1" oninput="validateInput(this, 'input2')" />
+                        <input type="text" maxlength="1" name="two" id="input2" oninput="validateInput(this, 'input3')" />
+                        <input type="text" maxlength="1" name="three" id="input3" oninput="validateInput(this, 'input4')" />
+                        <input type="text" maxlength="1" name="four" id="input4" oninput="validateInput(this)" />
+                    </div>
+                    <p class="resend">Resend Code in <span id="timer">60</span> seconds</p>
+                    <p class="resend-link" style="display: none;"><a href="/resend" id="resendLink">Resend Code</a></p>
+                    <button type="submit" class="verify-button">Verify</button>
+                    <p class="back-to-register">
+                        <a href="/register">Back to register</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+        <div class="register-right">
+            <div class="logo-container">
+              <img src="/images/drinkity_logo_no_bg.png" alt="Drinkity Logo">
+              <h2>Drinkity</h2>
+              <p>Since 2024</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/script/user/otp.js"></script>
+</body>
+</html>

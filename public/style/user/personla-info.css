@@ -1,0 +1,81 @@
+/* General body and fonts */
+body {
+    font-family: 'Nunito', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.header {
+    background-color: white;
+    padding: 1rem 0;
+    border-bottom: 1px solid #e6e6e6;
+}
+
+.logo {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+    color: #e63946;
+}
+
+.search-bar {
+    width: 40%;
+    padding: 0.5rem;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+}
+
+.container {
+    max-width: 1140px;
+    margin: 0 auto;
+}
+
+.sidebar {
+    background-color: #ffffff;
+    padding: 1.5rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.nav-link {
+    color: #333;
+    padding: 0.8rem 0;
+    display: block;
+    font-weight: 700;
+}
+
+.nav-link:hover {
+    color: #e63946;
+}
+
+.nav-link.active {
+    color: #e63946;
+}
+
+.card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.user-info p {
+    font-size: 16px;
+    margin: 0.5rem 0;
+}
+
+.actions .btn {
+    border-radius: 20px;
+    padding: 0.5rem 1.5rem;
+    font-weight: 700;
+}
+
+.footer {
+    padding: 2rem 0;
+    background-color: #ffffff;
+    border-top: 1px solid #e6e6e6;
+    margin-top: 3rem;
+}
+
+.footer p {
+    color: #999;
+    font-size: 14px;
+}

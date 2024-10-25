@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drinkity - Log in</title>
+    <link rel="stylesheet" href="/style/user/userLogin.css">
+</head>
+<body>
+    <div class="container">
+        
+        <div class="left">
+            <div class="login-box">
+                <div class="logo-img">
+                    <img src="/images/drinkity_text_no_bg.png" width="140px" height="70px">
+                </div>
+                <h2>Log in</h2>
+                <p>Welcome back! Please enter your details.</p>
+                <form onsubmit="verifySubmit(event)" class="form-login" action="/login" method="POST">
+                    <input type="email" id="email" name="email" placeholder="Enter your email" onkeyup="emailvalidate()">
+                    <span id="emailError"></span>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" onkeyup="passwordvalidate()">
+                    <span id="passwordError"></span>
+                    <p><a href="/forgot-password">Forgot password</a></p>
+                    <button  type="submit">Log in</button>
+                    <p style="color: red;"><%= msg %></p>
+                </form>
+                <!-- <button class="google-btn">
+                    <img src="https://lh3.googleusercontent.com/COxitqgJr1sJnIDe8-jiKhxDx1FrYbtRHKJ9z_hELisAlapwE9LUPh6fcXIfb5vwpbMl4xl9H9TRFPc5NOO8Sb3VSgIBrfRYvW6cUA" alt="Google logo">
+                    Log in with Google
+                </button> -->
+                <p>Don't have an account? <a href="/register">Sign up</a></p>
+            </div>
+        </div>
+        <div class="register-right">
+            <div class="logo-container">
+              <img src="/images/drinkity_logo_no_bg.png" alt="Drinkity Logo">
+              <h2>Drinkity</h2>
+              <p>Since 2024</p>
+            </div>
+        </div>
+    </div>
+    <script src="/script/user/login.js"></script>
+</body>
+</html>
