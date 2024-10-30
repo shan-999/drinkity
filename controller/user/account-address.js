@@ -74,7 +74,7 @@ const addAddress = async (req,res) =>     {
             landmark,
             city,
             PINCode:pincode,
-            phoneNumber:mobile,
+            phonNumber:mobile,
             state,
             email
         })
@@ -112,7 +112,7 @@ const editAddress = async (req, res) => {
             fullName: req.body.fullName,
             address: req.body.address,
             email: req.body.email,
-            mobile: req.body.mobile,
+            phonNumber: req.body.mobile,
             city: req.body.city,
             PINcode: req.body.pincode,
             state: req.body.state,

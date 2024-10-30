@@ -8,10 +8,22 @@ const { find } = require('../../model/adminModel');
 
 
 //login page-------------------------------------------------------
-const loadLogin = async (req, res) => {
-    const message = req.query.message
-    res.render('user/login',{msg:message});
+const   loadLogin = async (req, res) => {
+    console.log('yes reched here');
+    
+    try {
+        const message = req.query.message
+    res.render('user/login',{msg:message}); 
+    console.log('render login');
+    console.log(req.session.userId);
+    } catch (error) {
+        
+        res.send("not found")
+    }
+    
+    
 };
+
 
 
 const login = async (req,res) =>{
@@ -29,7 +41,6 @@ const login = async (req,res) =>{
             return res.redirect('login?message=You were blocked by admin')
         }
 
-        console.log(`user id ${req.session.userId}`);
         req.session.userId = user._id
 
         res.redirect('/home')

@@ -40,48 +40,56 @@
             <div class="col-md-8 offset-md-2">
 
                 <h2 class="mb-4">Edit new address</h2>
-                <form action="/edit-address/<%= address._id %>" method="POST" class="shadow-sm p-4 bg-white">
+                <form action="/edit-address/<%= address._id %>" method="POST" class="shadow-sm p-4 bg-white" onsubmit="submitValidation(event)">
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="fullName" class="form-label">Full name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="fullName" name="fullName" value="<%= address ? address.fullName : '' %>" required>
+                            <input type="text" class="form-control" id="fullName" name="fullName" value="<%= address ? address.fullName : '' %>" onkeyup="validatename()">
+                            <span id="nameError" style="color: red;"></span>
                         </div>
                         <div class="mb-3">
                             <label for="address" class="form-label">House / apartment number and street address <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="address" name="address" value="<%= address ? address.address : '' %>" required>
+                            <input type="text" class="form-control" id="address" name="address" value="<%= address ? address.address : '' %>" onkeyup="validateAddress()">
+                            <span id="addressError" style="color: red;"></span>
                         </div>
                     </div>
                 
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="email" class="form-label">Email address <span class="text-danger">*</span></label>
-                            <input type="email" class="form-control" id="email" name="email" value="<%= address ? address.email : '' %>" required>
+                            <input type="email" class="form-control" id="email" name="email" value="<%= address ? address.email : '' %>" onkeyup="validateEmail()">
+                            <span id="emailError" style="color: red;"></span>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="mobile" class="form-label">Mobile number</label>
-                            <input type="text" class="form-control" id="mobile" name="mobile" value="<%= address ? address.mobile : '' %>">
+                            <input type="text" class="form-control" id="mobile" name="mobile" value="<%= address ? address.phonNumber : '' %>" onkeyup="validateMobile()">
+                            <span id="mobileError" style="color: red;"></span>
                         </div>
                     </div>
                 
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="city" class="form-label">City <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="city" name="city" value="<%= address ? address.city : '' %>" required>
+                            <input type="text" class="form-control" id="city" name="city" value="<%= address ? address.city : '' %>" onkeyup="validateCity()">
+                            <span id="cityError" style="color: red;"></span>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="postcode" class="form-label">Postcode <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="postcode" name="pincode" value="<%= address ? address.PINCode : '' %>" required>
+                            <input type="text" class="form-control" id="postcode" name="pincode" value="<%= address ? address.PINCode : '' %>" onkeyup="validatePostcode()">
+                            <span id="postcodeError" style="color: red;"></span>
                         </div>
                     </div>
                 
                     <div class="mb-3">
                         <label for="state" class="form-label">State<span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="state" name="state" value="<%= address ? address.state : '' %>" required>
+                        <input type="text" class="form-control" id="state" name="state" value="<%= address ? address.state : '' %>" onkeyup="validateState()">
+                        <span id="stateError" style="color: red;"></span>
                     </div>
                     
                     <div class="mb-3">
                         <label for="landmark" class="form-label">Add Nearby Famous Shop/Mall/Landmark<span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="landmark" name="landmark" value="<%= address ? address.landmark : '' %>" required>
+                        <input type="text" class="form-control" id="landmark" name="landmark" value="<%= address ? address.landmark : '' %>" onkeyup="validateLandmark()">
+                        <span id="landmarkError" style="color: red;"></span>
                     </div>
                 
                     <button type="submit" class="btn btn-primary w-100">Update Address</button>
@@ -106,5 +114,136 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
     <script src="/script/user/home.js/plugins.js"></script>
     <script src="/script/user/home.js/script.js"></script>
+
+
+
+    <script> 
+
+
+        function validatename() {
+            let fullName = document.getElementById('fullName').value;
+            let regex = /^[A-Za-z\s]+$/; 
+
+            if (fullName.trim() === "") {
+                document.getElementById('nameError').innerHTML = 'Name cannot be empty.';
+                return false;
+            }
+
+            if (!regex.test(fullName)) {
+                document.getElementById('nameError').innerHTML = 'Invalid name. Please use only letters and spaces.';
+                return false;
+            }
+
+            document.getElementById('nameError').innerHTML = '';
+            return true;
+        }
+
+
+        function validateAddress() {
+            let address = document.getElementById('address').value;
+
+            if (address.trim() === "") {
+                document.getElementById('addressError').innerHTML = 'Address cannot be empty.';
+                return false;
+            }
+
+            document.getElementById('addressError').innerHTML = '';
+            return true;
+        }
+
+        function validateEmail() {
+            let email = document.getElementById('email').value;
+            let regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (email.trim() === "") {
+                document.getElementById('emailError').innerHTML = 'Email cannot be empty.';
+                return false;
+            }
+
+            if (!regex.test(email)) {
+                document.getElementById('emailError').innerHTML = 'Invalid email format.';
+                return false;
+            }
+
+            document.getElementById('emailError').innerHTML = '';
+            return true;
+        }
+
+        function validateMobile() {
+            let mobile = document.getElementById('mobile').value;
+            let regex = /^\d{10}$/;
+
+            if (mobile && !regex.test(mobile)) {
+                document.getElementById('mobileError').innerHTML = 'Invalid mobile number. It should be 10 digits.';
+                return false;
+            }
+
+            document.getElementById('mobileError').innerHTML = '';
+            return true;
+        }
+
+        function validateCity() {
+            let city = document.getElementById('city').value;
+
+            if (city.trim() === "") {
+                document.getElementById('cityError').innerHTML = 'City cannot be empty.';
+                return false;
+            }
+
+            document.getElementById('cityError').innerHTML = '';
+            return true;
+        }
+
+        function validatePostcode() {
+            let postcode = document.getElementById('postcode').value;
+
+            if (postcode.trim() === "") {
+                document.getElementById('postcodeError').innerHTML = 'Postcode cannot be empty.';
+                return false;
+            }
+
+            document.getElementById('postcodeError').innerHTML = '';
+            return true;
+        }
+
+        function validateState() {
+            let state = document.getElementById('state').value;
+
+            if (state.trim() === "") {
+                document.getElementById('stateError').innerHTML = 'State cannot be empty.';
+                return false;
+            }
+
+            document.getElementById('stateError').innerHTML = '';
+            return true;
+        }
+
+        function validateLandmark() {
+            let landmark = document.getElementById('landmark').value;
+
+            if (landmark.trim() === "") {
+                document.getElementById('landmarkError').innerHTML = 'Landmark cannot be empty.';
+                return false;
+            }
+
+            document.getElementById('landmarkError').innerHTML = '';
+            return true;
+        }
+
+        function submitValidation(event) {
+            let name = validatename();
+            let address = validateAddress();
+            let email = validateEmail();
+            let mobile = validateMobile();
+            let city = validateCity();
+            let postcode = validatePostcode();
+            let state = validateState();
+            let landmark = validateLandmark();
+
+            if (!name || !address || !email || !mobile || !city || !postcode || !state || !landmark) {
+                event.preventDefault();
+            }
+        }
+    </script>
   </body>
 </html>

@@ -10,23 +10,26 @@ const cart  = require('../controller/user/cart');
 
 
 
+
 router.get('/login', auth.isLogin, userController.loadLogin)
+
+
 router.post('/login',userController.login)
 
 router.get('/register', auth.isLogin, userController.loadRegister);
 router.post('/register', userController.registerUser);
-router.get('/otp',auth.isLogin, userController.loadotp);
-router.post('/otp', userController.verifyOtp);
-router.get('/resend', userController.resendOtp);
+router.get('/otp',auth.isLogin,userController.loadotp);
+router.post('/otp', auth.isLogin,userController.verifyOtp);
+router.get('/resend',auth.isLogin,userController.resendOtp);
 
 
 router.get('/forgot-password',auth.isLogin,userController.loadForgetPassword)
-router.post('/forgot-password',userController.forgotPassword)
-router.get('/otp-password',userController.loadOTPPassword)
-router.post('/otp-verify-password',userController.verifyOtpForPassword)
-router.get('/change-password',userController.loadPasswordChange)
-router.post('/change-password',userController.changePassword)
-router.get('/password-reseted',userController.passwordReseted)   
+router.post('/forgot-password',auth.isLogin,userController.forgotPassword)
+router.get('/otp-password',auth.isLogin,userController.loadOTPPassword)
+router.post('/otp-verify-password',auth.isLogin,userController.verifyOtpForPassword)
+router.get('/change-password',auth.isLogin,userController.loadPasswordChange)
+router.post('/change-password',auth.isLogin,userController.changePassword)
+router.get('/password-reseted',auth.isLogin,userController.passwordReseted)   
 
 
 
@@ -36,6 +39,8 @@ router.get('/product-details/:id',userHome.LoadProductDetails)
 
 
 router.get('/account-orders',auth.isAuthenticated,accountOrders.loadAccountOrders)
+router.get('/order-details/:orderId',auth.isAuthenticated,accountOrders.laodOrderDetais)
+router.post('/cancel-order',auth.isAuthenticated,accountOrders.cancelOrder)
 
 
 router.get('/account-address',auth.isAuthenticated,accountAddress.loadAddress)
@@ -53,9 +58,15 @@ router.patch('/edit-password',auth.isAuthenticated,accountPersonlaInfo.changePas
 
 
 router.get('/cart',auth.isAuthenticated,cart.loadCart)
-router.post('/addtocart',auth.isAuthenticated,cart.addToCart)
+router.post('/addtocart',cart.addToCart)
+router.delete('/cart/remove-item',auth.isAuthenticated,cart.removeItem)
 router.post('/edit-cart',auth.isAuthenticated,cart.editCart)
 router.get('/checkout',auth.isAuthenticated,cart.checkout)
+router.get('/select-addesses/:id',auth.isAuthenticated,cart.selectedAddress)
+router.post('/confirm-order',auth.isAuthenticated,cart.confirmOrder)
+router.get('/order-confirmed/:orderId',auth.isAuthenticated,cart.loadOrderConfirmed)
+
+
 
 
 

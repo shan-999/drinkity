@@ -18,6 +18,53 @@
     <link rel="stylesheet" href="/style/user/aside.css">
 </head>
 <body>
+    <style>
+        .custom-border-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .custom-border-table th,
+        .custom-border-table td {
+            border: 1px solid #c2bbbb; /* Change this color to your preferred border color */
+        }
+
+        .custom-border-table th {
+            background-color: #f0f0f0; /* Optional: Background color for headers */
+        }
+
+        .badge {
+        padding: 8px 12px; 
+        border-radius: 5px;
+        font-size: 0.9em; 
+        font-weight: bold; 
+        display: inline-block;
+        }
+
+        .custom-pending {
+            background-color: #ffc107; 
+            color: #212529; 
+        }
+
+        .custom-shipped {
+            background-color: #17a2b8; 
+            color: white;
+        }
+
+        .custom-delivered {
+            background-color: #28a745; 
+            color: white; 
+        }
+
+        .custom-cancelled {
+            background-color: #dc3545;
+            color: white; 
+        }
+        .badge:hover {
+            opacity: 0.8; 
+            cursor: pointer; 
+        }
+    </style>
     <header>
         <%- include('partial/head') %>
     </header>
@@ -31,29 +78,67 @@
             <div class="col-md-9">
                 <section class="content py-5">
                     <h2>Orders</h2>
-
-                    <div class="orders-section">
-                        <% if (order.length === 0) { %>
+                
+                    <div class="orders-section" style="max-height: 600px; overflow-y: auto; border: solid;">
+                        <% if (!order || order.length === 0) { %>
                             <p>No orders found.</p>
                         <% } else { %>
-                            <% order.forEach(function(orderDetail) { %>
-                                <div class="order-card border p-3 mb-4">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <p class="m-0">Order #<%= orderDetail._id %></p>
-                                        <span class="badge bg-primary"><%= orderDetail.status %></span>
-                                    </div>
-                                    <p class="m-0">Order Date: <%= new Date(orderDetail.orderDate).toLocaleDateString() %></p>
-                                    <p class="m-0">Total: ₹<%= orderDetail.price %></p>
-                                    <div class="order-product mt-3">
-                                        <a href="#">
-                                            <img src="<%= orderDetail.image[0] %>" alt="Product Image" class="img-thumbnail" style="max-width: 100px;">
-                                        </a>
-                                    </div>
-                                </div>
-                            <% }) %>
+                            <table class="custom-border-table">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Products</th>
+                                        <th>Total Price</th>
+                                        <th>Order Date</th>
+                                        <th>Delivery Date</th>
+                                        <th>Status</th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% order.forEach(function(orderDetail) { %>
+                                        <tr>
+                                            <td><%= orderDetail._id.toString().slice(-15) %></td>
+                
+                                            <td>
+                                                <% orderDetail.products.forEach(function(product) { %>
+                                                    <div>
+                                                        <strong><%= product.productName %></strong>
+                                                    </div>
+                                                <% }) %>
+                                                <div class="mt-2">
+                                                    <a href="/order-details/<%= orderDetail._id %>" class="btn btn-primary btn-sm">Show More</a>
+                                                </div>
+                                            </td>
+                
+                                            <td>₹<%= orderDetail.Totalprice.toFixed(2) %></td>
+                
+                                            <td><%= new Date(orderDetail.orderDate).toLocaleDateString() %></td>
+                
+                                            <td><%= new Date(new Date(orderDetail.orderDate).getTime() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString() %></td>
+                
+                                            <td>
+                                                <% let statusClass = ''; %>
+                                                <% if (orderDetail.status === 'Pending') { %>
+                                                    <% statusClass = 'custom-pending'; %>
+                                                <% } else if (orderDetail.status === 'Shipped') { %>
+                                                    <% statusClass = 'custom-shipped'; %>
+                                                <% } else if (orderDetail.status === 'Delivered') { %>
+                                                    <% statusClass = 'custom-delivered'; %>
+                                                <% } else if (orderDetail.status === 'Cancelled') { %>
+                                                    <% statusClass = 'custom-cancelled'; %>
+                                                <% } %>
+                                                <span class="badge <%= statusClass %>"><%= orderDetail.status %></span>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
                         <% } %>
                     </div>
                 </section>
+                
+                
             </div>
         </div>
     </main>

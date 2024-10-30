@@ -33,12 +33,12 @@ const loadHome = async (req, res) => {
 
         const products = await productsmodel.find({ listed: true });
 
-        // Fetch the cart for the current user and populate product details
+    
         const cart = await cartSchema.findOne({ userId: req.session.userId })
-            .populate('items.productId') // Populate product details
+            .populate('items.productId') 
             .exec();
 
-        // Calculate total price for the cart
+       
         let cartTotalPrice = 0;
         if (cart && cart.items.length > 0) {
             cartTotalPrice = cart.items.reduce((total, item) => {
@@ -50,8 +50,8 @@ const loadHome = async (req, res) => {
             categories,
             products,
             userId: req.session.userId,
-            cart: cart ? cart.items : [],  // Send populated cart items
-            cartTotalPrice  // Send total cart price
+            cart: cart ? cart.items : [],  
+            cartTotalPrice  
         });
 
     } catch (error) {
@@ -63,15 +63,17 @@ const loadHome = async (req, res) => {
 
 const LoadProductDetails = async (req, res) => {
     try {
+console.log("not here");
+
         const productId = req.params.id;
 
         if(!productId) return res.redirect('/home')
 
         const cart = await cartSchema.findOne({ userId: req.session.userId })
-        .populate('items.productId') // Populate product details
+        .populate('items.productId')
         .exec();
 
-        const cartTotalPrice = cart.cartTotalPrice
+    
         const categories = await category.find({ listed: true });
 
         const product = await productsmodel.findById(productId); 
@@ -83,7 +85,7 @@ const LoadProductDetails = async (req, res) => {
 
         }).limit(8);
 
-        res.render('user/product-details', { product ,categories ,relatedProducts,userId :req.session.userId,cart,cartTotalPrice});
+        res.render('user/product-details', { product ,categories ,relatedProducts,userId :req.session.userId,cart});
     } catch (error) {
         console.error(error);
         res.status(500).send('Server Error');

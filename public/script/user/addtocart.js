@@ -1,35 +1,42 @@
-const { response } = require("express")
 
 function updateCart(productId,event){
     event.preventDefault()
     let quantity = document.getElementById('quantity').value
 
-    axios.post('/addtocart',{productId,quantity})
+    axios.post('/addtocart', { productId, quantity })
     .then(response => {
-        if(response.data){
+        console.log('Product added to cart successfully');
+
+        if (response.status === 200) {
             Swal.fire(
                 'Added to cart',
-                'Product will added to cart',
-                'Success'
-            )
-            .then(() => {
-                // location.reload()
-            })
-        }else{
+                'Product was successfully added to cart',
+                'success'
+            );
+        } else {
+            console.log(response.data.message)
             Swal.fire(
                 'Error!',
-                response.data.message || 'Faild to adding cart'
-            )
+                response.data.message || 'Failed to add to cart',
+                'error'
+            );
         }
     })
     .catch(error => {
-        console.error('Error addto cart :', error);
+        if (error.response && error.response.status === 401) {
             Swal.fire(
                 'Error!',
-                'Failed to add to cart. Please try again.',
+                error.response.data.message || 'You need to log in first',
                 'error'
             );
-    })
+        } else {
+            Swal.fire(
+                'Error!',
+                error.response.data.message || 'Failed to add to cart. Please try again.',
+                'error'
+            );
+        }
+    });
 }
 
 

@@ -18,7 +18,16 @@
 
 </head>
 <body>
+      <style>
+        .remove-btn{
+          width: 20px;
+          border: none;
+        }
 
+        .remove-btn:hover{
+          color: red;;
+        }
+      </style>
    
 
 
@@ -37,11 +46,11 @@
           <button>Wish List</button>
         </div>
       
-        <div class="cart-items">
+        <div class="cart-items" >
           <% if (cart && cart.items.length > 0) { %>
             <% cart.items.forEach(item => { %>
-              <div class="cart-item">
-                <a href="/product-details/<%= item.productId._id %>"><img src="<%= item.productId.images[0] %>" alt="<%= item.productId.name %>" class="cart-item-image"></a>
+              <div class="cart-item" id="cart-item-<%= item.productId._id %>">
+                <a href="/product-details/<%= item.productId._id %>"><img src="<%= item.productId.images[0] %>" class="cart-item-image"></a>
                 <div class="cart-item-details">
                   <p class="item-name"><%= item.productId.productName %></p>
                 </div>
@@ -62,16 +71,16 @@
                   onkeydown="return false;" 
                   onchange="updateCart('<%= item.productId._id %>', this.value)">
                   <span id="item-total-price-<%= item.productId._id %>" class="item-total-price">₹<%= item.totalPrice %></span>
-                </div>
-                <button class="remove-item-btn">&times;</button>
+                </div>  
+                <button onclick="removeFromCart('<%= item.productId._id %>',)" class="remove-btn">x</button>
               </div>
             <% }) %>
           <% } else { %>
-            <p>Your cart is empty. <a href="/shop">Continue shopping</a>.</p>
+            <p>Your cart is empty. <a href="/home">Continue shopping</a>.</p>
           <% } %>
         </div>
       
-        <% if (cart && cart.items.length > 0) { %>
+        <% if (cart && cart.items.length > 0 ) { %>
           <div class="cart-summary">
             <h3>Total: ₹<span id="cart-total"><%= cart.cartTotalPrice %></span></h3>
             <a href="/checkout" class="checkout-button">Proceed to Checkout</a>
@@ -113,7 +122,36 @@
       }
 
       
-      
+
+      function removeFromCart(productId,totalPrice) {
+        axios.delete('/cart/remove-item', {
+          data: { productId }
+        })
+        .then(response => {
+          console.log(response.data.cart);
+          
+          if (response.data.success) {
+            const itemElement = document.getElementById(`cart-item-${productId}`);
+            if (itemElement) {
+              itemElement.remove();
+            }
+
+            const cartTotalElement = document.getElementById('cart-total');
+            if (cartTotalElement) {
+                cartTotalElement.innerText = response.data.cart;  
+
+                if(cartTotalElement === 0){
+                  // document.querySelector('.cart-summary').style.display = 'none';
+                  location.reload()
+                }
+            }
+
+           
+          }
+        })
+        .catch(error => console.error('Error:', error));
+      }
+          
     </script>
 </body>
 </html>

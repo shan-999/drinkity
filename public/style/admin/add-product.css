@@ -162,16 +162,16 @@ body {
 
   .errore{
     display: flex;
-    gap: 143px;
+    gap: 218px;
     color: red;
   }
   .errore1{
     display: flex;
-    gap: 148px;
+    gap: 235px;
     color: red;
   }
 
   .innerdiv{
-    width: 455px;
+    width: 460px;
     height: 20px;
   }

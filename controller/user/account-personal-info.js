@@ -56,9 +56,9 @@ const changePassword = async (req,res) => {
 
         const isMatch = await bcrypt.compare(currentPassword,user.password)
         
-        if(!isMatch) return res.status(400).json({success:false , message: 'Current password is incorrect'})
+        if(!isMatch) return res.status(400).json({success:false , message:'Current password is incorrect'})
 
-        if(password != cpassword) return res.status(400).json({success:false , message: 'New passwords do not match'})
+        if(password != cpassword) return res.status(400).json({success:false , message:'New passwords do not match'})
 
         const hashedPassword = await bcrypt.hash(password, 10);
 

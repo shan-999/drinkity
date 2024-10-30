@@ -70,7 +70,7 @@
                             <label for="username" class="form-label">Username</label>
                             <input type="text" class="form-control" id="username" name="username"
                                 value="<%= user.userName %>" onkeyup="validateUsername()">
-                            <span class="text-danger" id="error"></span>
+                            <span style="color: red;" id="error"></span>
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email address</label>
@@ -98,19 +98,20 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="editInfoForm" >
+                    <form id="editInfoForm" onsubmit="validateChangePassSubmit()">
                         <div class="mb-3">
                             <label for="password" class="form-label">Current Password</label>
                             <input type="password" class="form-control" id="current-password" name="current-password" >
                         </div>  
                         <div class="mb-3">
                             <label for="password" class="form-label">New Password</label>
-                            <input type="text" class="form-control" id="password" name="password">
-                            <span class="text-danger" id="error"></span>
+                            <input type="text" class="form-control" id="password" name="password" onkeyup="vlidateNewpassword()">
+                            <span style="color: red;" id="newpassError"></span>
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Conform Password</label>
-                            <input type="text" class="form-control" id="conform-password" name="conform-password" >
+                            <input type="text" class="form-control" id="conform-password" name="conform-password" onkeyup="validateConfPassword()">
+                            <span style="color: red;" id="conform-password-Error"></span>
                         </div>
                         
                         <div class="modal-footer">
@@ -130,8 +131,8 @@
     <script src="/script/user/home.js/jquery-1.11.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
-        crossorigin="anonymous"></script>
+            integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+            crossorigin="anonymous"></script>
     <script src="/script/user/home.js/plugins.js"></script>
     <script src="/script/user/home.js/script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -148,7 +149,9 @@
         const isValid = validateUsername();
         if (!isValid) {
             event.preventDefault();
+            return false
         }
+        return true
     }
 
     function validateUsername() {
@@ -165,6 +168,12 @@
 
     document.getElementById('editInfoForm').addEventListener('submit', (event) => {
         const userName = document.getElementById('username').value;
+
+        if(!validatesubmit(event)){
+            event.preventDefault();
+            return false
+        }
+        
 
         axios.patch('/edit-info', {
             userName
@@ -191,12 +200,51 @@
     });
 
 
+    function vlidateNewpassword(){
+        let password = document.getElementById('password').value
+        let regex = /^(?=.*[0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{5,}$/
+        if(!regex.test(password)){
+            document.getElementById('newpassError').innerHTML = 'Password must be at least 5 characters long, contain at least one number and one special character'
+            return false
+        }
+        document.getElementById('newpassError').innerHTML = ""
+        return true
+    }
+
+
+    function validateConfPassword(){
+        let cpassword = document.getElementById('conform-password').value
+        let password = document.getElementById('password').value
+
+        if(password != cpassword){
+            document.getElementById('conform-password-Error').innerHTML = 'Password not match'
+            return false
+        }
+        document.getElementById('conform-password-Error').innerHTML = ""
+        return true
+    }
+
+    function validateChangePassSubmit(event){
+        let password = vlidateNewpassword()
+        let cpassword = validateConfPassword()
+        if(!password || !cpassword){
+            event.preventDefault()
+            return false
+        }
+        return true
+    }
+
     document.getElementById('editpassModal').addEventListener('submit', (event) => {
         event.preventDefault();
         const password = document.getElementById('password').value
         const cpassword = document.getElementById('conform-password').value
         const currentPassword = document.getElementById('current-password').value
 
+
+        if(!validateChangePassSubmit(event)){
+            event.preventDefault()
+            return false
+        }
 
         if (password !== cpassword) {
             Swal.fire(
@@ -214,7 +262,7 @@
             currentPassword
         })
         .then(response => {
-            if(response.data){
+            if(response.status === 200 && response.data.success){
                 Swal.fire(
                     'Password Changed!',
                     'Your Password has been changed.',
@@ -225,7 +273,7 @@
             }else{
                 Swal.fire(
                     'Error!',
-                    response.data.message || 'Failed to change the password. Please try again.',
+                    response.data.message || 'Failed to change the Password. Please try again'  ,
                     'error'
                 );
             }

@@ -112,7 +112,8 @@ const editProduct = async (req, res) => {
     try {
         const { productName, brand, price, ingredients, quantity, category ,description} = req.body;
         const productId = req.params.id;
-
+        console.log('hello');
+        
         
         const product = await products.findById(productId);
         if (!product) {

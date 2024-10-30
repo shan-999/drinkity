@@ -5,6 +5,7 @@ const adminAth = require('../middleware/adminAuth')
 const adminUsers = require('../controller/admin/adminUser')
 const adminProducts = require('../controller/admin/adminProduct')
 const adminCategory = require('../controller/admin/category')
+const adminOrders = require('../controller/admin/orders')
 
 
 router.get('/login',adminAth.isLogin,adminController.loadLogin)
@@ -39,5 +40,9 @@ router.post('/add-category',adminAth.checkSession,adminCategory.addCategory)
 router.post('/edit-category',adminAth.checkSession,adminCategory.editCategory)
 router.post('/delete-category',adminAth.checkSession,adminCategory.deleteCategory)
 router.post('/soft-edit-category/:action',adminAth.checkSession,adminCategory.softEditCategory)
+
+
+router.get('/orders',adminAth.checkSession,adminOrders.loadOrder)
+router.post('/orders/:orderId', adminAth.checkSession,adminOrders.updateStats);
 
 module.exports  = router

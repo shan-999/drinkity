@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Confirmation</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/style/user/home/vendor.css">
+    <link rel="stylesheet" type="text/css" href="/style/user/home.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
+
+</head>
+<body>
+    <style>
+        * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f3eb;
+      color: #333;
+      min-height: 100vh;
+    }
+    
+    .order-container {
+        display: flex;
+        background-color: #fff;
+        border-radius: 37px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        width: 80%;
+        max-width: 1150px;
+        height: 574px;
+    }
+    
+    .thank-you-section, .order-summary-section {
+      padding: 20px;
+    }
+    
+    .thank-you-section {
+        width: 50%;
+        background-color: #fff5f1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .thank-you-section h1 {
+      font-size: 1.6em;
+      margin-bottom: 10px;
+      color: #333;
+    }
+    
+    .thank-you-section p {
+      font-size: 0.9em;
+      margin-bottom: 20px;
+      color: #666;
+    }
+    
+    .billing-address {
+      margin-top: 20px;
+    }
+    
+    .billing-address h3 {
+      font-size: 1.1em;
+      margin-bottom: 10px;
+    }
+    
+    .billing-address p {
+      font-size: 0.9em;
+      color: #555;
+    }
+    
+    .track-order-button {
+      background-color: #ff6b6b;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      margin-top: 20px;
+    }
+    
+    .track-order-button:hover {
+      background-color: #ff5252;
+    }
+    
+    .order-summary-section {
+        width: 50%;
+        background-color: #f3f5f7;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .order-summary-section h2 {
+      font-size: 1.4em;
+      margin-bottom: 10px;
+    }
+    
+    .order-summary-section p {
+      font-size: 0.9em;
+      margin: 5px 0;
+      color: #555;
+    }
+    
+    .order-item {
+      display: flex;
+      align-items: center;
+      margin: 15px 0;
+    }
+    
+    .order-item img {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      margin-right: 15px;
+      background-color: #ddd;
+    }
+    
+    .order-item p {
+      font-size: 0.9em;
+      margin-bottom: 5px;
+    }
+    
+    .order-total {
+      display: flex;
+      justify-content: space-between;
+      /* margin-top: 20px; */
+      font-size: 1.1em;
+      font-weight: bold;
+    }
+    
+    .main-sec{
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      height: 700px;
+      align-items: center;
+      background-color: #f9f3eb;
+    }
+
+
+    .products {
+      width: 520px;         
+      height: 350px;        
+      overflow-y: auto;     
+      overflow-x: hidden;   
+      border: 1px solid #ccc;      
+    }
+    .products .order-item{
+      padding: 10px;
+    }
+
+    .order-total {
+                 
+      background: #fff;       
+      padding: 10px;
+      border-top: 1px solid #ccc; 
+      text-align: right;      
+    }
+
+    .shippingFee{
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      font-size: 12px;
+      
+      background: #fff;
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+      text-align: right;
+    }
+
+    .continue-shop-btn{
+      background-color: #a58a8a;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      margin-top: 20px;
+    }
+
+    .total-summery{
+      position: sticky;        
+      bottom: 0;  
+    }
+
+    .continue-shop-btn:hover {
+      background-color: #de8e8e;
+    }
+      </style>
+   
+      <header> <%- include('partial/head') %></header>
+  
+
+
+      <section class="main-sec">
+        <div class="order-container">
+            <div class="thank-you-section">
+                <h1>Thank you for your purchase!</h1>
+                <p>Your order will be processed within 24 hours during working days. You will receive your order and tracking details once the items have been shipped.</p>
+                <div class="billing-address">
+                    <h3>Billing address</h3>
+                    <p><strong>Name:</strong> <%= order.customer.userName %></p>
+                    <p><strong>Address:</strong> <%= order.customer.address.landMark %>, <%= order.customer.address.city %>, <%= order.customer.address.state %></p>
+                    <p><strong>PIN Code:</strong> <%= order.customer.address.postalCode %></p>
+                    <p><strong>Email:</strong> <%= order.customer.email %></p>
+                </div>
+                <div style="display: flex; gap: 20px;">
+                  <a href="/order-details/<%= order._id %>"><button class="track-order-button">Order Details</button></a>
+                  <a href="/home"><button class="continue-shop-btn">Continue shopping</button></a>
+                </div>
+                
+            </div>
+    
+            <div class="order-summary-section">
+                <h2>Order Summary</h2>
+                <p><strong>Order Date:</strong> <%= new Date(order.orderDate).toLocaleDateString() %></p>
+                <p><strong>Order ID:</strong> <%= order._id %></p>
+                <p><strong>Payment Method:</strong> 
+                    <% if (order.paymentMethod === 'cod') { %>
+                        Cash on Delivery
+                    <% } else { %>
+                        <%= order.paymentMethod %>
+                    <% } %>
+                </p>
+    
+                <div class="products">
+                    <% order.products.forEach(product => { %>
+                        <div class="order-item">
+                            <img src="<%= product.image %>" alt="Product Image">
+                            <div>
+                                <p><strong><%= product.productName %></strong></p>
+                                <p>₹<%= product.price.toFixed(2) %> x <%= product.quantity %> = ₹<%= (product.price * product.quantity).toFixed(2) %></p>
+                            </div>
+                        </div>
+                    <% }) %>
+                    <div class="total-summery">
+                      <div class="shippingFee" >
+                        <p><strong>Shipping fee</strong></p>
+                        <p><strong>₹ <%= order.Totalprice < 500 ? '60.00' : '0.00' %></strong></p>
+                      </div>
+                      <div class="order-total">
+                          <p><strong>Order Total</strong></p>
+                          <p><strong>₹<%= order.Totalprice.toFixed(2) %></strong></p>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+      
+ 
+  <footer style="margin-top: 0px"><%- include('partial/footer') %></footer>
+
+
+
+  <script src="/script/user/home.js/jquery-1.11.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+        crossorigin="anonymous"></script>
+    <script src="/script/user/home.js/plugins.js"></script>
+    <script src="/script/user/home.js/script.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</body>
+</html>

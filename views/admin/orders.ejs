@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders Table</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/style/admin/sidebar.css">
+    <link rel="stylesheet" href="/style/admin/header.css">
+</head>
+<body>
+
+    <style>
+        * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .filter-option {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .filter-bar select {
+            margin: 0 10px;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+
+        .reset-filter {
+            margin-left: auto;
+            color: #e74c3c;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .reset-filter:hover {
+            text-decoration: underline;
+        }
+
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .order-table th, .order-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .order-table th {
+            background-color: #f7f7f7;
+            font-weight: bold;
+        }
+
+        .order-table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .order-table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .status-dropdown {
+    padding: 5px;
+    border-radius: 5px;
+    font-weight: bold;
+    color: white;
+}
+
+.status-pending {
+    background-color: #FFA500; 
+}
+
+.status-shipped {
+    background-color: #0000FF;
+}
+
+.status-delivered {
+    background-color: #008000; 
+}
+
+.status-cancelled {
+    background-color: #FF0000; 
+}
+
+    </style>
+
+    <div class="admin-layout">
+        <%- include('partial/sidebar') %>
+        <div class="main-content">
+            <%- include('partial/header') %>
+            <br><br><br><br>
+            <div class="container">
+                <h1>Orders</h1>
+                <div class="filter-bar">
+                    <div class="filter-option">Filter By</div>
+                    <select>
+                        <option>Date</option>
+                    </select>
+                    <select>
+                        <option>Order Type</option>
+                    </select>
+                    <select>
+                        <option>Order Status</option>
+                    </select>
+                    <a href="#" class="reset-filter">Reset Filter</a>
+                </div>
+                <br><br>
+                <table class="order-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>Address</th>
+                            <th>Date</th>
+                            <th>Product</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% orders.forEach(order => { %>
+                            <tr>
+                                <td><%= order._id %></td>
+                                <td><%= order.customer.email %></td>
+                                <td><%= order.customer.userName %>,<%= order.customer.address.landMark %>, <%= order.customer.address.city %>, <%= order.customer.address.state %></td>
+                                <td><%= new Date(order.orderDate).toLocaleDateString() %></td>
+                                <td>
+                                    <% order.products.forEach(product => { %>
+                                        <div><%= product.productName %></div>
+                                    <% }) %>
+                                </td>
+                                <td>
+                                    <select class="status-dropdown" data-order-id="<%= order._id %>" <% if (order.canceledBy === 'user') { %> disabled <% } %>>
+                                        <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                        <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                                        <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                                        <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                    </select>
+                                    <% if (order.canceledBy === 'user') { %>
+                                        <span class="cancellation-message" style="color: red;">User canceled the order</span>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    
+    <script>
+        document.querySelectorAll('.status-dropdown').forEach(dropdown => {
+            setColor(dropdown);
+
+            dropdown.addEventListener('change', async (event) => {
+                setColor(event.target);
+
+                const orderId = event.target.dataset.orderId;
+                const newStatus = event.target.value;
+
+                console.log(orderId);
+                console.log(newStatus);
+                
+
+                try {
+                    const response = await axios.post(`/admin/orders/${orderId}`,{ status: newStatus });
+
+                    if (response.status === 200) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Status Updated',
+                            text: 'Order status updated successfully!',
+                            confirmButtonText: 'OK'
+                        });
+                    } else {
+                        throw new Error('Failed to update order status');
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to update order status. Please try again later.',
+                        confirmButtonText: 'OK'
+                    });
+                    console.error('Error updating status:', error);
+                }
+            });
+        });
+
+
+        
+        function setColor(dropdown) {
+            dropdown.classList.remove('status-pending', 'status-shipped', 'status-delivered', 'status-cancelled');
+
+            const status = dropdown.value.toLowerCase();
+            dropdown.classList.add(`status-${status}`);
+        }
+
+    </script>
+
+    
+</body>
+</html>

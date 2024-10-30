@@ -24,7 +24,7 @@ const cartSchema = new Schema({
     },
     cartTotalPrice:{
         type: Number,
-        require:true
+        required:true
     }
 });
 

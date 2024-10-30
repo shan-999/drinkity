@@ -30,19 +30,13 @@ const addressSchema = new Schema({
         type: String,
         required: true,
     },
-    phoneNumber: {
+    phonNumber: {
         type: String,
         required: true,
     },
-    state: {
-        type: String,
-        required: true,
-    },email:{
+    email:{
         type:String,
         required: true
-    },isPrimary:{
-        type:Boolean,
-        default:true
     }
 },{timestamps:true});
 
