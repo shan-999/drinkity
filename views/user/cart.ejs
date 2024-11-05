@@ -67,7 +67,7 @@
                   value="<%= item.quantity %>" 
                   class="quantity-input" 
                   min="1" 
-                  max="<%= item.productId.quantity %>" 
+                  max="<%= Math.min(item.productId.quantity, 10) %>" 
                   onkeydown="return false;" 
                   onchange="updateCart('<%= item.productId._id %>', this.value)">
                   <span id="item-total-price-<%= item.productId._id %>" class="item-total-price">₹<%= item.totalPrice %></span>
@@ -100,6 +100,9 @@
     <script src="/script/user/home.js/plugins.js"></script>
     <script src="/script/user/home.js/script.js"></script>
 
+   
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
       function updateCart(productId, newQuantity) {
@@ -151,7 +154,22 @@
         })
         .catch(error => console.error('Error:', error));
       }
-          
+        
+
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const errorMessage = urlParams.get('errorMessage');
+
+      if (errorMessage) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: errorMessage,
+          confirmButtonText: 'Go Back'
+        }).then(() => {
+          window.location.href = '/cart';
+        });
+      }
     </script>
 </body>
 </html>

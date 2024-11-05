@@ -155,17 +155,19 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Order #</th>
+                            <th>Order</th>
                             <th>Order Date</th>
                             <th>Status</th>
-                            <th>Total</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total Price</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         <% order.products.forEach(product => { %>
                         <tr>
-                            <td><%= order._id %></td>
+                            <td><%= order._id.toString().slice(-10) %></td>
                             <td><%= new Date(order.orderDate).toLocaleDateString() %></td>
                             <td>
                                 <span class="status 
@@ -178,7 +180,9 @@
                                 <%= order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
                             </span>     
                             </td>
-                            <td>₹<%= (product.price * product.quantity).toFixed(2) %></td>
+                            <td>₹<%= product.price.toFixed(2) %></td>
+                            <td><%= product.quantity %></td>
+                            <td><%= product.total.toFixed(2) %></td>
                             <td><img src="<%= product.image %>" alt="Product Image"></td>
                         </tr>
                         <% }) %>
@@ -188,12 +192,18 @@
     
             <div class="order-summary">
                 <h3>Order Summary</h3>
-                <p>Subtotal (5 items): ₹<%= order.Totalprice.toFixed(2) %></p>
+                <p>Subtotal : ₹<%= order.Totalprice .toFixed(2) %></p>
                 <p>Quantity: <%= order.products.length %></p>
-                <p>Delivery: ₹34</p> 
+                <p> 
+                    <% if (order.Totalprice < 500) { %>
+                        <p>Delivery: ₹60</p>
+                    <% } else { %>
+                        <p>Delivery: Free</p>
+                    <% } %>
+                </p> 
                 <hr>
-                <p>Estimated total: <strong>₹<%= order.Totalprice.toFixed(2) %></strong></p>
-                <p>Payment Method: <strong><%= order.paymentMethourd %></strong></p>
+                <p>Estimated total: <strong>₹<%= estimatedTotal.toFixed(2) %></strong></p>
+                <p>Payment Method: <strong> <%= order.paymentMethourd === 'cod' ? 'Cash On Delivery' : order.paymentMethourd %></strong></p>
                 <% if (order.status === 'Cancelled') { %>
                     <div style="color: red; font-weight: bold; margin-top: 10px;">
                         <p>Your order has been cancelled.</p>

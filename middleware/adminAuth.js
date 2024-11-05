@@ -1,6 +1,9 @@
 const isLogin = (req,res,next) => {
+
+    
     if(req.session.adminId){
         res.redirect('/admin/dashboard')
+        console.log(req.session.adminId)
     }else{
         next()
     }

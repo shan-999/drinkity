@@ -14,8 +14,6 @@ const loadAccountOrders = async (req, res) => {
         console.log(order);
         
 
-        
-
         res.render('user/account-orders', { categories, order ,user , activePage: 'order' }); 
     } catch (err) {
         console.log(`this is from load order: ${err}`)
@@ -31,11 +29,17 @@ const laodOrderDetais = async (req, res) => {
 
         const order = await orderSchema.findById(orderId).populate("products"); 
 
+        
         if (!order) {
             return res.status(404).send("Order not found");
         }
         
-        res.render("user/order-details", { order ,categories}); 
+        const shippingFee = order.Totalprice > 500 ? 0 : 60
+
+        const estimatedTotal = Number(order.Totalprice) + shippingFee
+        
+
+        res.render("user/order-details", { order ,categories, estimatedTotal}); 
     } catch (err) {
         console.log(`This is from load order details: ${err}`);
         res.status(500).send("Server error");
@@ -79,7 +83,6 @@ const cancelOrder = async (req,res) => {
         console.log(`This is from cancel order: ${error}`);
     }
 }
-
 
 
 

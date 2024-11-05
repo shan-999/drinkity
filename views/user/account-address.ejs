@@ -136,20 +136,19 @@ function deleteAddress(address) {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
-        if (result.isConfirmed) {  // Check if the user confirmed the action
+        if (result.isConfirmed) { 
             const url = `/delete-Address/${address}`;
 
             axios.delete(url)
                 .then(response => {
                     if (response.data) {
                         console.log(response.data);
-                        // Show success message
                         Swal.fire(
                             'Deleted!',
                             'Your address has been deleted.',
                             'success'
                         ).then(() => {
-                            location.reload();  // Reload the page to show updated address list
+                            location.reload(); 
                         });
                     }
                 })

@@ -881,7 +881,8 @@ $(document).ready(function () {
 		quantityInput.value = value;
 		
 		decreaseBtn.disabled = value <= 1;
-		increaseBtn.disabled = value >= maxQuantity;
+		increaseBtn.disabled = value >= maxQuantity
+		increaseBtn.disabled = value >= 10
 	}
 	
 	decreaseBtn.addEventListener('click', () => {

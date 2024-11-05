@@ -44,5 +44,6 @@ router.post('/soft-edit-category/:action',adminAth.checkSession,adminCategory.so
 
 router.get('/orders',adminAth.checkSession,adminOrders.loadOrder)
 router.post('/orders/:orderId', adminAth.checkSession,adminOrders.updateStats);
+router.get('/order-detils/:orderId',adminAth.checkSession,adminOrders.loadOrderDetails)
 
 module.exports  = router

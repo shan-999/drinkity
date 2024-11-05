@@ -1,4 +1,5 @@
-const orderSchema = require('../../model/order')
+const orderSchema = require('../../model/order');
+const productsSchema = require('../../model/products');
 
 const loadOrder = async (req, res) => {
     try {
@@ -29,9 +30,11 @@ const updateStats = async (req,res) => {
         if (!order) {
             return res.status(404).json({ message: 'Order not found' });
         }
+
+
         if (status === 'Cancelled') {
-            order.canceledBy = 'admin'; 
-        } 
+            order.canceledBy = 'admin';
+        }        
         
         res.status(200).json({ message: 'Order status updated successfully', order });
 
@@ -41,7 +44,31 @@ const updateStats = async (req,res) => {
     }
 }
 
+
+
+
+const loadOrderDetails = async (req, res) => {
+    try {
+        const orderId = req.params.orderId; 
+        const order = await orderSchema.findById(orderId).populate('customer').populate('products');
+        
+        if (!order) {
+            return res.status(404).send("Order not found");
+        }
+        
+        res.render('admin/order-details', { order });
+    } catch (error) {
+        console.log('Error in loadOrderDetails:', error);
+        res.status(500).send("Server Error");
+    }
+};
+
+
+
+
+
 module.exports = {
     loadOrder,
-    updateStats
+    updateStats,
+    loadOrderDetails
 }

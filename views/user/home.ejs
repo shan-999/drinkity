@@ -26,8 +26,25 @@
         height: auto;
         width: 100%;
         object-fit: contain;
-
       }
+
+      .out-of-stock {
+        opacity: 0.5; /* Makes the image appear dim */
+        filter: grayscale(100%); /* Converts the image to grayscale */
+    }
+
+    .product-item .out-of-stock::after {
+        content: 'Out of Stock';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.7);
+        color: #fff;
+        padding: 5px 10px;
+        font-size: 14px;
+        border-radius: 4px;
+    }
     </style>
   </head>
   <body>
@@ -259,7 +276,7 @@
               <div class="swiper-wrapper">
                 <% categories.forEach(category => { %>
                   <a href="index.html" class="nav-link category-item swiper-slide">
-                    <!-- Add image tag if you have category thumbnails -->
+                    <!-- Add image tag  -->
                     <!-- <img src="<%= category.imageUrl %>" alt="<%= category.categoryName %> Thumbnail"> -->
                     <h3 class="category-title"><%= category.categoryName %></h3>
                   </a>
@@ -316,7 +333,7 @@
                                     <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
                                     <figure>
                                         <a href="/product-details/<%= product._id %>" title="<%= product.productName %>">
-                                            <img src="<%= product.images[0] %>" alt="<%= product.productName %>" class="tab-image">
+                                          <img src="<%= product.images[0] %>" alt="<%= product.productName %>" class="tab-image <%= product.quantity <= 0 ? 'out-of-stock' : '' %>">
                                         </a>
                                     </figure>
                                     <h3><%= product.productName %></h3>

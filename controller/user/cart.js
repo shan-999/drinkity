@@ -30,89 +30,11 @@ const loadCart = async (req, res) => {
 };
 
 
-// const loadCart = async (req, res) => {
-//     const userId = req.session.userId
-//     try {
-    
-//         const categories = await category.find({ listed: true });
-
-        
-//         const cart = await cartSchema.findOne({ userId})
-//             .populate('items.productId'); 
-
-//         let sum = 0
-//         cart.items.forEach((product)=>{
-            
-//            sum += product.totalPrice
-//         })
-
-//         if (!cart) {
-//             return res.render('user/cart', { categories,sum, cart: null });
-//         }
-
-//         res.render('user/cart', { categories,sum, cart });
-//     } catch (error) {
-//         console.log(`Error in loadCart: ${error}`);
-//         res.status(500).send('Internal Server Error');
-//     }
-// }
-
-
-// const addToCart = async (req, res) => {
-//     const { productId, quantity } = req.body;
-//     const userId = req.session.userId;
 
 
 
 
-//     try {
 
-//         const user = await userModel.findById(userId)
-//         if(!user){
-//             res.redirect('/login')
-//         }
-
-//         let cart = await cartSchema.findOne({ userId });
-
-
-//         if (!cart) {
-//             const totalPrice = await calculateNewPrice(productId, quantity);
-//             const newCart = new cartSchema({
-//                 userId,
-//                 items: [{ productId, quantity,totalPrice}],
-
-//             });
-//             await newCart.save();
-//             return res.status(200).json({ success: true, message: 'Cart created successfully' });
-//         }
-
-
-//         const itemIndex = cart.items.findIndex(item => item.productId.toString() === productId);
-
-//         const totalPrice = await calculateNewPrice(productId, quantity);
-
-//         if (itemIndex > -1) {
-//             cart.items[itemIndex].quantity += Number(quantity);
-//         } else {
-//             cart.items.push({ productId, quantity ,totalPrice });
-//         }
-
-//         await cartSchema.findOneAndUpdate(
-//             { userId, 'items.productId': productId }, 
-//             { 
-//                 $set: { 'items.$.totalPrice': totalPrice } 
-//             },
-//             { new: true }
-//         );
-
-//         await cart.save();
-//         res.status(200).json({ success: true, message: 'Cart updated successfully' });
-
-//     } catch (error) {
-//         console.error(`Error in add to cart: ${error}`);
-//         res.status(500).json({ success: false, message: 'An error occurred while adding to cart' });
-//     }
-// };
 
 
 
@@ -159,13 +81,16 @@ const addToCart = async (req, res) => {
         
        
         const itemIndex = cart.items.findIndex(item => item.productId.toString() == productId)
-         cart.cartTotalPrice += totalPrice
+        cart.cartTotalPrice += totalPrice
 
         if(itemIndex > -1){
             const newQuantity = cart.items[itemIndex].quantity += Number(quantity)
 
             if (newQuantity > product.quantity){
                 return res.status(404).json({success:false,message:'Quantity exceeds available stock'})
+            }
+            if(newQuantity > 10){
+                return res.status(404).json({success: false,message: 'Quantity exceed the quantity limit'})
             }
 
             cart.items[itemIndex].quantity = newQuantity
@@ -174,6 +99,10 @@ const addToCart = async (req, res) => {
 
             if (quantity > product.quantity) {
                 return res.status(400).json({ success: false, message: 'Quantity exceeds available stock' });
+            }
+
+            if(quantity > 10){
+                return res.status(404).json({success: false,message: 'Quantity exceed the quantity limit'})
             }
 
             cart.items.push({productId,quantity,totalPrice})
@@ -252,6 +181,23 @@ const checkout = async (req, res) => {
         const address = await addressSchema.findOne({ userId });
         const addresses = await addressSchema.find({ userId }).lean();
 
+        let hasExcessQuantity = false
+        let exceedsItems = []
+        cart.items.forEach(item => {
+            const product = item.productId  
+            if(item.quantity > product.quantity){
+                hasExcessQuantity = true
+                exceedsItems.push(product.productName)
+            }
+        })
+        console.log("exceed items:"+exceedsItems);
+        
+
+        if (hasExcessQuantity) {
+            const errorMessage = `The following items exceed available stock: ${exceedsItems.join(', ')}`;
+            return res.redirect(`/cart?errorMessage=${encodeURIComponent(errorMessage)}`);
+        }
+
         
         let totalProductPrice = cart.cartTotalPrice;
 
@@ -293,6 +239,7 @@ const selectedAddress = async (req,res) => {
 }
 
 
+
 const removeItem = async (req,res) => {
     const { productId } = req.body;
     try {
@@ -324,8 +271,6 @@ const removeItem = async (req,res) => {
         res.status(500).send('Internal Server Error');
     }
 }
-
-
 
 
 
@@ -431,6 +376,11 @@ const confirmOrder = async (req, res) => {
         });
     }
 };
+
+
+
+
+
 
 
 const loadOrderConfirmed = async (req, res) => {

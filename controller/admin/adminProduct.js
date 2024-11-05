@@ -7,11 +7,27 @@ const categorys = require('../../model/category')
 
 
 const loadProducts = async (req, res) => {
-    const adminId = req.session.adminId;
-    if (!adminId) return res.redirect('/admin/login?message=Something went wrong');
+    try {
+        const adminId = req.session.adminId;
+        if (!adminId) return res.redirect('/admin/login?message=Something went wrong');
 
-    const product = await products.find({});
-    res.render('admin/product', { product: product });
+        const page = parseInt(req.query.page) || 1; 
+        const limit = 4; 
+        const skip = (page - 1) * limit;
+
+        const product = await products.find({}).skip(skip).limit(limit);
+        
+            
+
+        const totalProducts = await products.countDocuments();
+        const totalPages = Math.ceil(totalProducts / limit);
+
+
+        res.render('admin/product', { product: product , page, totalPages});
+    } catch (error) {
+        console.log(`this error from load product : ${error}`);
+        
+    }
 };
 
 
@@ -112,7 +128,6 @@ const editProduct = async (req, res) => {
     try {
         const { productName, brand, price, ingredients, quantity, category ,description} = req.body;
         const productId = req.params.id;
-        console.log('hello');
         
         
         const product = await products.findById(productId);

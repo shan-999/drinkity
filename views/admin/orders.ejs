@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orders Table</title>
-    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="/style/admin/sidebar.css">
     <link rel="stylesheet" href="/style/admin/header.css">
 </head>
@@ -73,14 +72,18 @@
         }
 
         .order-table th, .order-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
+            border: 1px solid #008000; 
+            padding: 8px; 
+            text-align: left; 
         }
 
         .order-table th {
-            background-color: #f7f7f7;
+            background-color: #f2f2f2; 
             font-weight: bold;
+        }
+
+        .order-table td {
+            background-color: #ffffff;
         }
 
         .order-table tbody tr:nth-child(even) {
@@ -91,27 +94,27 @@
         }
 
         .status-dropdown {
-    padding: 5px;
-    border-radius: 5px;
-    font-weight: bold;
-    color: white;
-}
+            padding: 5px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: white;
+        }
 
-.status-pending {
-    background-color: #FFA500; 
-}
+        .status-pending {
+            background-color: #FFA500; 
+        }
 
-.status-shipped {
-    background-color: #0000FF;
-}
+        .status-shipped {
+            background-color: #0000FF;
+        }
 
-.status-delivered {
-    background-color: #008000; 
-}
+        .status-delivered {
+            background-color: #008000; 
+        }
 
-.status-cancelled {
-    background-color: #FF0000; 
-}
+        .status-cancelled {
+            background-color: #FF0000; 
+        }
 
     </style>
 
@@ -141,10 +144,9 @@
                         <tr>
                             <th>ID</th>
                             <th>Email</th>
-                            <th>Address</th>
-                            <th>Date</th>
                             <th>Product</th>
                             <th>Status</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -152,24 +154,24 @@
                             <tr>
                                 <td><%= order._id %></td>
                                 <td><%= order.customer.email %></td>
-                                <td><%= order.customer.userName %>,<%= order.customer.address.landMark %>, <%= order.customer.address.city %>, <%= order.customer.address.state %></td>
-                                <td><%= new Date(order.orderDate).toLocaleDateString() %></td>
+                                
                                 <td>
                                     <% order.products.forEach(product => { %>
                                         <div><%= product.productName %></div>
                                     <% }) %>
                                 </td>
                                 <td>
-                                    <select class="status-dropdown" data-order-id="<%= order._id %>" <% if (order.canceledBy === 'user') { %> disabled <% } %>>
+                                    <select class="status-dropdown" data-order-id="<%= order._id %>" <% if (order.status === 'Cancelled' || order.status === 'Delivered') { %> disabled <% } %>>
                                         <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
                                         <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
                                         <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
                                         <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
-                                    </select>
+                                    </select><br>
                                     <% if (order.canceledBy === 'user') { %>
                                         <span class="cancellation-message" style="color: red;">User canceled the order</span>
                                     <% } %>
                                 </td>
+                                <td><button style="background-color: rgb(220, 227, 189);" class="show-more" id="show-more" data-order-id="<%= order._id %>">Show more</button></td>
                             </tr>
                         <% }) %>
                     </tbody>
@@ -205,7 +207,7 @@
                             title: 'Status Updated',
                             text: 'Order status updated successfully!',
                             confirmButtonText: 'OK'
-                        });
+                        }).then(()=> location.reload())
                     } else {
                         throw new Error('Failed to update order status');
                     }
@@ -230,6 +232,14 @@
             dropdown.classList.add(`status-${status}`);
         }
 
+
+
+        document.querySelectorAll('.show-more').forEach(button => {
+        button.addEventListener('click', function () {
+            const orderId = this.getAttribute('data-order-id');
+            window.location.href = `/admin/order-detils/${orderId}`;
+        });
+    });
     </script>
 
     

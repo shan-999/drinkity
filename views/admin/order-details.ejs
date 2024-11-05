@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+
+    <link rel="stylesheet" href="/style/admin/sidebar.css">
+    <link rel="stylesheet" href="/style/admin/header.css">
+    <link rel="stylesheet" href="/style/admin/category.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+
+<body>
+
+    <style>
+        .order-details {
+            width: 80%;
+            margin: 0 auto;
+            font-family: Arial, sans-serif;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .order-section {
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+        }
+
+        .order-items,
+        .customer-info,
+        .transactions,
+        .order-status {
+            border: 1px solid #ddd;
+            padding: 16px;
+            border-radius: 8px;
+        }
+
+        .order-items h3,
+        .customer-info h3,
+        .transactions h3,
+        .order-status h3 {
+            border-bottom: 2px solid #333;
+            padding-bottom: 8px;
+        }
+
+        .order-items {
+            width: 500px;
+        }
+
+        .order-table,
+        .transactions-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .order-table th,
+        .order-table td,
+        .transactions-table th,
+        .transactions-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .order-table th,
+        .transactions-table th {
+            background-color: #f7f7f7;
+        }
+
+        .total-label {
+            text-align: right;
+            padding-right: 8px;
+        }
+
+        .customer-info p,
+        .order-status p {
+            margin: 5px 0;
+        }
+
+        .customer-info img {
+            margin-top: 10px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: block;
+        }
+
+        .customer-info {
+            width: 300px;
+        }
+
+        .order-status select {
+            margin-left: 10px;
+        }
+
+        .order-status button {
+            margin-left: 10px;
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .main-content {
+            margin-top: 100px;
+        }
+
+        .order-details {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .order-details-section {
+            display: flex;
+            flex-direction: column;
+            gap: 30px
+        }
+
+        .main-head {
+            display: flex;
+            gap: 355px;
+        }
+
+        .status-dropdown {
+            padding: 5px;
+            border-radius: 5px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .status-pending {
+            background-color: #FFA500;
+        }
+
+        .status-shipped {
+            background-color: #0000FF;
+        }
+
+        .status-delivered {
+            background-color: #008000;
+        }
+
+        .status-cancelled {
+            background-color: #FF0000;
+        }
+    </style>
+
+    <div class="admin-layout">
+        <%- include('partial/sidebar') %>
+
+            <div class="main-content">
+                <%- include('partial/header') %>
+
+
+
+                    <div class="order-details">
+                        <div class="main-head">
+                            <h2><a href="/admin/orders"><svg xmlns="http://www.w3.org/2000/svg" height="24px"
+                                        viewBox="0 -960 960 960" width="24px" fill="#434343">
+                                        <path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z" />
+                                    </svg></a></h2>
+                            <h2>Order Details</h2>
+                        </div>
+
+                        <div class="order-section">
+                            <!-- Transactions Section -->
+                            <div class="order-items">
+                                <h3>Transactions</h3>
+                                <table class="order-table">
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Date</strong></td>
+                                            <td>
+                                                <%= order.orderDate.toLocaleDateString() %>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Payment Method</strong></td>
+                                            <td>
+                                                <%= order.paymentMethourd %>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Total Price</strong></td>
+                                            <td>₹<%= order.Totalprice %>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Customer Information Section -->
+                            <div class="customer-info">
+                                <h3>Customer</h3>
+                                <p>
+                                    <%= order.customer.userName %>
+                                </p>
+                                <p>
+                                    <%= order.customer.address.landMark %>
+                                </p>
+                                <p>
+                                    <%= order.customer.address.city %>, <%= order.customer.address.state %>
+                                </p>
+                                <p>
+                                    <%= order.customer.address.postalCode %>
+                                </p>
+                                <p>
+                                    <%= order.customer.email %>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Order Items Section -->
+                        <div class="order-details-section">
+                            <div class="transactions">
+                                <h3>Order Items</h3>
+                                <table class="transactions-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Image</th>
+                                            <th>Id</th>
+                                            <th>Name</th>
+                                            <th>Status</th>
+                                            <th>Price</th>
+                                            <th>Quantity</th>
+                                            <th>Total Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% order.products.forEach(item=> { %>
+                                            <tr>
+                                                <td><img src="<%= item.image %>" alt="Product Image" width="50"></td>
+                                                <td>
+                                                    <%= item.productId %>
+                                                </td>
+                                                <td>
+                                                    <%= item.productName %>
+                                                </td>
+                                                <td>
+                                                    <%= order.status %>
+                                                </td>
+                                                <td>₹<%= item.price %>
+                                                </td>
+                                                <td>
+                                                    <%= item.quantity %>
+                                                </td>
+                                                <td>₹<%= item.total %>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Order Status Section -->
+                            <div class="order-status">
+                                <h3>Order Details</h3>
+                                <p><strong>Order Status:</strong>
+                                    <select class="status-dropdown" data-order-id="<%= order._id %>" <% if (order.status === 'Cancelled' || order.status === 'Delivered') { %> disabled <% } %>>
+                                        <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                        <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                                        <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                                        <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                    </select><br>
+                                    <% if (order.canceledBy==='user' ) { %>
+                                        <span class="cancellation-message" style="color: red;">User canceled the
+                                            order</span>
+                                        <% } %>
+                                </p>
+                                <p><strong>Date Created:</strong>
+                                    <%= order.createdAt.toLocaleDateString() %>
+                                </p>
+                                <p><strong>Delivery Date:</strong>
+                                    <%= order.orderDate.toLocaleDateString() %>
+                                </p>
+                                <p><strong>Payment Method:</strong>
+                                    <%= order.paymentMethourd %>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <script>
+        document.querySelectorAll('.status-dropdown').forEach(dropdown => {
+            setColor(dropdown);
+
+            dropdown.addEventListener('change', async (event) => {
+                setColor(event.target);
+
+                const orderId = event.target.dataset.orderId;
+                const newStatus = event.target.value;
+
+                console.log(orderId);
+                console.log(newStatus);
+
+
+                try {
+                    const response = await axios.post(`/admin/orders/${orderId}`, { status: newStatus });
+
+                    if (response.status === 200) {
+                        console.log("iydcfgyi");
+                        
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Status Updated',
+                            text: ' updated !',
+                            confirmButtonText: 'OK'
+                        }).then(()=> location.reload())
+                    } else {
+                        throw new Error('Failed to update order status');
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to update order status. Please try again later.',
+                        confirmButtonText: 'OK'
+                    });
+                    console.error('Error updating status:', error);
+                }
+            });
+        });
+
+
+
+        function setColor(dropdown) {
+            dropdown.classList.remove('status-pending', 'status-shipped', 'status-delivered', 'status-cancelled');
+
+            const status = dropdown.value.toLowerCase();
+            dropdown.classList.add(`status-${status}`);
+        }
+
+
+
+
+    </script>
+</body>
+
+</html>

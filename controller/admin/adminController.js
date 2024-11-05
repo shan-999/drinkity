@@ -5,7 +5,6 @@ const bcrypt = require('bcrypt')
 
 const loadLogin = async (req,res) => {
     const message = req.query.message
-    console.log(message);
     res.render('admin/login',{msg:message})
 }
 
@@ -29,14 +28,20 @@ const login = async (req,res) => {
     
     
     req.session.adminId = admin._id
+    console.log(req.session.adminId);
+    
     res.redirect('/admin/dashboard')
 }
 
 
 
 const logout = (req, res) => {
-    req.session.destroy() 
-    res.redirect('/admin/login'); 
+    try {
+        req.session.adminId = null    
+        res.redirect('/admin/login');
+    } catch (error) {
+        console.log(`error in logout : ${error}`); 
+    } 
 };
 
 

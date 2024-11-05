@@ -20,9 +20,9 @@ const loadAddress = async (req, res) => {
         const skip = (page - 1) * limit;  
 
         
-        const addresses = await addressSchema.find({ userId: user._id })
-                                              .skip(skip)
-                                              .limit(limit);
+        const addresses = await addressSchema.find({ userId: user._id }).skip(skip).limit(limit);
+        
+                                              
 
 
         const totalAddresses = await addressSchema.countDocuments({ userId: user._id });

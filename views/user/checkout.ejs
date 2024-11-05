@@ -618,8 +618,8 @@
                     Swal.fire('Success', data.message, 'success');
                 }
             } catch (error) {
-
-                Swal.fire('Error', 'Something went wrong. Please try again.', 'error');
+                console.log(error.message);
+                Swal.fire('Error', error.response.data.message, 'error');
                 console.error('Error:', error);
             }
         });
