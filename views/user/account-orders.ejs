@@ -14,135 +14,140 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/style/user/landig-header.css">
-    <link rel="stylesheet" href="/style/user/account-orders.css">
     <link rel="stylesheet" href="/style/user/aside.css">
 </head>
 <body>
     <style>
-        .custom-border-table {
-            border-collapse: collapse;
+        .orders-section {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            background-color: #fff;
+        }
+
+        .orders-table {
             width: 100%;
+            border-collapse: collapse;
         }
 
-        .custom-border-table th,
-        .custom-border-table td {
-            border: 1px solid #c2bbbb; /* Change this color to your preferred border color */
+        .orders-table th{
+            padding: 12px;
+            text-align: left;
+            border: none;
         }
 
-        .custom-border-table th {
-            background-color: #f0f0f0; /* Optional: Background color for headers */
+        
+        .orders-table td {    
+            border-bottom: 1px solid #e4e4e4;  
+            border-left: none;             
+            border-right: none; 
+            border-top: none;
         }
 
-        .badge {
-        padding: 8px 12px; 
-        border-radius: 5px;
-        font-size: 0.9em; 
-        font-weight: bold; 
-        display: inline-block;
+        .orders-table th {
+            background-color: #f9f9f9;
+            font-weight: bold;
         }
 
-        .custom-pending {
-            background-color: #ffc107; 
-            color: #212529; 
-        }
-
-        .custom-shipped {
-            background-color: #17a2b8; 
+        .order-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
             color: white;
         }
 
-        .custom-delivered {
-            background-color: #28a745; 
-            color: white; 
+        .status-Pending { background-color: #a8b817; }
+        .status-Shipped { background-color: #01a2d7; }
+        .status-Delivered { background-color: #28b14d; }
+        .status-Cancelled { background-color: #be4646; }
+
+        .product-images {
+            display: flex;
+            gap: 5px;
         }
 
-        .custom-cancelled {
-            background-color: #dc3545;
-            color: white; 
-        }
-        .badge:hover {
-            opacity: 0.8; 
-            cursor: pointer; 
+        .product-images img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
         }
     </style>
+
     <header>
         <%- include('partial/head') %>
     </header>
 
     <main class="container-fluid">
         <div class="row">
+            <!-- Sidebar -->
             <div class="col-md-3">
                 <%- include('partial/aside') %>
             </div>
 
+            <!-- Orders Section -->
             <div class="col-md-9">
-                <section class="content py-5">
-                    <h2>Orders</h2>
-                
-                    <div class="orders-section" style="max-height: 600px; overflow-y: auto; border: solid;">
-                        <% if (!order || order.length === 0) { %>
-                            <p>No orders found.</p>
-                        <% } else { %>
-                            <table class="custom-border-table">
-                                <thead>
+                <section class="orders-section my-5">
+                    <h2 class="mb-4">Orders</h2>
+
+                    <% if (!order || order.length === 0) { %>
+                        <p>No orders found.</p>
+                    <% } else { %>
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Order #</th>
+                                    <th>Order date</th>
+                                    <th>Status</th>
+                                    <th>Total</th>
+                                    <th>Products</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% order.forEach(function(orderDetail) { %>
                                     <tr>
-                                        <th>Order ID</th>
-                                        <th>Products</th>
-                                        <th>Total Price</th>
-                                        <th>Order Date</th>
-                                        <th>Delivery Date</th>
-                                        <th>Status</th>
+                                        <td>order#<%= orderDetail._id.toString().slice(-5) %></td>
+                                        <td><%= new Date(orderDetail.orderDate).toLocaleDateString() %></td>
                                         
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% order.forEach(function(orderDetail) { %>
-                                        <tr>
-                                            <td><%= orderDetail._id.toString().slice(-15) %></td>
-                
-                                            <td>
-                                                <% orderDetail.products.forEach(function(product) { %>
-                                                    <div>
-                                                        <strong><%= product.productName %></strong>
-                                                    </div>
+                                        <td>
+                                            <span class="order-status status-<%= orderDetail.status %>">
+                                                <%= orderDetail.status %>
+                                            </span>
+                                        </td>
+                                        
+                                        <td>₹<%= orderDetail.Totalprice  %></td>
+
+                                        
+                                        <td>
+                                            <div class="product-images">
+                                                <% orderDetail.products.slice(0, 3).forEach(function(product) { %>
+                                                    <img src="<%= product.image %>" alt="<%= product.productName %>">
+                                                    
                                                 <% }) %>
-                                                <div class="mt-2">
-                                                    <a href="/order-details/<%= orderDetail._id %>" class="btn btn-primary btn-sm">Show More</a>
-                                                </div>
-                                            </td>
-                
-                                            <td>₹<%= orderDetail.Totalprice.toFixed(2) %></td>
-                
-                                            <td><%= new Date(orderDetail.orderDate).toLocaleDateString() %></td>
-                
-                                            <td><%= new Date(new Date(orderDetail.orderDate).getTime() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString() %></td>
-                
-                                            <td>
-                                                <% let statusClass = ''; %>
-                                                <% if (orderDetail.status === 'Pending') { %>
-                                                    <% statusClass = 'custom-pending'; %>
-                                                <% } else if (orderDetail.status === 'Shipped') { %>
-                                                    <% statusClass = 'custom-shipped'; %>
-                                                <% } else if (orderDetail.status === 'Delivered') { %>
-                                                    <% statusClass = 'custom-delivered'; %>
-                                                <% } else if (orderDetail.status === 'Cancelled') { %>
-                                                    <% statusClass = 'custom-cancelled'; %>
+
+                                                <% if (orderDetail.products.length > 3) { %>
+                                                    <p style="color: #cccccc; font-size: 12px;"><%= orderDetail.products.length - 3 %> more</p>
                                                 <% } %>
-                                                <span class="badge <%= statusClass %>"><%= orderDetail.status %></span>
-                                            </td>
-                                        </tr>
-                                    <% }) %>
-                                </tbody>
-                            </table>
-                        <% } %>
-                    </div>
+
+                                                
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a href="/order-details/<%= orderDetail._id %>" class="btn btn-link p-0"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#666666"><path d="m321-80-71-71 329-329-329-329 71-71 400 400L321-80Z"/></svg></a>
+
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    <% } %>
                 </section>
-                
-                
             </div>
         </div>
     </main>
-<br><br>
+
     <footer>
         <%- include('partial/footer') %>
     </footer>

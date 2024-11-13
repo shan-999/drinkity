@@ -9,18 +9,13 @@ const { find } = require('../../model/adminModel');
 
 //login page-------------------------------------------------------
 const   loadLogin = async (req, res) => {
-    console.log('yes reched here');
     
     try {
         const message = req.query.message
-    res.render('user/login',{msg:message}); 
-    console.log('render login');
-    console.log(req.session.userId);
+        res.render('user/login',{msg:message}); 
     } catch (error) {
-        
         res.send("not found")
     }
-    
     
 };
 
@@ -96,11 +91,11 @@ const registerUser = async (req, res) => {
 
 
 const sendOtp = async (email) => {
-    let digits = '0123456789';
     let otp = '';
-    for (let i = 0; i < 4; i++) {
-        otp += digits[Math.floor(Math.random() * digits.length)];
+    for (let i = 0; i < 4 ; i++){
+        otp += String(Math.floor(Math.random() * 10));
     }
+
 
     console.log(`Generated OTP: ${otp}`);
 
@@ -193,10 +188,10 @@ const resendOtp = async (req, res) => {
             return res.redirect('/register');
         }
 
-        let digits = '0123456789';
+
         let newOtp = '';
         for (let i = 0; i < 4; i++) {
-            newOtp += digits[Math.floor(Math.random() * digits.length)];
+            newOtp += String(Math.floor(Math.random() * 10));
         }
         console.log(`New OTP: ${newOtp}`);
 
@@ -215,8 +210,12 @@ const resendOtp = async (req, res) => {
             text: `Your new OTP code is ${newOtp}`,
         };
 
-        await transporter.sendMail(mailOptions);
-        console.log('New OTP email sent to: ' + userEmail);
+        try {
+            await transporter.sendMail(mailOptions);
+            console.log('New OTP email sent to: ' + userEmail);
+        } catch (error) {
+            console.log(`erroore resend otp: ${error}`);
+        }
 
         const exprTime = Date.now() + 5 * 60 * 1000; 
         await OTP.findOneAndUpdate(
@@ -297,8 +296,7 @@ const verifyOtpForPassword = async (req,res) => {
 
         res.redirect('/change-password')
     } catch (error) {
-        console.log(`errore from verify otpfor password change : ${error}`);
-        
+        console.log(`errore from verify otpfor password change : ${error}`);   
     }
 }
 
@@ -345,9 +343,7 @@ const changePassword = async (req, res) => {
 
 const logout  = async (req,res) => {
     try {
-        console.log('shgsd');
-        
-        req.session.destroy()
+        req.session.userId = null
         res.redirect('/login')
     } catch (error) {
         console.log(error.message)

@@ -37,9 +37,13 @@ const laodOrderDetais = async (req, res) => {
         const shippingFee = order.Totalprice > 500 ? 0 : 60
 
         const estimatedTotal = Number(order.Totalprice) + shippingFee
+
+        const subTotal = order.products.reduce((acc,item) => acc + item.total ,0)
+        console.log(subTotal);
+        
         
 
-        res.render("user/order-details", { order ,categories, estimatedTotal}); 
+        res.render("user/order-details", { order ,categories, estimatedTotal ,subTotal}); 
     } catch (err) {
         console.log(`This is from load order details: ${err}`);
         res.status(500).send("Server error");
@@ -48,42 +52,30 @@ const laodOrderDetais = async (req, res) => {
 
 
 const cancelOrder = async (req,res) => {
-    const { orderId } = req.body;
-    console.log(orderId);
-    
+    const {orderId} = req.body
+
     try {
-
-        const order = await orderSchema.findById(orderId);
-
-        if (!order) {
-            return res.status(404).json({ message: 'Order not found' });
+        const order = await orderSchema.findById(orderId)
+        if(!order){
+            return res.status(400).json({message:'order not fount'})
         }
 
-        order.status = 'Cancelled'; 
+        order.status = 'Cancelled'
         order.canceledBy = 'user'
-        await order.save();
+        await order.save()
 
-        const productId = order.products.map(product => product.productId)
-        const productQuantity = order.products.map(product => product.quantity)
-
-        for(i = 0 ; i < productId.length ; i++ ){
-            const id = productId[i]
-            const quantity = productQuantity[i]
-
-            await productsSchema.findOneAndUpdate(id,{
-                $inc:{quantity:quantity}
+        for(let product of order.products){
+            await productsSchema.updateOne({_id:product.productId},{
+                $inc:{quantity:product.quantity}
             })
-            
         }
 
-        res.status(200).json({ message: 'Order cancelled successfully!' });
-
+        res.status(200).json('')
 
     } catch (error) {
-        console.log(`This is from cancel order: ${error}`);
+        console.log('this is from cancel order',error);
     }
 }
-
 
 
 module.exports = {

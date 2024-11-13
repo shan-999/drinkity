@@ -192,7 +192,8 @@
     
             <div class="order-summary">
                 <h3>Order Summary</h3>
-                <p>Subtotal : ₹<%= order.Totalprice .toFixed(2) %></p>
+
+                <p>Subtotal : ₹<%= subTotal.toFixed(2) %></p>
                 <p>Quantity: <%= order.products.length %></p>
                 <p> 
                     <% if (order.Totalprice < 500) { %>
@@ -222,7 +223,7 @@
                         <h4>Shipping Address</h4>
                         <p><strong>Name:</strong> <%= order.customer.userName %></p>
                         <p><strong>Email:</strong> <%= order.customer.email %></p>
-                        <p><strong>Phone:</strong> <%= order.customer.address.phoneNumber %></p>
+                        <p><strong>Phone:</strong> <%= order.customer.address.phonNumber %></p>
                         <p><strong>Address:</strong> <%= order.customer.address.landMark %>, <%= order.customer.address.city %>, <%= order.customer.address.state %>, <%= order.customer.address.postalCode %></p>
                     </div>
                     <div class="help">

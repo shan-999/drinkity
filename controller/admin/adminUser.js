@@ -14,30 +14,7 @@ const loadusers = async (req,res) => {
 }
 
 
-// const userStatus = async(req,res) => {
-//     const {userId} = req.body
-//     const action = req.params.action
 
-
-//     try {
-//         const user = await userModel.findById(userId);
-//         if (!user) return res.json({ success: false, message: 'User not found' });
-    
-//         if (action === 'block') {
-//           user.isBlocked = true;
-//           req.session.userId = null
-//         } else if (action === 'unblock') {
-//           user.isBlocked = false;
-//           req.session.userId = userId
-//         }
-    
-//         await user.save();
-//         return res.json({ success: true });
-//       } catch (error) {
-//         console.error(error);
-//         res.json({ success: false, message: 'Error occurred' });
-//       }
-// }
 
 
 const userStatus = async (req, res) => {

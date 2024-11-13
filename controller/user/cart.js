@@ -8,7 +8,6 @@ const userModel = require('../../model/userModel');
 
 
 
-
 const loadCart = async (req, res) => {
     const userId = req.session.userId;
     try {
@@ -17,12 +16,12 @@ const loadCart = async (req, res) => {
         const cart = await cartSchema.findOne({ userId }).populate('items.productId');
             
         console.log(cart);
+        const message = req.body.errorMessage || null
         
         if(!cart){
-            return res.render('user/cart', {categories, cart:null})
+            return res.render('user/cart', {categories, cart:null, message  })
         }
-
-        res.render('user/cart', { categories, cart });
+        res.render('user/cart', { categories, cart , message});
     } catch (error) {
         console.log(`Error in loadCart: ${error}`);
         res.status(500).send('Internal Server Error');

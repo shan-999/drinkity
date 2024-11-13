@@ -221,7 +221,7 @@ module.exports = {
     loadAddProduct,
     loadEditProduct,
     addProduct,
-    upload, // Reused for both adding and editing products
+    upload, 
     editProduct,
     deleteProduct,
     editStatus
