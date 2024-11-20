@@ -8,10 +8,13 @@ const userModel = require('../../model/userModel');
 
 
 
+<<<<<<< HEAD
 
 
 
 
+=======
+>>>>>>> fa130ed472eaafe5b602dbea4beeaf1885876b25
 const loadCart = async (req, res) => {
     const userId = req.session.userId;
     try {

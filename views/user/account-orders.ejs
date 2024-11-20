@@ -99,7 +99,11 @@
                                 <tr>
                                     <th>Order #</th>
                                     <th>Order date</th>
+<<<<<<< HEAD
                                     <th>Delivey date</th>
+=======
+                                    <th>Status</th>
+>>>>>>> fa130ed472eaafe5b602dbea4beeaf1885876b25
                                     <th>Total</th>
                                     <th>Products</th>
                                     <th></th>
@@ -111,7 +115,15 @@
                                         <td>order#<%= orderDetail._id.toString().slice(-5) %></td>
                                         <td><%= new Date(orderDetail.orderDate).toLocaleDateString() %></td>
                                         
+<<<<<<< HEAD
                                         <td> <%= new Date(new Date(orderDetail.orderDate).setDate(new Date(orderDetail.orderDate).getDate() + 3)).toLocaleDateString() %></td>
+=======
+                                        <td>
+                                            <span class="order-status status-<%= orderDetail.status %>">
+                                                <%= orderDetail.status %>
+                                            </span>
+                                        </td>
+>>>>>>> fa130ed472eaafe5b602dbea4beeaf1885876b25
                                         
                                         <td>₹<%= orderDetail.Totalprice  %></td>
 
@@ -138,6 +150,7 @@
                                 <% }) %>
                             </tbody>
                         </table>
+<<<<<<< HEAD
                         <nav aria-label="Address Pagination">
                             <ul class="pagination">
                                 <% if (currentPage > 1) { %>
@@ -163,6 +176,10 @@
                     
                 </section>
                 
+=======
+                    <% } %>
+                </section>
+>>>>>>> fa130ed472eaafe5b602dbea4beeaf1885876b25
             </div>
         </div>
     </main>

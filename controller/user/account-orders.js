@@ -43,6 +43,7 @@ const laodOrderDetais = async (req, res) => {
         
         const shippingFee = order.Totalprice > 500 ? 0 : 60
 
+<<<<<<< HEAD
         let estimatedTotal = Number(order.Totalprice) + shippingFee
 
         let subTotal = order.products.reduce((acc,item) => item.status === 'Cancelled' ? acc + 0 : acc + item.total ,0)
@@ -65,6 +66,16 @@ const laodOrderDetais = async (req, res) => {
         }
         
 
+=======
+        const estimatedTotal = Number(order.Totalprice) + shippingFee
+
+        const subTotal = order.products.reduce((acc,item) => acc + item.total ,0)
+        console.log(subTotal);
+        
+        
+
+        res.render("user/order-details", { order ,categories, estimatedTotal ,subTotal}); 
+>>>>>>> fa130ed472eaafe5b602dbea4beeaf1885876b25
     } catch (err) {
         console.log(`This is from load order details: ${err}`);
         res.status(500).send("Server error");
@@ -76,6 +87,7 @@ const laodOrderDetais = async (req, res) => {
 
 
 const cancelOrder = async (req,res) => {
+<<<<<<< HEAD
     const {productId,orderId} = req.body
 
     try {
@@ -99,12 +111,37 @@ const cancelOrder = async (req,res) => {
         return res.status(200).json({success : true , message : 'Your order canceled'})        
 
         
+=======
+    const {orderId} = req.body
+
+    try {
+        const order = await orderSchema.findById(orderId)
+        if(!order){
+            return res.status(400).json({message:'order not fount'})
+        }
+
+        order.status = 'Cancelled'
+        order.canceledBy = 'user'
+        await order.save()
+
+        for(let product of order.products){
+            await productsSchema.updateOne({_id:product.productId},{
+                $inc:{quantity:product.quantity}
+            })
+        }
+
+        res.status(200).json('')
+>>>>>>> fa130ed472eaafe5b602dbea4beeaf1885876b25
 
     } catch (error) {
         console.log('this is from cancel order',error);
     }
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> fa130ed472eaafe5b602dbea4beeaf1885876b25
 module.exports = {
     loadAccountOrders,
     laodOrderDetais,
