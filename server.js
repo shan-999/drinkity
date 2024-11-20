@@ -7,6 +7,7 @@ const path = require('path')
 const session = require('express-session')
 const MongoDBStore = require('connect-mongodb-session')(session);
 const nocache = require('nocache')
+require('dotenv').config();
 
 
 
@@ -37,6 +38,6 @@ app.use('/admin', adminRoutes)
 connectDB()
 
 
-app.listen(3000, () => {
-    console.log('server runnig port 3000');
+app.listen(3001, () => {
+    console.log('server runnig port 3001');
 })

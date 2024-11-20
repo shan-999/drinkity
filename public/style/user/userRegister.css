@@ -14,7 +14,7 @@ body, html {
   .register-left {
     flex: 1;
     background-color: #E2E0A5;
-    padding: 0 100px 40px 100px;
+    padding: 20px 100px 15px 100px;
   }
   
   .register-right {
@@ -29,15 +29,15 @@ body, html {
   h1 {
     font-family: 'Pacifico', cursive;
     color: #D04A02;
-    margin-bottom: 40px;
+    margin-bottom: 50px;
   }
   
   h2 {
-    margin-bottom: 10px;
+    margin-bottom: 40px;
   }
   
   p {
-    margin-bottom: 30px;
+    margin-bottom: 17px;
     color: #6F6F6F;
   }
   
@@ -47,7 +47,7 @@ body, html {
   }
   
   label {
-    margin-bottom: 5px;
+    margin-top: 20px;
     font-weight: bold;
   }
   

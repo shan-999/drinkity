@@ -15,6 +15,10 @@ const userSchema = new mongoose.Schema({
     isBlocked:{
         type:Boolean,
         default:false
+    },
+    googelSingin:{
+        type:Boolean,
+        default:false
     }
 })
 

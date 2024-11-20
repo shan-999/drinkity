@@ -11,6 +11,36 @@
 
 </head>
 <body>
+  <style>
+    .pagination {
+          margin-top: 20px;
+          display: flex;
+          justify-content: center;
+          gap: 10px;
+      }
+
+
+      /* pagination */
+      .pagination a {
+          padding: 8px 12px;
+          border: 1px solid #ddd;
+          color: #333;
+          text-decoration: none;
+          border-radius: 4px;
+      }
+
+      .pagination .active-page {
+          background-color: #007bff;
+          color: white;
+          border: none;
+      }
+
+      .pagination a:hover {
+          background-color: #007bff;
+          color: white;
+      }
+
+  </style>
   <div class="admin-layout">
     <%- include('partial/sidebar') %> 
 
@@ -57,6 +87,19 @@
               <% } %>
             </tbody>
           </table>
+          <div class="pagination">
+            <% if (page > 1) { %>
+                <a href="?page=<%= page - 1 %>" class="prev-page">Previous</a>
+            <% } %>
+
+            <% for (let i = 1; i <= totalPages; i++) { %>
+                <a href="?page=<%= i %>" class="<%= page === i ? 'active-page' : '' %>"><%= i %></a>
+            <% } %>
+
+            <% if (page < totalPages) { %>
+                <a href="?page=<%= page + 1 %>" class="next-page">Next</a>
+            <% } %>
+          </div>
         </div>
       </div>
     </div>

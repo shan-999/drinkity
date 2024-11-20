@@ -19,7 +19,8 @@ const orderSchema = new mongoose.Schema({
         price: { type: Number, required: true },
         quantity: { type: Number, required: true, min: 1 },
         total: { type: Number, required: true }, 
-        image: { type: String, required: true }, 
+        image: { type: String, required: true },
+        status: { type: String, enum: ['Pending', 'Shipped', 'Delivered', 'Cancelled'], default: 'Pending' },
     }],
     Totalprice: {
         type: Number,
@@ -31,9 +32,9 @@ const orderSchema = new mongoose.Schema({
     },
     orderDate: {
         type: Date,
-        default: Date.now     },
-    status: { type: String, enum: ['Pending', 'Shipped', 'Delivered', 'Cancelled'], default: 'Pending' },
-    canceledBy: { type: String, enum: ['user', 'admin', null] }
+        default: Date.now     
+    }
+
 }, { timestamps: true });
 
 

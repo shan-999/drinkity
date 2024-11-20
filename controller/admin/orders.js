@@ -3,8 +3,16 @@ const productsSchema = require('../../model/products');
 
 const loadOrder = async (req, res) => {
     try {
-        const orders = await orderSchema.find().populate('userId').exec();
-        res.render('admin/orders', { orders });
+        const page = parseInt(req.query.page) || 1; 
+        const limit = 4; 
+        const skip = (page - 1) * limit;
+
+        const orders = await orderSchema.find().populate('userId').skip(skip).limit(limit).exec();
+
+        const totalProducts = await orderSchema.countDocuments();
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        res.render('admin/orders', { orders ,page , totalPages});
     } catch (error) {
         console.log('Error in loadOrder: ' + error);
         res.status(500).send('An error occurred while loading orders.');
@@ -15,31 +23,21 @@ const loadOrder = async (req, res) => {
 const updateStats = async (req,res) => {
     try {
         const { orderId } = req.params;
-        const { status } = req.body;
-
-        console.log(orderId,status);
+        const { status,productId } = req.body;
         
-
-        const validStatuses = ['Pending', 'Shipped', 'Delivered', 'Cancelled'];
-        if (!validStatuses.includes(status)) {
-            return res.status(400).json({ message: 'Invalid status value' });
-        }
-
-        const order = await orderSchema.findByIdAndUpdate(orderId, { status }, { new: true });
+        const order = await orderSchema.findById(orderId)
         
-        if (!order) {
-            return res.status(404).json({ message: 'Order not found' });
-        }
-
-
-        if (status === 'Cancelled') {
-            order.canceledBy = 'admin';
-        }        
         
-        res.status(200).json({ message: 'Order status updated successfully', order });
+        const productIndex = order.products.findIndex(item => item.productId.toString() === productId)
+        
+        order.products[productIndex].status = status
+
+        await order.save()
+        
+        res.status(200).json({ message: 'Order status updated successfully', });
 
     } catch (error) {
-        console.log('Error in loadOrder: ' + error);
+        console.log('Error in update order: ' , error);
         res.status(500).send('An error occurred while loading orders.');
     }
 }

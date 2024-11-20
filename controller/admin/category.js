@@ -1,12 +1,24 @@
 const categoryModel = require('../../model/category')
 
 const loadcategory = async (req,res) =>{
-    const adminId = req.session.adminId
-    if(!adminId) return res.redirect('/admin/login?message=sumthing errore')
+    try {
+        const adminId = req.session.adminId
+        if(!adminId) return res.redirect('/admin/login?message=sumthing errore')
 
-    
-    const categories = await categoryModel.find({})
-    res.render('admin/category',{categories:categories})
+        const page = parseInt(req.query.page) || 1; 
+        const limit = 4; 
+        const skip = (page - 1) * limit;
+        
+        const categories = await categoryModel.find().skip(skip).limit(limit)
+
+        const totalProducts = await categoryModel.countDocuments();
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        res.render('admin/category',{categories:categories, totalPages, page})
+    } catch (error) {
+        console.log(`error from load category ${error}`);
+        
+    }
 }
 
 const loadAddCategory = async (req, res) => {

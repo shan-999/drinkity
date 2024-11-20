@@ -34,6 +34,7 @@ function emailvalidate() {
 }
 
 
+
 function passwordvalidate() {
     let password = document.getElementById('password').value
     let regex = /^(?=.*[0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{5,}$/
@@ -72,4 +73,9 @@ function verifySubmit(event) {
     if (!isNameValid || !isEmailValid || !isPasswordValid || !isCPasswordValid) {
         event.preventDefault();
     } 
+
+    let email = document.getElementById('email').value
+
+    sessionStorage.setItem('tempEmail',email)
+    console.log(sessionStorage.getItem('tempEmail'))
 }

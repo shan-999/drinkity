@@ -323,7 +323,7 @@
             </div>
             
             <div class="tab-content" id="nav-tabContent">
-                <!-- All Products Tab Pane -->
+                <!-- All products  -->
                 <div class="tab-pane fade show active" id="nav-all" role="tabpanel" aria-labelledby="nav-all-tab">
                     <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
                         <% products.forEach(product => { %>
@@ -348,17 +348,17 @@
                     </div>
                 </div>
             
-                <!-- Soft Drinks Tab Pane -->
+                <!-- Soft drinks  -->
                 <div class="tab-pane fade" id="nav-softdrinks" role="tabpanel" aria-labelledby="nav-softdrinks-tab">
                     <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-                        <% products.filter(product => product.category === 'Soft drinks').forEach(product => { %>
+                        <% products.filter(product => product.category === 'Soft Drinks').forEach(product => { %>
                           <div class="col">
                             <div class="product-item">
                                 <span class="badge bg-success position-absolute m-3">-30%</span>
                                 <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
                                 <figure>
                                     <a href="/product-details/<%= product._id %>" title="<%= product.productName %>">
-                                        <img src="<%= product.images[0] %>" alt="<%= product.productName %>" class="tab-image">
+                                        <img src="<%= product.images[0] %>" alt="<%= product.productName %>" class="tab-image <%= product.quantity <= 0 ? 'out-of-stock' : '' %>">
                                     </a>
                                 </figure>
                                 <h3><%= product.productName %></h3>
@@ -372,18 +372,18 @@
                         <% }) %>
                     </div>
                 </div>
-            
-                <!-- Fruit Juices Tab Pane -->
+
+                <!-- Fruit juices -->
                 <div class="tab-pane fade" id="nav-juices" role="tabpanel" aria-labelledby="nav-juices-tab">
                     <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-                        <% products.filter(product => product.category === 'Fruit Juices').forEach(product => { %>
+                        <% products.filter(product => product.category === 'Fruit juice').forEach(product => { %>
                           <div class="col">
                             <div class="product-item">
                                 <span class="badge bg-success position-absolute m-3">-30%</span>
                                 <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
                                 <figure>
                                     <a href="/product-details/<%= product._id %>" title="<%= product.productName %>">
-                                        <img src="<%= product.images[0] %>" alt="<%= product.productName %>" class="tab-image">
+                                        <img src="<%= product.images[0] %>" alt="<%= product.productName %>" class="tab-image <%= product.quantity <= 0 ? 'out-of-stock' : '' %>">
                                     </a>
                                 </figure>
                                 <h3><%= product.productName %></h3>
@@ -556,38 +556,48 @@
 
 
     <script>
-      document.getElementById('product-filter').addEventListener('change', function() {
-    const filterValue = this.value;
-    const productContainer = document.querySelector('.product-grid');
-    const products = Array.from(productContainer.children);
+      document.addEventListener('DOMContentLoaded', function() {
+        const filter = document.getElementById('product-filter');
+        const productContainer = document.querySelector('.product-grid');
+        
+        if (filter && productContainer) {
+            const originalProducts = Array.from(productContainer.children);
 
-    let sortedProducts;
+            filter.addEventListener('change', function() {
+                const filterValue = this.value;
+                const products = Array.from(productContainer.children);
 
-    if (filterValue === 'az') {
-        sortedProducts = products.sort((a, b) => 
-            a.querySelector('h3').innerText.localeCompare(b.querySelector('h3').innerText)
-        );
-    } else if (filterValue === 'za') {
-        sortedProducts = products.sort((a, b) => 
-            b.querySelector('h3').innerText.localeCompare(a.querySelector('h3').innerText)
-        );
-    } else if (filterValue === 'low-high') {
-        sortedProducts = products.sort((a, b) => 
-            parseFloat(a.querySelector('.price').innerText.replace('₹', '')) - 
-            parseFloat(b.querySelector('.price').innerText.replace('₹', ''))
-        );
-    } else if (filterValue === 'high-low') {
-        sortedProducts = products.sort((a, b) => 
-            parseFloat(b.querySelector('.price').innerText.replace('₹', '')) - 
-            parseFloat(a.querySelector('.price').innerText.replace('₹', ''))
-        );
-    } else {
-        return; 
-    }
+                let sortedProducts;
 
-    productContainer.innerHTML = '';
-    sortedProducts.forEach(product => productContainer.appendChild(product));
-});
+                if (filterValue === 'az') {
+                    sortedProducts = products.sort((a, b) => 
+                        a.querySelector('h3').innerText.localeCompare(b.querySelector('h3').innerText)
+                    );
+                } else if (filterValue === 'za') {
+                    sortedProducts = products.sort((a, b) => 
+                        b.querySelector('h3').innerText.localeCompare(a.querySelector('h3').innerText)
+                    );
+                } else if (filterValue === 'low-high') {
+                    sortedProducts = products.sort((a, b) => 
+                        parseFloat(a.querySelector('.price').innerText.replace('₹', '')) - 
+                        parseFloat(b.querySelector('.price').innerText.replace('₹', ''))
+                    );
+                } else if (filterValue === 'high-low') {
+                    sortedProducts = products.sort((a, b) => 
+                        parseFloat(b.querySelector('.price').innerText.replace('₹', '')) - 
+                        parseFloat(a.querySelector('.price').innerText.replace('₹', ''))
+                    );
+                } else if (filterValue === 'Filte') {
+                    sortedProducts = originalProducts;
+                } else {
+                    return;
+                }
+
+                productContainer.innerHTML = '';
+                sortedProducts.forEach(product => productContainer.appendChild(product));
+            });
+        }
+    });
 
     </script>
   </body>
