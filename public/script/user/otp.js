@@ -1,10 +1,17 @@
+<<<<<<< HEAD
 // document.addEventListener('DOMContentLoaded', () => {
 //     const timerElement = document.getElementById('timer');
 //     const resendLinkElement = document.querySelector('.resend-link');
 //     const resendButtonElement = document.querySelector('.resend');
 //     const countdownDuration = 60;
+=======
+>>>>>>> fa130ed472eaafe5b602dbea4beeaf1885876b25
 
+function validateInput(current, nextFieldID) {
+    const value = current.value;
+    const isNumber = /^[0-9]+$/.test(value);  
 
+<<<<<<< HEAD
 //     let resetTimer = sessionStorage.getItem('resetTimer') === 'true';
 //     let otpTimerStarted = sessionStorage.getItem('otpTimerStarted');
 
@@ -67,6 +74,15 @@ function validateInput(current, nextFieldID) {
     }
 }
 
+=======
+    if (!isNumber) {
+        current.value = '';  
+    } else if (nextFieldID && value.length === 1) {
+        document.getElementById(nextFieldID).focus(); 
+    }
+}
+
+>>>>>>> fa130ed472eaafe5b602dbea4beeaf1885876b25
 document.querySelectorAll('.code-inputs input').forEach((input, index, inputs) => {
     input.addEventListener('keydown', (event) => {
         if (event.key === 'Backspace' && input.value.length === 0 && index > 0) {
