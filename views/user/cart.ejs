@@ -22,10 +22,13 @@
         .remove-btn{
           width: 20px;
           border: none;
+          display: flex;
+          cursor: pointer;
         }
 
-        .remove-btn:hover{
-          color: red;;
+        .remove-btn:hover svg {
+          fill: rgb(255, 255, 255);
+          background-color: rgb(184, 24, 24);
         }
       </style>
    
@@ -72,7 +75,7 @@
                   onchange="updateCart('<%= item.productId._id %>', this.value)">
                   <span id="item-total-price-<%= item.productId._id %>" class="item-total-price">₹<%= item.totalPrice %></span>
                 </div>  
-                <button onclick="removeFromCart('<%= item.productId._id %>',)" class="remove-btn">x</button>
+                <button onclick="removeFromCart('<%= item.productId._id %>',)" class="remove-btn"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#666666"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg></button>
               </div>
             <% }) %>
           <% } else { %>
@@ -88,6 +91,9 @@
         <% } %>
       
         <a href="/home" class="continue-shopping">Continue shopping</a>
+        <% if ( message ) { %>
+          <span style="color: red;"><%= message %></span>
+        <% } %>  
       </div>
 
 

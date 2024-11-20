@@ -29,6 +29,7 @@
                     <img src="https://lh3.googleusercontent.com/COxitqgJr1sJnIDe8-jiKhxDx1FrYbtRHKJ9z_hELisAlapwE9LUPh6fcXIfb5vwpbMl4xl9H9TRFPc5NOO8Sb3VSgIBrfRYvW6cUA" alt="Google logo">
                     Log in with Google
                 </button> -->
+                <button type="button" id="google-sign-in-btn" class="google-btn">Sign in with Google</button>
                 <p>Don't have an account? <a href="/register">Sign up</a></p>
             </div>
         </div>
@@ -41,5 +42,36 @@
         </div>
     </div>
     <script src="/script/user/login.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <script>
+    
+
+        const clientId = "534928979090-nv4sgitnntqdoa0o6b61b6a2irpesmqa.apps.googleusercontent.com"
+    
+        function handleCredentialResponse(response) {
+            const idToken = response.credential;
+            console.log("Encoded JWT ID token:", idToken);
+    
+            
+            axios.post('/google-signup', { token: idToken })
+                .then(response => window.location.href = '/home')
+                .catch(error => console.error('Error:', error));
+        }
+    
+    
+        window.onload = function() {
+            google.accounts.id.initialize({
+                client_id: clientId,
+                callback: handleCredentialResponse,
+            });
+    
+            google.accounts.id.renderButton(
+                document.getElementById('google-sign-in-btn'),
+                { theme: 'outline', size: 'medium' ,type: 'standard' } 
+            );
+        };
+      </script>
 </body>
 </html>

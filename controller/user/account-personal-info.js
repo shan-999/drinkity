@@ -7,8 +7,13 @@ const loadPersonlaInfo = async (req,res) => {
     try {
         const categories = await categorySchema.find({ listed: true });
         const user = await userSchema.findOne(req.session.userId)
+
+        let currentPassword = null
+        if(user.googelSingin === true){
+            currentPassword = `drinkity@${user.userName.trim().split(' ').join('')}123`
+        }
         
-        res.render('user/personal-info',{categories,user,activePage: 'Personal-info'})
+        res.render('user/personal-info',{categories,user,activePage: 'Personal-info', currentPassword})
 
 
     } catch (error) {
@@ -64,6 +69,9 @@ const changePassword = async (req,res) => {
 
         await userSchema.findByIdAndUpdate({_id:userId},{$set:{password:hashedPassword}})
 
+        user.googelSingin = false
+        await user.save()
+        
         res.status(200).json({success:true , message: 'Password changed successfully'})
         
     } catch (error) {
@@ -77,3 +85,4 @@ module.exports = {
     changeUserName,
     changePassword
 }
+

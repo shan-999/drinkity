@@ -240,13 +240,18 @@
                                             <tr>
                                                 <td><img src="<%= item.image %>" alt="Product Image" width="50"></td>
                                                 <td>
-                                                    <%= item.productId %>
+                                                    <%= item.productId.toString().slice(-10) %>
                                                 </td>
-                                                <td>
+                                                <td style="width: 200px;">
                                                     <%= item.productName %>
                                                 </td>
                                                 <td>
-                                                    <%= order.status %>
+                                                    <select class="status-dropdown" data-order-id="<%= order._id %>" data-product-id="<%= item.productId %>" <% if (item.status === 'Cancelled' || item.status === 'Delivered') { %> disabled <% } %>>
+                                                        <option value="Pending" <%= item.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                                        <option value="Shipped" <%= item.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                                                        <option value="Delivered" <%= item.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                                                        <option value="Cancelled" <%= item.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                                    </select>
                                                 </td>
                                                 <td>₹<%= item.price %>
                                                 </td>
@@ -264,13 +269,7 @@
                             <!-- Order Status Section -->
                             <div class="order-status">
                                 <h3>Order Details</h3>
-                                <p><strong>Order Status:</strong>
-                                    <select class="status-dropdown" data-order-id="<%= order._id %>" <% if (order.status === 'Cancelled' || order.status === 'Delivered') { %> disabled <% } %>>
-                                        <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
-                                        <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
-                                        <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-                                        <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
-                                    </select><br>
+                                
                                     <% if (order.canceledBy==='user' ) { %>
                                         <span class="cancellation-message" style="color: red;">User canceled the
                                             order</span>
@@ -303,6 +302,7 @@
                 setColor(event.target);
 
                 const orderId = event.target.dataset.orderId;
+                const productId = event.target.dataset.productId;
                 const newStatus = event.target.value;
 
                 console.log(orderId);
@@ -310,7 +310,7 @@
 
 
                 try {
-                    const response = await axios.post(`/admin/orders/${orderId}`, { status: newStatus });
+                    const response = await axios.post(`/admin/orders/${orderId}`, { status: newStatus,productId });
 
                     if (response.status === 200) {
                         console.log("iydcfgyi");

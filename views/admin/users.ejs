@@ -11,6 +11,35 @@
 
 </head>
 <body>
+  <style>
+    .pagination {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+
+    /* pagination */
+    .pagination a {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        color: #333;
+        text-decoration: none;
+        border-radius: 4px;
+    }
+
+    .pagination .active-page {
+        background-color: #007bff;
+        color: white;
+        border: none;
+    }
+
+    .pagination a:hover {
+        background-color: #007bff;
+        color: white;
+    }
+  </style>
   <div class="admin-layout">
     <%- include('partial/sidebar') %>
 
@@ -33,13 +62,11 @@
               <% users.forEach(user => { %>
                 <tr>
                   <td>
-                    <!-- Assuming user has a profile picture URL stored in the database -->
                     <img class='user-img' src="/images/profile-admin.jpg" alt="Profile">
                   </td>
                   <td><%= user.userName %></td>
                   <td><%= user.email %></td>
                   <td>
-                    <!-- Conditionally render block/unblock buttons based on user status -->
                     <% if (user.isBlocked) { %>
                       <button class="unblock-btn" onclick="changeStatus('<%= user._id %>', 'unblock')">Unblock</button>
                     <% } else { %>
@@ -55,31 +82,24 @@
             <% } %>
           </tbody>
         </table>
+        <div class="pagination">
+          <% if (page > 1) { %>
+              <a href="?page=<%= page - 1 %>" class="prev-page">Previous</a>
+          <% } %>
+
+          <% for (let i = 1; i <= totalPages; i++) { %>
+              <a href="?page=<%= i %>" class="<%= page === i ? 'active-page' : '' %>"><%= i %></a>
+          <% } %>
+
+          <% if (page < totalPages) { %>
+              <a href="?page=<%= page + 1 %>" class="next-page">Next</a>
+          <% } %>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
-    
-    // function changeStatus(userId, action) {
-    //   fetch(`/admin/users/${action}`, {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify({ userId })
-    //   })
-    //   .then(response => response.json())
-    //   .then(data => {
-    //     if (data.success) {
-    //       location.reload(); 
-    //     } else {
-    //       alert('Failed to update user status');
-    //     }
-    //   })
-    //   .catch(err => console.error('Error:', err));
-    // }
-
     async function changeStatus(userId, action) {
     const actionText = action === 'block' ? 'Block' : 'Unblock';
     const successMessage = action === 'block' ? 'User blocked successfully!' : 'User unblocked successfully!';
@@ -104,13 +124,13 @@
                     body: JSON.stringify({ userId })
                 });
 
-                if (!response.ok) throw new Error('Network response was not ok'); // Check for non-200 status
+                if (!response.ok) throw new Error('Network response was not ok');
 
                 const data = await response.json();
 
                 if (data.success) {
                     Swal.fire('Success!', successMessage, 'success').then(() => {
-                        window.location.reload(); // Reload the page to reflect the new status
+                        window.location.reload(); 
                     });
                 } else {
                     Swal.fire('Error', data.message || 'Failed to change user status.', 'error');

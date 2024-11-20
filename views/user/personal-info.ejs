@@ -101,7 +101,11 @@
                     <form id="editInfoForm" onsubmit="validateChangePassSubmit()">
                         <div class="mb-3">
                             <label for="password" class="form-label">Current Password</label>
-                            <input type="password" class="form-control" id="current-password" name="current-password" >
+                            <% if (user.googelSingin) {  %>
+                                <input type="password" class="form-control" id="current-password" name="current-password" value="<%= currentPassword %>">
+                            <% } else { %>
+                                <input type="password" class="form-control" id="current-password" name="current-password" >
+                            <% } %>
                         </div>  
                         <div class="mb-3">
                             <label for="password" class="form-label">New Password</label>

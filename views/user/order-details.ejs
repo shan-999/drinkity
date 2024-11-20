@@ -139,7 +139,15 @@
     background-color: #d9534f; /* Red for Cancelled */
     color: white;
 }
-
+.cancel-btn{
+    color: rgb(255, 0, 0);
+    text-decoration: none;
+    cursor: pointer;
+}
+.cancel-btn:hover{
+    color: rgb(255, 255, 255);
+    background-color: red;
+}
 
     </style>
 
@@ -155,36 +163,44 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Order</th>
+                            <th>Product Name</th>
                             <th>Order Date</th>
                             <th>Status</th>
                             <th>Price</th>
-                            <th>Quantity</th>
                             <th>Total Price</th>
+                            <th></th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         <% order.products.forEach(product => { %>
                         <tr>
-                            <td><%= order._id.toString().slice(-10) %></td>
+                            <td style="width: 200px;""><%= product.productName %></td>
                             <td><%= new Date(order.orderDate).toLocaleDateString() %></td>
                             <td>
                                 <span class="status 
                                 <%= 
-                                    order.status === 'Pending' ? 'pending' : 
-                                    order.status === 'Shipped' ? 'shipped' : 
-                                    order.status === 'Delivered' ? 'delivered' : 
-                                    order.status === 'Cancelled' ? 'cancelled' : ''
+                                    product.status === 'Pending' ? 'pending' : 
+                                    product.status  === 'Shipped' ? 'shipped' : 
+                                    product.status  === 'Delivered' ? 'delivered' : 
+                                    product.status  === 'Cancelled' ? 'cancelled' : ''
                                 %>">
-                                <%= order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
+                                <%= product.status.charAt(0).toUpperCase() + product.status.slice(1) %>
                             </span>     
                             </td>
-                            <td>₹<%= product.price.toFixed(2) %></td>
-                            <td><%= product.quantity %></td>
+                            <td>₹<%= product.price.toFixed(2) %> <span style="color: #b5aeae; font-size: 10px;">X</span> <%= product.quantity %></td>
                             <td><%= product.total.toFixed(2) %></td>
                             <td><img src="<%= product.image %>" alt="Product Image"></td>
-                        </tr>
+                            <% if(product.status != 'Cancelled' && product.status != 'Delivered') { %>
+                                <td><a class="cancel-btn" data-product-id="<%= product.productId %>"  data-order-id="<%= order._id %>">Cancel</a></td>
+                            <% } else { %>
+                                <% if(product.status === 'Cancelled') { %>
+                                    <td style="color: rgb(214, 87, 87);"> cancelled</td>
+                                <% } else { %>
+                                    <td style="color: #5cb85c;">Delivered</td>
+                                <% } %>
+                            <% } %> 
+                          </tr>
                         <% }) %>
                     </tbody>
                 </table>
@@ -192,7 +208,8 @@
     
             <div class="order-summary">
                 <h3>Order Summary</h3>
-                <p>Subtotal : ₹<%= order.Totalprice .toFixed(2) %></p>
+
+                <p>Subtotal : ₹<%= subTotal.toFixed(2) %></p>
                 <p>Quantity: <%= order.products.length %></p>
                 <p> 
                     <% if (order.Totalprice < 500) { %>
@@ -202,37 +219,24 @@
                     <% } %>
                 </p> 
                 <hr>
+                
                 <p>Estimated total: <strong>₹<%= estimatedTotal.toFixed(2) %></strong></p>
-                <p>Payment Method: <strong> <%= order.paymentMethourd === 'cod' ? 'Cash On Delivery' : order.paymentMethourd %></strong></p>
-                <% if (order.status === 'Cancelled') { %>
-                    <div style="color: red; font-weight: bold; margin-top: 10px;">
-                        <p>Your order has been cancelled.</p>
-                    </div>
-                <% } %>
+                <p>Payment Method: <strong> <%= order.paymentMethourd === 'cod' ? 'Cash On Delivery' : order.paymentMethourd %></strong></p> 
 
+                <% if(isCancelled) { %>
+                    <p style="color: red;">All products in this order have been canceled.</p>
+                <% } %>
             </div>
     
             <div class="additional-info">
-                <% if (order.status === 'Cancelled') { %>
-                    <div>
-                        <p>If you have questions about your cancellation, please contact our <a href="#">support team.</a></p>
-                    </div>
-                <% } else { %>
+                
                     <div class="address">
                         <h4>Shipping Address</h4>
                         <p><strong>Name:</strong> <%= order.customer.userName %></p>
                         <p><strong>Email:</strong> <%= order.customer.email %></p>
-                        <p><strong>Phone:</strong> <%= order.customer.address.phoneNumber %></p>
+                        <p><strong>Phone:</strong> <%= order.customer.address.phonNumber %></p>
                         <p><strong>Address:</strong> <%= order.customer.address.landMark %>, <%= order.customer.address.city %>, <%= order.customer.address.state %>, <%= order.customer.address.postalCode %></p>
                     </div>
-                    <div class="help">
-                        <h4>Need Help</h4>
-                        <% if (order.status != 'Delivered') { %>
-                            <p><a id="cancel-btn" href="#" data-order-id="<%= order._id %>">Cancel</a></p>
-                        <% } %>
-                            <p><a href="#">Need help</a></p>
-                    </div>
-                <% } %>
             </div>
         </div>
     </section>
@@ -259,43 +263,46 @@
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-    document.getElementById('cancel-btn').addEventListener('click', function (event) {
-    event.preventDefault(); 
+   document.querySelectorAll('.cancel-btn').forEach(function(button) {
+        button.addEventListener('click', function(event) {
+            event.preventDefault(); 
 
-    const orderId = this.getAttribute('data-order-id'); 
+            const productId = this.getAttribute('data-product-id'); 
+            const orderId = this.getAttribute('data-order-id'); 
 
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "Do you want to cancel this order?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, cancel it!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            axios.post('/cancel-order', { orderId })
-                .then(response => {
-                    Swal.fire(
-                        'Cancelled!',
-                        'Your order has been cancelled.',
-                        'success'
-                    ).then(() => {
-                        window.location.reload();
-                    });
-                })
-                .catch(error => {
-                    console.error('There was an error cancelling the order!', error);
-                    Swal.fire(
-                        'Error!',
-                        'Failed to cancel the order. Please try again later.',
-                        'error'
-                    );
-                });
-        }
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you want to cancel this order?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, cancel it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    axios.post('/cancel-order', { productId, orderId })
+                        .then(response => {
+                            Swal.fire(
+                                'Cancelled!',
+                                'Your order has been cancelled.',
+                                'success'
+                            ).then(() => {
+                                window.location.reload();
+                            });
+                        })
+                        .catch(error => {
+                            console.error('There was an error cancelling the order!', error);
+                            Swal.fire(
+                                'Error!',
+                                'Failed to cancel the order. Please try again later.',
+                                'error'
+                            );
+                        });
+                }
+            });
+        });
     });
-});
-
+o
 </script>
 
 </body>

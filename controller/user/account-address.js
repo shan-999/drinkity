@@ -22,9 +22,6 @@ const loadAddress = async (req, res) => {
         
         const addresses = await addressSchema.find({ userId: user._id }).skip(skip).limit(limit);
         
-                                              
-
-
         const totalAddresses = await addressSchema.countDocuments({ userId: user._id });
         const totalPages = Math.ceil(totalAddresses / limit);
 
@@ -60,7 +57,7 @@ const loadAddAddress = async (req,res) => {
 }
 
 
-const addAddress = async (req,res) =>     {
+const addAddress = async (req,res) =>    {
     try {
         if(!req.session.userId) return res.redirect('/home')
         const {fullName,address,email,mobile,city,pincode,state,landmark} = req.body

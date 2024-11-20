@@ -265,6 +265,8 @@
       closeDeleteModal();
     });
 
+
+    //change status
     function changeStatus(prodectId, action) {
       fetch(`/admin/product-status/${action}`, {
         method: 'POST',

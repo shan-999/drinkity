@@ -39,7 +39,7 @@
         </div>
 
         <button type="submit" class="register-btn" >Register Now</button>
-        <button type="button" class="google-btn">Sign in with Google</button>
+        <button type="button" id="google-sign-in-btn" class="google-btn">Sign in with Google</button>
         <p class="signin">Already have an account? <a href="/login">Sign in</a></p>
       </form>
     </div>
@@ -54,5 +54,38 @@
 
 
   <script src="/script/user/userRegister.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+
+
+  <script>
+    
+
+    const clientId = "534928979090-nv4sgitnntqdoa0o6b61b6a2irpesmqa.apps.googleusercontent.com"
+
+    function handleCredentialResponse(response) {
+        const idToken = response.credential;
+        console.log("Encoded JWT ID token:", idToken);
+
+        
+        axios.post('/google-signup', { token: idToken })
+            .then(response => window.location.href = '/home')
+            .catch(error => console.error('Error:', error));
+    }
+
+
+    window.onload = function() {
+        google.accounts.id.initialize({
+            client_id: clientId,
+            callback: handleCredentialResponse,
+        });
+
+        google.accounts.id.renderButton(
+            document.getElementById('google-sign-in-btn'),
+            { theme: 'outline', size: 'medium' ,type: 'standard' } 
+        );
+    };
+  </script>
 </body>
 </html>

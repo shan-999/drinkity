@@ -115,6 +115,35 @@
         .status-cancelled {
             background-color: #FF0000; 
         }
+        
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+
+        /* pagination */
+        .pagination a {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            color: #333;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .pagination .active-page {
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+
+        .pagination a:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
 
     </style>
 
@@ -145,7 +174,7 @@
                             <th>ID</th>
                             <th>Email</th>
                             <th>Product</th>
-                            <th>Status</th>
+                            <th>Order Date</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -161,21 +190,26 @@
                                     <% }) %>
                                 </td>
                                 <td>
-                                    <select class="status-dropdown" data-order-id="<%= order._id %>" <% if (order.status === 'Cancelled' || order.status === 'Delivered') { %> disabled <% } %>>
-                                        <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
-                                        <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
-                                        <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-                                        <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
-                                    </select><br>
-                                    <% if (order.canceledBy === 'user') { %>
-                                        <span class="cancellation-message" style="color: red;">User canceled the order</span>
-                                    <% } %>
+                                    <%= new Date(order.orderDate).toLocaleDateString() %>
                                 </td>
                                 <td><button style="background-color: rgb(220, 227, 189);" class="show-more" id="show-more" data-order-id="<%= order._id %>">Show more</button></td>
                             </tr>
                         <% }) %>
                     </tbody>
                 </table>
+                <div class="pagination">
+                    <% if (page > 1) { %>
+                        <a href="?page=<%= page - 1 %>" class="prev-page">Previous</a>
+                    <% } %>
+        
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <a href="?page=<%= i %>" class="<%= page === i ? 'active-page' : '' %>"><%= i %></a>
+                    <% } %>
+        
+                    <% if (page < totalPages) { %>
+                        <a href="?page=<%= page + 1 %>" class="next-page">Next</a>
+                    <% } %>
+                  </div>
             </div>
         </div>
     </div>

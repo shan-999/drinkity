@@ -7,14 +7,17 @@ const accountOrders = require('../controller/user/account-orders')
 const accountAddress = require('../controller/user/account-address')
 const accountPersonlaInfo = require('../controller/user/account-personal-info');
 const cart  = require('../controller/user/cart');
+const orderConfirme = require('../controller/user/confirm-order')
 
 
 
 
 router.get('/login', auth.isLogin, userController.loadLogin)
-
-
 router.post('/login',userController.login)
+
+
+router.post('/google-signup',auth.isLogin,userController.googelSingin)
+
 
 router.get('/register', auth.isLogin, userController.loadRegister);
 router.post('/register', userController.registerUser);
@@ -34,7 +37,6 @@ router.get('/password-reseted',auth.isLogin,userController.passwordReseted)
 
 
 router.get('/home', userHome.loadHome);
-
 router.get('/product-details/:id',userHome.LoadProductDetails)
 
 
@@ -61,11 +63,15 @@ router.get('/cart',auth.isAuthenticated,cart.loadCart)
 router.post('/addtocart',cart.addToCart)
 router.delete('/cart/remove-item',auth.isAuthenticated,cart.removeItem)
 router.post('/edit-cart',auth.isAuthenticated,cart.editCart)
-router.get('/checkout',auth.isAuthenticated,cart.checkout)
-router.get('/select-addesses/:id',auth.isAuthenticated,cart.selectedAddress)
-router.post('/confirm-order',auth.isAuthenticated,cart.confirmOrder)
-router.get('/order-confirmed/:orderId',auth.isAuthenticated,cart.loadOrderConfirmed)
 
+
+router.get('/checkout',auth.isAuthenticated,orderConfirme.checkout)
+router.get('/select-addesses/:id',auth.isAuthenticated,orderConfirme.selectedAddress)
+router.post('/confirm-order',auth.isAuthenticated,orderConfirme.confirmOrder)
+router.get('/order-confirmed/:orderId',auth.isAuthenticated,orderConfirme.loadOrderConfirmed)
+
+router.post('/create-razourpay-order',auth.isAuthenticated,orderConfirme.createRazourPayOrder)
+router.post('/verify-payment',auth.isAuthenticated,orderConfirme.verifyPayment)
 
 
 

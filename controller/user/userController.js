@@ -4,23 +4,22 @@ const saltRounds = 10;
 const nodemailer = require('nodemailer');
 const OTP = require('../../model/otpModel');
 const { find } = require('../../model/adminModel');
+require('dotenv').config();
+const { OAuth2Client } = require('google-auth-library');
+
+const client = new OAuth2Client('534928979090-nv4sgitnntqdoa0o6b61b6a2irpesmqa.apps.googleusercontent.com');
 
 
 
 //login page-------------------------------------------------------
 const   loadLogin = async (req, res) => {
-    console.log('yes reched here');
     
     try {
         const message = req.query.message
-    res.render('user/login',{msg:message}); 
-    console.log('render login');
-    console.log(req.session.userId);
+        res.render('user/login',{msg:message}); 
     } catch (error) {
-        
         res.send("not found")
     }
-    
     
 };
 
@@ -68,6 +67,7 @@ const registerUser = async (req, res) => {
     try {
         const { userName, email, password } = req.body;
 
+
         const user = await userSchema.findOne({ email });
         if (user) return res.redirect('/register'); 
 
@@ -96,11 +96,11 @@ const registerUser = async (req, res) => {
 
 
 const sendOtp = async (email) => {
-    let digits = '0123456789';
     let otp = '';
-    for (let i = 0; i < 4; i++) {
-        otp += digits[Math.floor(Math.random() * digits.length)];
+    for (let i = 0; i < 4 ; i++){
+        otp += String(Math.floor(Math.random() * 10));
     }
+
 
     console.log(`Generated OTP: ${otp}`);
 
@@ -193,10 +193,10 @@ const resendOtp = async (req, res) => {
             return res.redirect('/register');
         }
 
-        let digits = '0123456789';
+
         let newOtp = '';
         for (let i = 0; i < 4; i++) {
-            newOtp += digits[Math.floor(Math.random() * digits.length)];
+            newOtp += String(Math.floor(Math.random() * 10));
         }
         console.log(`New OTP: ${newOtp}`);
 
@@ -215,10 +215,14 @@ const resendOtp = async (req, res) => {
             text: `Your new OTP code is ${newOtp}`,
         };
 
-        await transporter.sendMail(mailOptions);
-        console.log('New OTP email sent to: ' + userEmail);
+        try {
+            await transporter.sendMail(mailOptions);
+            console.log('New OTP email sent to: ' + userEmail);
+        } catch (error) {
+            console.log(`erroore resend otp: ${error}`);
+        }
 
-        const exprTime = Date.now() + 5 * 60 * 1000; 
+        const exprTime = Date.now() + 1 * 60 * 1000; 
         await OTP.findOneAndUpdate(
             { email: userEmail },
             { otp: newOtp, exprTime: exprTime },
@@ -297,8 +301,7 @@ const verifyOtpForPassword = async (req,res) => {
 
         res.redirect('/change-password')
     } catch (error) {
-        console.log(`errore from verify otpfor password change : ${error}`);
-        
+        console.log(`errore from verify otpfor password change : ${error}`);   
     }
 }
 
@@ -345,14 +348,73 @@ const changePassword = async (req, res) => {
 
 const logout  = async (req,res) => {
     try {
-        console.log('shgsd');
-        
-        req.session.destroy()
+        req.session.userId = null
         res.redirect('/login')
     } catch (error) {
         console.log(error.message)
     }
 }
+
+
+//google singnin
+
+const googelSingin = async (req,res) => {
+    
+    try {
+        const {token} = req.body
+
+        
+
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience:"534928979090-nv4sgitnntqdoa0o6b61b6a2irpesmqa.apps.googleusercontent.com"
+        });
+
+
+        const payload = ticket.getPayload();
+        const { name, email ,picture } = payload;
+        console.log(name.trim().split(' ').join(''));
+
+        const user = await userSchema.findOne({email})
+
+        if(user){
+            req.session.userId = user._id
+            return res.status(200).json({success: true, message: 'User authenticated successfully'});
+        }
+        
+        const password = `drinkity@${name.trim().split(' ').join('')}123`
+        
+
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        console.log(password , hashedPassword);
+        
+
+        const newUser = new userSchema({
+            userName:name,
+            password:hashedPassword,
+            email:email,
+            googelSingin:true
+        })
+
+        await newUser.save()
+
+        req.session.userId = newUser._id
+
+        console.log(name,email)
+
+        res.status(200).json({
+            success: true,
+            message: 'User authenticated successfully',
+        });
+
+    } catch (error) {
+        console.log(`this error from google sign up ${error}`);
+        
+    }
+}
+
+
 
 module.exports = {
     loadLogin,
@@ -369,5 +431,9 @@ module.exports = {
     verifyOtpForPassword,
     loadPasswordChange,
     changePassword,
-    passwordReseted
+    passwordReseted,
+    googelSingin
 };
+
+
+
