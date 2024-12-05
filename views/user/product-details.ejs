@@ -64,6 +64,92 @@
     cursor: default;
 }
 	</style>
+	<style>
+		.quantity-container {
+			width: 300px;
+			display: flex;
+			gap: 40px;
+			align-items: center;
+			justify-content: center;
+			font-family: 'Arial', sans-serif;
+			margin-bottom: 17px;
+		}
+		
+		.quantity-label {
+			font-size: 16px;
+			font-weight: 500;
+			color: #333;
+			margin: 0;
+		}
+		
+		.quantity-field {
+			display: flex;
+			align-items: center;
+			background: #f8f9fa;
+			border-radius: 8px;
+			padding: 8px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		}
+		
+		.quantity-btn {
+			width: 28px;
+			height: 28px;
+			border: 1px solid #ddd;
+			background: #fff;
+			border-radius: 4px;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: #333;
+			font-size: 18px;
+			font-weight: bold;
+			transition: all 0.2s ease;
+			user-select: none;
+		}
+		
+		.quantity-btn:hover {
+			background: #000000;
+			border-color: #000000;
+		}
+		
+		.quantity-btn:active {
+			background: #000000;
+			transform: translateY(1px);
+		}
+		
+		#quantity {
+			width: 45px;
+			height: 28px;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			background: white;
+			text-align: center;
+			font-size: 16px;
+			font-weight: 500;
+			color: #333;
+			margin: 0 8px;
+			padding: 0;
+		}
+		 
+		#quantity::-webkit-outer-spin-button,
+		#quantity::-webkit-inner-spin-button {
+			-webkit-appearance: none;
+			margin: 0;
+		}
+		
+		#quantity:focus {
+			outline: none;
+			border-color: #007bff;
+		} 
+		.off-price{
+			font-family: Poppins-SemiBold;
+			font-size: 15px;
+			line-height: 1.388888;
+			color: #c8c6c6;
+			text-decoration: line-through;
+		}
+		</style>
 
 
 
@@ -199,10 +285,26 @@
                         <h4 class="mtext-105 cl2 js-name-detail p-b-14">
                             <%= product.productName %>
                         </h4>
-    
-                        <span class="mtext-106 cl2">
-                            ₹<%= product.price %>
-                        </span>
+						<% if(asOffer) { %>
+							<span class="off-price">
+								₹<%= product.price %>
+							</span>
+							<% if(asOffer.type === 'fixed') { %>
+							<span id="price" class="mtext-106 cl2 ">
+								₹<%= product.price - asOffer.offValue %>
+							</span>
+							<% } else { %>
+								<% const offprice = (asOffer.offValue / product.price) * 100 %>
+								<span id="price" class="mtext-106 cl2">
+									₹<%= (product.price - offprice).toFixed(2) %>
+								</span>
+							<% } %>
+						<% } else { %>
+							<span id="price" class="mtext-106 cl2">
+								₹<%= product.price %>
+							</span>
+						<% } %>
+                        
     
                         <div class="p-t-33">
                             <div class="flex-w flex-r-m p-b-10">
@@ -217,86 +319,7 @@
 										</div>
 									</div>
 
-									<style>
-										.quantity-container {
-											width: 300px;
-											display: flex;
-											gap: 40px;
-											align-items: center;
-											justify-content: center;
-											font-family: 'Arial', sans-serif;
-											margin-bottom: 17px;
-										}
-										
-										.quantity-label {
-											font-size: 16px;
-											font-weight: 500;
-											color: #333;
-											margin: 0;
-										}
-										
-										.quantity-field {
-											display: flex;
-											align-items: center;
-											background: #f8f9fa;
-											border-radius: 8px;
-											padding: 8px;
-											box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-										}
-										
-										.quantity-btn {
-											width: 28px;
-											height: 28px;
-											border: 1px solid #ddd;
-											background: #fff;
-											border-radius: 4px;
-											cursor: pointer;
-											display: flex;
-											align-items: center;
-											justify-content: center;
-											color: #333;
-											font-size: 18px;
-											font-weight: bold;
-											transition: all 0.2s ease;
-											user-select: none;
-										}
-										
-										.quantity-btn:hover {
-											background: #000000;
-											border-color: #000000;
-										}
-										
-										.quantity-btn:active {
-											background: #000000;
-											transform: translateY(1px);
-										}
-										
-										#quantity {
-											width: 45px;
-											height: 28px;
-											border: 1px solid #ddd;
-											border-radius: 4px;
-											background: white;
-											text-align: center;
-											font-size: 16px;
-											font-weight: 500;
-											color: #333;
-											margin: 0 8px;
-											padding: 0;
-										}
- 										
-										#quantity::-webkit-outer-spin-button,
-										#quantity::-webkit-inner-spin-button {
-											-webkit-appearance: none;
-											margin: 0;
-										}
-										
-										#quantity:focus {
-											outline: none;
-											border-color: #007bff;
-										} 
-										
-										</style>
+									
                                     
                                     <div class="add-to-cart-div" >
                                         <% if (product.quantity <= 0) { %>
@@ -305,7 +328,7 @@
 												Out of Stock
 											</button>
 										<% } else { %>
-											<button  id="addtocart" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail" onclick="updateCart('<%= product._id %>',event)">
+												<button  id="addtocart" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail" onclick="updateCart('<%= product._id %>',event,'product')">
 												Add to Cart
 											</button>
 										<% } %>

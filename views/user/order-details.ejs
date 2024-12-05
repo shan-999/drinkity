@@ -121,30 +121,35 @@
 }
 
 .pending {
-    background-color: #f0ad4e; /* Orange for Pending */
+    background-color: #f0ad4e; 
     color: white;
 }
 
 .shipped {
-    background-color: #5bc0de; /* Light Blue for Shipped */
+    background-color: #5bc0de;
     color: white;
 }
 
 .delivered {
-    background-color: #5cb85c; /* Green for Delivered */
+    background-color: #5cb85c; 
     color: white;
 }
 
 .cancelled {
-    background-color: #d9534f; /* Red for Cancelled */
+    background-color: #d9534f; 
     color: white;
 }
-.cancel-btn{
+.Returned {
+    background-color: chocolate;
+    color: white;
+}
+.cancel-btn ,.return-btn{
     color: rgb(255, 0, 0);
     text-decoration: none;
     cursor: pointer;
 }
-.cancel-btn:hover{
+.cancel-btn:hover,
+.return-btn:hover{
     color: rgb(255, 255, 255);
     background-color: red;
 }
@@ -183,6 +188,7 @@
                                     product.status === 'Pending' ? 'pending' : 
                                     product.status  === 'Shipped' ? 'shipped' : 
                                     product.status  === 'Delivered' ? 'delivered' : 
+                                    product.status === 'Returned' ? 'Returned' :
                                     product.status  === 'Cancelled' ? 'cancelled' : ''
                                 %>">
                                 <%= product.status.charAt(0).toUpperCase() + product.status.slice(1) %>
@@ -191,14 +197,21 @@
                             <td>₹<%= product.price.toFixed(2) %> <span style="color: #b5aeae; font-size: 10px;">X</span> <%= product.quantity %></td>
                             <td><%= product.total.toFixed(2) %></td>
                             <td><img src="<%= product.image %>" alt="Product Image"></td>
-                            <% if(product.status != 'Cancelled' && product.status != 'Delivered') { %>
+                            <% if(product.status != 'Cancelled' && product.status != 'Delivered' && product.status != 'Returned') { %>
                                 <td><a class="cancel-btn" data-product-id="<%= product.productId %>"  data-order-id="<%= order._id %>">Cancel</a></td>
                             <% } else { %>
                                 <% if(product.status === 'Cancelled') { %>
                                     <td style="color: rgb(214, 87, 87);"> cancelled</td>
                                 <% } else { %>
-                                    <td style="color: #5cb85c;">Delivered</td>
-                                <% } %>
+                                    <% console.log(product.requst.approve) %>
+                                    <% if (product.requst.approve === false){ %>
+                                        <td style="color: #ff9191;">Return requested</td>
+                                    <% } else if(product.requst.approve === true) { %>
+                                        <td style="color: #ff9191;">Returned</td>
+                                    <% } else { %>
+                                        <td><a class="return-btn" data-product-id="<%= product.productId %>" data-order-id="<%= order._id %>">Return</a></td>
+                                    <% } %>
+                                <% } %> 
                             <% } %> 
                           </tr>
                         <% }) %>
@@ -282,27 +295,100 @@
                 if (result.isConfirmed) {
                     axios.post('/cancel-order', { productId, orderId })
                         .then(response => {
-                            Swal.fire(
-                                'Cancelled!',
-                                'Your order has been cancelled.',
-                                'success'
-                            ).then(() => {
-                                window.location.reload();
-                            });
+                            if(response.data.success){
+                                Swal.fire(
+                                    'Cancelled!',
+                                    'Your order has been cancelled.',
+                                    'success'
+                                ).then(() => {
+                                    window.location.reload();
+                                });
+                            }
                         })
                         .catch(error => {
-                            console.error('There was an error cancelling the order!', error);
                             Swal.fire(
                                 'Error!',
-                                'Failed to cancel the order. Please try again later.',
+                                 error.response.data.message || 'Failed to cancel the order. Please try again later.',
                                 'error'
                             );
                         });
                 }
-            });
+            })
+            .catch(error => {
+                console.log(error);
+                
+            })
         });
     });
-o
+
+
+
+    document.querySelectorAll('.return-btn').forEach((btn) => {        
+        btn.addEventListener('click',(event) => {
+            event.preventDefault()
+
+
+            const productId = event.currentTarget.getAttribute('data-product-id'); 
+            const orderId = event.currentTarget.getAttribute('data-order-id'); 
+
+            Swal.fire({
+                title: 'Select a Reason',
+                html: `
+                    <select id="reason" class="swal2-input">
+                        <option value="" disabled selected>Select a reason</option>
+                        <option value="damaged">Damaged product</option>
+                        <option value="wrong">Wrong product delivered</option>
+                        <option value="mind">Changed my mind</option>
+                    </select>
+                    <div id="explain-reson"></div>
+                `,
+                focusConfirm: false,
+                preConfirm: () => {
+                    const selectedReason = document.getElementById('reason').value
+                    const additionalInputField = document.getElementById('explain-reson1')
+                    const additionalInput = additionalInputField ? additionalInputField.value.trim() : '';
+
+                    
+                    if (!selectedReason) {
+                        Swal.showValidationMessage('Please select a reason.');
+                        return false
+                    }else if(!additionalInput){
+                        Swal.showValidationMessage('provide additional details.');
+                        return false
+                    }
+                    return { reason: selectedReason, additionalInfo: additionalInput };
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Submit',
+                didOpen: () => {
+                    const reasonSelect = document.getElementById('reason');
+                    const container = document.getElementById('explain-reson');
+
+                    reasonSelect.addEventListener('change', () => {
+                        container.innerHTML = '';
+
+                        const inputField = document.createElement('input');
+                        inputField.type = 'text';
+                        inputField.id = 'explain-reson1';
+                        inputField.className = 'swal2-input';
+                        inputField.placeholder = 'Provide additional details (if any)';
+                        container.appendChild(inputField);
+                    });
+                }
+            }).then((response) => {
+                if(response.isConfirmed){
+                    const reason = response.value.reason
+                    const additionalInfo = response.value.additionalInfo
+
+                    axios.post('/return-order',{reason, additionalInfo, productId, orderId})
+                    .then(() => {
+                        location.reload()
+                    })
+                }
+            })
+            
+        })
+    })
 </script>
 
 </body>

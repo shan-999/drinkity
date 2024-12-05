@@ -35,6 +35,10 @@ const productSchema = new mongoose.Schema({
     images: {
         type: [String],
         require:true
+    },
+    offer: {
+        offerApplied:{type:Boolean,default:false},
+        offerId:[{type: mongoose.Schema.Types.ObjectId, ref: 'offers'}]
     }
 })
 

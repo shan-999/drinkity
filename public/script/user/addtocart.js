@@ -1,11 +1,22 @@
 
-function updateCart(productId,event){
+function updateCart(productId,event,from){
+    
     event.preventDefault()
-    let quantity = document.getElementById('quantity').value
+    let quantityElement = document.getElementById('quantity')
+    let quantity = quantityElement ? quantityElement.value : 1
 
-    axios.post('/addtocart', { productId, quantity })
+    let price = 0
+    if(from === 'product'){
+        price = parseFloat((document.getElementById('price').textContent).replace(/[^\d.]/g, ''))
+    }else if(from === 'wishlist'){
+        price = event.target.getAttribute('data-price')
+    }
+    console.log(price);
+    
+    
+
+    axios.post('/addtocart', { productId, quantity ,price})
     .then(response => {
-        console.log('Product added to cart successfully');
 
         if (response.status === 200) {
             Swal.fire(

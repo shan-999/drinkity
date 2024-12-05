@@ -73,9 +73,9 @@
         <symbol xmlns="http://www.w3.org/2000/svg" id="minus" viewBox="0 0 24 24">
           <path fill="currentColor" d="M19 11H5a1 1 0 0 0 0 2h14a1 1 0 0 0 0-2Z"/>
         </symbol>
-        <symbol xmlns="http://www.w3.org/2000/svg" id="cart" viewBox="0 0 24 24">
+        <!-- <symbol xmlns="http://www.w3.org/2000/svg" id="cart" viewBox="0 0 24 24">
           <path fill="currentColor" d="M8.5 19a1.5 1.5 0 1 0 1.5 1.5A1.5 1.5 0 0 0 8.5 19ZM19 16H7a1 1 0 0 1 0-2h8.491a3.013 3.013 0 0 0 2.885-2.176l1.585-5.55A1 1 0 0 0 19 5H6.74a3.007 3.007 0 0 0-2.82-2H3a1 1 0 0 0 0 2h.921a1.005 1.005 0 0 1 .962.725l.155.545v.005l1.641 5.742A3 3 0 0 0 7 18h12a1 1 0 0 0 0-2Zm-1.326-9l-1.22 4.274a1.005 1.005 0 0 1-.963.726H8.754l-.255-.892L7.326 7ZM16.5 19a1.5 1.5 0 1 0 1.5 1.5a1.5 1.5 0 0 0-1.5-1.5Z"/>
-        </symbol>
+        </symbol> -->
         <symbol xmlns="http://www.w3.org/2000/svg" id="check" viewBox="0 0 24 24">
           <path fill="currentColor" d="M18.71 7.21a1 1 0 0 0-1.42 0l-7.45 7.46l-3.13-3.14A1 1 0 1 0 5.29 13l3.84 3.84a1 1 0 0 0 1.42 0l8.16-8.16a1 1 0 0 0 0-1.47Z"/>
         </symbol>
@@ -275,7 +275,14 @@
             <div class="category-carousel swiper">
               <div class="swiper-wrapper">
                 <% categories.forEach(category => { %>
-                  <a href="index.html" class="nav-link category-item swiper-slide">
+                  <a href="/category/<%= category.categoryName %>" class="nav-link category-item swiper-slide">
+                    
+                    <% const isOffer = categoryoff.find(item => item.applicableFor.toString() === category._id.toString()) %>
+
+                    <% if(isOffer) { %>
+                      <span class="offprice"><%= isOffer.type === 'fixed' ? '₹' : '' %><%= isOffer.offValue %><%= isOffer.type === 'percentage' ? '%' : '' %></span>
+                    <% } %>
+
                     <!-- Add image tag  -->
                     <!-- <img src="<%= category.imageUrl %>" alt="<%= category.categoryName %> Thumbnail"> -->
                     <h3 class="category-title"><%= category.categoryName %></h3>
@@ -329,8 +336,11 @@
                         <% products.forEach(product => { %>
                             <div class="col">
                                 <div class="product-item">
-                                    <span class="badge bg-success position-absolute m-3">-30%</span>
-                                    <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
+                                  <% const asOffer = offProducts.find(item => item.applicableFor.toString() === product._id.toString() ) %>
+                                  <% if(asOffer){ %>
+                                    <span class="badge bg-success position-absolute m-3"><%= asOffer.type === 'fixed' ? '₹' : '' %><%= asOffer.offValue %><%= asOffer.type === 'percentage' ? '%' : '' %></span>
+                                  <% } %>
+                                    <a data-productId="<%= product._id %>" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
                                     <figure>
                                         <a href="/product-details/<%= product._id %>" title="<%= product.productName %>">
                                           <img src="<%= product.images[0] %>" alt="<%= product.productName %>" class="tab-image <%= product.quantity <= 0 ? 'out-of-stock' : '' %>">
@@ -341,12 +351,34 @@
                                         <svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg>
                                         <%= (Math.random() * 4 + 1).toFixed(1) %> 
                                     </span>
-                                    <span class="price">₹<%= product.price.toFixed(2) %></span>
+                                    <% if(asOffer) { %>
+                                      <% if(asOffer.type === 'fixed') { %>
+                                      <span class="price">₹<%= (product.price - asOffer.offValue).toFixed() %></span>
+                                      <span class="price-off">₹<%= product.price.toFixed(2)  %></span>
+                                      <% } else { %>
+                                        <% const offprice = (asOffer.offValue / product.price) * 100 %>
+                                      <span class="price">₹<%= (product.price - offprice).toFixed(2) %></span>
+                                      <span class="price-off">₹<%= product.price.toFixed(2)  %></span>
+                                      <% } %>
+                                    <% } else { %>
+                                      <span class="price">₹<%= product.price.toFixed(2) %></span>
+                                    <% } %>
                                 </div>
                             </div>
                         <% }) %>
                     </div>
                 </div>
+
+                <style>
+                  .price-off{
+                    display: block;
+                    width: 100%;
+                    line-height: 30px;
+                    text-transform: capitalize;
+                    color: #8c8c8c;
+                    text-decoration-line: line-through;
+                }
+                </style>
             
                 <!-- Soft drinks  -->
                 <div class="tab-pane fade" id="nav-softdrinks" role="tabpanel" aria-labelledby="nav-softdrinks-tab">
@@ -355,7 +387,7 @@
                           <div class="col">
                             <div class="product-item">
                                 <span class="badge bg-success position-absolute m-3">-30%</span>
-                                <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
+                                <a data-productId="<%= product._id %>" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
                                 <figure>
                                     <a href="/product-details/<%= product._id %>" title="<%= product.productName %>">
                                         <img src="<%= product.images[0] %>" alt="<%= product.productName %>" class="tab-image <%= product.quantity <= 0 ? 'out-of-stock' : '' %>">
@@ -380,7 +412,7 @@
                           <div class="col">
                             <div class="product-item">
                                 <span class="badge bg-success position-absolute m-3">-30%</span>
-                                <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
+                                <a data-productId="<%= product._id %>"  class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"><%= product._id %></use></svg></a>
                                 <figure>
                                     <a href="/product-details/<%= product._id %>" title="<%= product.productName %>">
                                         <img src="<%= product.images[0] %>" alt="<%= product.productName %>" class="tab-image <%= product.quantity <= 0 ? 'out-of-stock' : '' %>">
@@ -552,6 +584,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
     <script src="/script/user/home.js/plugins.js"></script>
     <script src="/script/user/home.js/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 
 
@@ -598,6 +632,34 @@
             });
         }
     });
+
+
+
+    document.querySelectorAll('.btn-wishlist').forEach(function (item){
+      item.addEventListener('click',function (item) {
+        const productId = this.getAttribute('data-productId')
+
+        axios.post('/add-to-wishlist',{productId})
+        .then(res => {
+          swal.fire({
+            titele:'success',
+            text: res.data.message ||'Added to wishlist',
+            icon:'success',
+            confirmButtonText:'Ok'
+          })
+        
+        })
+        .catch(error => {
+          swal.fire({
+            titele:'Failed',
+            text: error.response.data.message ||'Failed to add to wishlist',
+            icon:'info',
+            confirmButtonText:'Ok'
+          })
+        })
+        
+      })
+    })
 
     </script>
   </body>

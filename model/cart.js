@@ -15,6 +15,10 @@ const cartSchema = new Schema({
         totalPrice:{
             type: Number,
             default :0
+        },
+        price:{
+            type:Number,
+            required:true
         }
     }],
     userId: {

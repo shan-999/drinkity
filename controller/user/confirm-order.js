@@ -4,6 +4,9 @@ const orderSchema = require('../../model/order');
 const category = require('../../model/category');
 const cartSchema = require('../../model/cart')
 const addressSchema = require('../../model/address')
+const couponSchema = require('../../model/coupon')
+const offerSchema = require('../../model/offers')
+const mongoose = require('mongoose')
 
 
 const crypto = require('crypto');
@@ -22,6 +25,10 @@ const checkout = async (req, res) => {
         const cart = await cartSchema.findOne({ userId }).populate('items.productId'); 
         const address = await addressSchema.findOne({ userId });
         const addresses = await addressSchema.find({ userId }).lean();
+        const coupons = await couponSchema.find({status:'Valied'})
+
+        const couponDiscount = req.session.couponDiscount
+        
 
         if(!cart){
             return res.redirect('/cart')
@@ -36,7 +43,6 @@ const checkout = async (req, res) => {
                 exceedsItems.push(product.productName)
             }
         })
-        console.log("exceed items:"+exceedsItems);
         
 
         if (hasExcessQuantity) {
@@ -59,7 +65,9 @@ const checkout = async (req, res) => {
             shippingFee,
             discount,
             totalPrice,
-            totalProductPrice
+            totalProductPrice,
+            coupons,
+            couponDiscount
         });
     } catch (error) {
         console.error(`errore in checkout ${error}`);
@@ -91,14 +99,12 @@ const selectedAddress = async (req,res) => {
 
 const confirmOrder = async (req, res) => {
     try {
-        console.log('some call');
         
         const userId = req.session.userId;
         if (!userId) {
             return res.status(401).json({ message: 'User not authenticated' });
         }
-        const {address,products,paymentMethod,totalPrice} = req.body
-        
+        const {address,products,paymentMethod,totalPrice,coupenApplied,discountPrice} = req.body
         
         const productId = products.map(product => product.productId)
         
@@ -137,6 +143,33 @@ const confirmOrder = async (req, res) => {
         }else{
             orderAddress = address
         }
+        console.log('ii');
+
+        // if(!coupenApplied){
+        //     coupenApplied = false
+        // }
+
+        const prouductIds = products.map(item => new mongoose.Types.ObjectId(item.productId))
+        const offers = await offerSchema.find({
+            applicableFor:{$in:prouductIds}
+        })
+        
+        let totalOfferPrice = 0
+       if(offers){
+            for (const item of offers) {
+                if (item.type === 'fixed') {
+                    totalOfferPrice += item.offValue
+                } else {
+                    const product = await productsSchema.findById(item.applicableFor);
+                    const offval = (product.price * item.offValue) / 100; 
+                    totalOfferPrice += offval
+                }
+            }
+
+           
+``
+       }
+
         
        
         const user = await users.findById(req.session.userId)
@@ -164,10 +197,14 @@ const confirmOrder = async (req, res) => {
             Totalprice: totalPrice,
             paymentMethourd: paymentMethod,
             orderDate: new Date(),
-            status: 'Pending'
+            status: 'Pending',
+            coupenApplied:{applied:coupenApplied,discount:discountPrice},
+            totalOfferPrice
         });
 
         await newOrder.save();
+
+        req.session.couponDiscount = null
 
      
         for (let item of products) {
@@ -194,6 +231,12 @@ const confirmOrder = async (req, res) => {
 
 
 
+async function bestOffer() {
+    
+}
+
+
+
 
 const loadOrderConfirmed = async (req, res) => {
     try {
@@ -216,6 +259,7 @@ const loadOrderConfirmed = async (req, res) => {
 // for razorpay
 
 const Razorpay = require("razorpay");
+
 
 
 const razorpay = new Razorpay({
@@ -250,18 +294,26 @@ const verifyPayment = async (req,res) => {
         const hmac = crypto.createHmac('sha256', "S5Ew9Qju67kwU7vzwhhoUklL");
         hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
         const generatedSignature = hmac.digest('hex');
+
+        console.log('ys');
+        
         
         if (generatedSignature === razorpay_signature) {
             console.log(`verification success : generatedsig ${generatedSignature},  razorpay_signature ${razorpay_signature}`);
             
             res.send({success: true, status: 'Payment verified' });
+            console.log('yes here');
+            
         } else {
             console.log(`verification faild : generatedsig ${generatedSignature},  razorpay_signature ${razorpay_signature}`);
             
             res.status(400).send({success: false, status: 'Payment verification failed' });
+            console.log('no here');
+
         }
     } catch (error) {
         console.log(`error from verify payment ${error}`);
+        res.send('yes get it')
     }
 }
 

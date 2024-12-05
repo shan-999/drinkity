@@ -20,260 +20,10 @@
         rel="stylesheet">
     <link rel="stylesheet" href="/style/user/landig-header.css">
     <link rel="stylesheet" href="/style/user/cart.css">
+    <link rel="stylesheet" href="/style/user/checkout.css">
 </head>
 
 <body>
-    <style>
-        :root {
-
-            --color-primary: #fc8080;
-            --font-family-base: Poppins, sans-serif;
-            --font-size-h1: 1.25rem;
-            --font-size-h2: 1rem;
-        }
-
-        * {
-            box-sizing: inherit;
-        }
-
-        html {
-            box-sizing: border-box;
-        }
-
-        body {
-            background-color: var(--color-background);
-            display: grid;
-            font-family: var(--font-family-base);
-            line-height: 1.5;
-            margin: 0;
-            min-block-size: 100vh;
-        }
-
-        address {
-            font-style: normal;
-        }
-
-        button {
-            border: 0;
-            color: inherit;
-            cursor: pointer;
-            font: inherit;
-        }
-
-        fieldset {
-            border: 0;
-            margin: 0;
-            padding: 0;
-        }
-
-        h1 {
-            font-size: var(--font-size-h1);
-            line-height: 1.2;
-            margin-block: 0 1.5em;
-        }
-
-        h2 {
-            font-size: var(--font-size-h2);
-            line-height: 1.2;
-            margin-block: 0 0.5em;
-        }
-
-        legend {
-            font-weight: 600;
-            margin-block-end: 0.5em;
-            padding: 0;
-        }
-
-        input {
-            border: 0;
-            color: inherit;
-            font: inherit;
-        }
-
-        input[type="radio"] {
-            accent-color: var(--color-primary);
-        }
-
-        table {
-            border-collapse: collapse;
-            inline-size: 100%;
-        }
-
-        tbody {
-            color: #b4b4b4;
-        }
-
-        td {
-            padding-block: 0.125em;
-        }
-
-        tfoot {
-            border-top: 1px solid #b4b4b4;
-            font-weight: 600;
-        }
-
-        .align {
-            display: grid;
-            place-items: center;
-        }
-
-        .button {
-            align-items: center;
-            background-color: var(--color-primary);
-            border-radius: 999em;
-            color: #fff;
-            display: flex;
-            gap: 0.5em;
-            justify-content: center;
-            padding-block: 0.75em;
-            padding-inline: 1em;
-            transition: 0.3s;
-        }
-
-        .button:focus,
-        .button:hover {
-            background-color: #e96363;
-        }
-
-        .button--full {
-            inline-size: 100%;
-        }
-
-        .card {
-            border-radius: 1em;
-            background-color: #818181;
-            color: #fff;
-            padding: 1em;
-        }
-
-        .form {
-            display: grid;
-            gap: 2em;
-        }
-
-        .form__radios {
-            display: grid;
-            gap: 1em;
-        }
-
-        .form__radio {
-            align-items: center;
-            background-color: #fefdfe;
-            border-radius: 1em;
-            box-shadow: 0 0 1em rgba(0, 0, 0, 0.0625);
-            display: flex;
-            padding: 1em;
-        }
-
-        .form__radio label {
-            align-items: center;
-            display: flex;
-            flex: 1;
-            gap: 1em;
-        }
-
-        .header {
-            display: flex;
-            justify-content: center;
-            padding-block: 0.5em;
-            padding-inline: 1em;
-        }
-
-        .icon {
-            block-size: 1em;
-            display: inline-block;
-            fill: currentColor;
-            inline-size: 1em;
-            vertical-align: middle;
-        }
-
-        .iphone {
-            background-color: #fbf6f7;
-            background-image: linear-gradient(to bottom, #fbf6f7, #fff);
-            border-radius: 2em;
-            block-size: auto;
-            box-shadow: 0 0 1em rgba(0, 0, 0, 0.0625);
-            inline-size: 800px;
-            padding: 2em;
-        }
-
-        .product-image {
-            block-size: 60px;
-            inline-size: 60px;
-            border-radius: 0.5em;
-            object-fit: cover;
-        }
-
-        th {
-            text-align: left;
-        }
-
-        /* Basic styling for the dropdown box */
-        #options-dropdown {
-            width: 455px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-shadow: 0 0 1em rgba(0, 0, 0, 0.0625);
-            font-size: 16px;
-            background-color: #fff;
-            appearance: none;
-            /* Hides the default arrow */
-            cursor: pointer;
-        }
-
-        /* Optional: Add custom arrow */
-        #options-dropdown {
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="%23aaa" d="M7 10l5 5 5-5z"/></svg>');
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            background-size: 16px;
-        }
-
-        /* Add hover effect */
-        #options-dropdown:hover {
-            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Style the dropdown items */
-        #options-dropdown option {
-            padding: 8px;
-        }
-
-
-        table {
-            width: 100%;
-            /* Adjust to your layout */
-            border-collapse: collapse;
-            /* Ensure borders are collapsed */
-            margin: 20px 0;
-            /* Add some spacing above and below the table */
-        }
-
-        th,
-        td {
-            border: 2px solid #e9e9e9;
-            padding: 10px;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        .product-image {
-            max-width: 100px;
-            height: auto;
-        }
-
-        .main-div {
-            width: 100%;
-            place-items: center;
-        }
-    </style>
 
     <header> <%- include('partial/head') %></header>
 
@@ -392,7 +142,7 @@
                                             <input type="hidden" name="products[<%= index %>][productName]" value="<%= item.productId.productName %>">
                                         </td>
                                         <td>
-                                            ₹<%= item.productId.price.toFixed(2) %>
+                                            ₹<%= item.price.toFixed(2) %>
                                             <input type="hidden" name="products[<%= index %>][price]" value="<%= item.productId.price.toFixed(2) %>">
                                         </td>
                                         <td>
@@ -400,7 +150,7 @@
                                             <input type="hidden" name="products[<%= index %>][quantity]" value="<%= item.quantity %>">
                                         </td>
                                         <td>
-                                            ₹<%= (item.productId.price * item.quantity).toFixed(2) %>
+                                            ₹<%= (item.price * item.quantity).toFixed(2) %>
                                             <input type="hidden" name="products[<%= index %>][productTotalPrice]" value="<%= (item.productId.price * item.quantity).toFixed(2) %>">
                                         </td>
                                         <input type="hidden" name="products[<%= index %>][productId]" value="<%= item.productId._id %>">
@@ -415,6 +165,40 @@
                     </table>
                 </div>
                 
+                <div style="display: <%= couponDiscount ? 'none' : 'flex' %>;" class="subscription-box" id="coupon-pending">
+                    <div class="subscription-content">
+                        <h2>Get The Latest & Best Coupon Here</h2>
+                        <p>Enter your coupon code below to avail discounts or click to see available coupons for exclusive offers.</p>
+                        <p><a id="showCoupons"  class="avai-copen" >show available copens</a></p>
+                        <div class="form-container">
+                            <input type="code" id="code" placeholder="Enter coupon code" class="email-input" />
+                            <button class="subscribe-button" type="button" id="apply-btn">Apply</button>
+                        </div>
+                        <span style="color: red;" id="coupon-error"></span>
+                    </div>
+                    <div class="subscription-image">
+                        <img width="280px" height="200px" src="/images/coupon-imag.png" alt="Coupon Offer" />
+                    </div>
+                </div>
+
+                <div style="display: <%= couponDiscount ? 'flex' : 'none' %>;" id="coupen-success" class="subscription-box">
+                    <div class="subscription-content">
+                        <ul class="coupon-list">
+                            <li>
+                                <div class="coupon-card">
+                                    <div class="coupon-code">
+                                        <p style="color: #4caf50;">Coupon Code: code applied successfully! you saved <strong id="coupon-discount"></strong> </span></p>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                        <button id="remove-coupon" type="button" class="remove-btn">remove</button>
+                    </div>
+                    <div class="subscription-image">
+                        <img width="280px" height="200px" src="/images/coupon-imag.png" alt="Coupon Offer" />
+                    </div>
+                </div>
+                
 
                 <fieldset>
                     <legend>Payment Method</legend>
@@ -427,7 +211,7 @@
                                 Razorpay</label>
                             <input id="Razorpay" name="paymentMethod" type="radio" value="Razorpay" checked/>
                         </div>
-                        <div class="form__radio">
+                        <div class="form__radio cod-<%= totalProductPrice > 1000 ? 'none' : 'block' %>" >
                             <label for="cod">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="20" height="20">
                                     <rect x="8" y="16" width="48" height="32" rx="4" fill="#4CAF50" />
@@ -441,33 +225,49 @@
                     </div>
                 </fieldset>
 
+
+                
+                
+
                 <div>
                     <h2>Shopping Bill</h2>
                     <table>
                         <tbody>
                             <tr>
                                 <td>Shipping fee</td>
-                                <td align="right">₹<%= shippingFee.toFixed(2) %>
+                                <td id="shippingFee" align="right">₹<%= shippingFee.toFixed(2) %>
                                 </td>
                             </tr>
                             <tr>
-                                <td>Discount</td>
-                                <td align="right">-₹<%= discount.toFixed(2) %>
-                                </td>
+                                <% if(couponDiscount) { %>
+                                    <td>Discount</td>
+                                    <td id="discount" align="right">-₹<%= couponDiscount.toFixed(2) %></td>
+                                <% } else { %>
+                                    <td>Discount</td>
+                                    <td id="discount" align="right">-0 %></td>
+                                <% } %>
                             </tr>
                             <tr>
                                 <td>Price Total</td>
-                                <td align="right">
+                                <td id="totol-price"  align="right">
                                     ₹<%= totalProductPrice.toFixed(2) %>
                                 </td>
                             </tr>
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td>Total</td>
-                                <td align="right">₹<%= totalPrice.toFixed(2) %>
-                                <input type="hidden" name="totalPrice" id="totalPrice" value="<%= totalPrice.toFixed(2) %>">
-                                </td>
+                                
+                                <% if(couponDiscount) { %>
+                                    <td>Total</td>
+                                    <input type="hidden" name="totalPrice" id="totalPrice" value="<%= totalPrice.toFixed(2) %>">
+                                    <td id="total" align="right">₹<%= (totalPrice - couponDiscount ).toFixed(2) %>
+                                    </td>
+                                <% } else { %>
+                                    <td>Total</td>
+                                    <input type="hidden" name="totalPrice" id="totalPrice" value="<%= totalPrice.toFixed(2) %>">
+                                    <td id="total" align="right">₹<%= totalPrice.toFixed(2) %>
+                                    </td>
+                                <% } %>
                             </tr>
                         </tfoot>
                     </table>
@@ -483,6 +283,34 @@
         </div>
     </div>
 
+
+    <div id="modalOverlay" class="modal-overlay"></div>
+    <div id="couponsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeModal">&times;</span>
+            <h3>Best Offers for You</h3>
+            <% coupons.forEach(coupon => { %>
+            <ul class="coupon-list">
+                <li>
+                    <div class="coupon-card">
+                        <div class="coupon-header">SAVE<%= coupon.value %><%= coupon.type === 'fixed' ? '' : '%' %></div>
+                        <div class="coupon-details">Get <%= coupon.type === 'fixed' ? '₹' : '' %><%= coupon.value %><%= coupon.type === 'fixed' ? '' : '%' %> off on orders above ₹<%= coupon.minValue %>.</div>
+                        <div class="coupon-code">
+                            <p>Coupon Code: <span class="coupon-code-span"><%= coupon.code %></span></p>
+                            <button class="copy-btn" onclick="copyCode('<%= coupon.code %>',this)">Copy</button>
+                            <span class="copy-message"></span>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <% }) %>
+        </div>
+    </div>
+
+
+    
+    
+    
     <footer><%- include('partial/footer') %></footer>
 
 
@@ -504,223 +332,10 @@
 
     <!-- Razorpay pay script -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="/script/user/checkout.js"></script>
 
-
-    <script>
-        const addressDropdown = document.getElementById('options-dropdown');
-        const addressDisplay = document.getElementById('address-display');
-
-        addressDropdown.addEventListener('change', async (event) => {
-            const selectedAddressId = event.target.value;
-
-            try {
-                const response = await axios.get(`/select-addesses/${selectedAddressId}`);
-                const address = response.data;
-
-                addressDisplay.innerHTML = `
-                    <address>
-                        ${address.fullName}<br />
-                        ${address.address},<br />
-                        ${address.city}, ${address.state}, ${address.PINCode},<br />
-                        ${address.PINCode}, ${address.landmark}
-                    </address>
-                `;
-            } catch (error) {
-                console.error('Error fetching address:', error);
-            }
-        });
-
-
-        
-            document.getElementById('order-form').addEventListener('submit', async  (event) => {
-            event.preventDefault();
-
-
-            const selectAddress = document.getElementById('options-dropdown').value
-
-            if (selectAddress === 'select address') {
-                Swal.fire('Error', 'Please select a valid address or choose the Custom option.', 'error');
-                return; 
-            }
-            
-            let addresData;
-
-            if (selectAddress === 'custom') {
-                const fullName = document.getElementById('fullName').value.trim();
-                const address = document.getElementById('coustome-address').value.trim();
-                const email = document.getElementById('email').value.trim();
-                const mobileNumber = document.getElementById('mobile').value.trim();
-                const city = document.getElementById('city').value.trim();
-                const postcode = document.getElementById('postcode').value.trim();
-                const state = document.getElementById('state').value.trim();
-                const landmark = document.getElementById('landmark').value.trim();
-
-                if (!fullName || !address || !email || !mobileNumber || !city || !postcode || !state || !landmark) {
-                    Swal.fire('Error', 'Please fill in all required fields for the custom address.', 'error');
-                    return; 
-                }
-
-                addresData = {
-                    custom: true,
-                    fullName: fullName,
-                    address: address,
-                    email: email,
-                    phonNumber: mobileNumber,
-                    city: city,
-                    PINCode: postcode,
-                    state: state,
-                    landmark: landmark
-                };
-            } else {
-                addresData = {
-                    custom: false,
-                    id: selectAddress
-                };
-            }
-            
-            const products = Array.from(document.querySelectorAll('input[name^="products"]')).reduce((acc, input) => {
-                const matches = input.name.match(/^products\[(\d+)]\[(\w+)]$/);
-                if (!matches) return acc;
-
-                const [, index, field] = matches;
-                acc[index] = acc[index] || {};
-                acc[index][field] = input.value || ''; 
-                return acc;
-            }, []);
-
-
-
-            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value ;
-            
-            
-            
-
-            const totalPrice = document.getElementById('totalPrice').value ;
-
-            if (!addresData || !paymentMethod || !totalPrice || products.some(product => !product.productName || !product.price || !product.quantity || !product.productTotalPrice)) {
-                Swal.fire('Error', 'Please fill in all the required fields.', 'error');
-                return;
-            }
-
-
-            const formData = {
-                address: addresData,
-                products, 
-                paymentMethod,
-                totalPrice
-            };
-
-
-
-
-            try {
-                if (paymentMethod === 'Razorpay') {
-                try {
-                    const response = await axios.post('/create-razourpay-order', { amount: Number(totalPrice) * 100 });
-                    const order = response.data;
-
-                    const options = {
-                    key: "rzp_test_pp5Ul8PxlHsCpL",
-                    amount: order.amount,
-                    currency: "INR",
-                    name: "Your Shop",
-                    description: "Purchase Description",
-                    order_id: order.id,
-                    handler: async (response) => {
-                        try {
-                        const verifyResponse = await axios.post('/verify-payment', response)
-                            .then(res => {
-                                
-                                if(res.data.success){
-                                    
-                                    axios.post('/confirm-order', formData, {
-                                    headers: {
-                                        'Content-Type': 'application/json'
-                                    }
-                                    }).then((response)=>{
-                                        console.log(response);
-                                        
-                                        const data = response.data;
-                                        console.log(data);
-                                        
-
-                                    if (data.showAlert) {
-                                    Swal.fire('Error', data.message, 'error');
-                                    } else if (data.redirect) {
-                                    window.location.href = data.redirect;
-                                    } else {
-                                    Swal.fire('Success', data.message, 'success');
-                                    }
-
-                                    })
-
-                                    
-
-                                }
-                            })
-                        } catch (error) {
-                        console.error('Payment verification failed:', error);
-                        alert('Payment verification failed.');
-                        }
-                    }
-                    };
-
-                    const rzp = new Razorpay(options);
-                    rzp.open();
-
-
-                } catch (error) {
-                    console.error('Error creating Razorpay order:', error);
-                    Swal.fire('Error', 'Failed to initiate Razorpay payment.', 'error');
-                }
-                } else {
-                try {
-                    const response = await axios.post('/confirm-order', formData, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                    });
-
-                    const data = response.data;
-
-                    if (data.showAlert) {
-                    Swal.fire('Error', data.message, 'error');
-                    } else if (data.redirect) {
-                    window.location.href = data.redirect;
-                    } else {
-                    Swal.fire('Success', data.message, 'success');
-                    }
-                } catch (error) {
-                    console.error('Error confirming order:', error);
-                    Swal.fire('Error', 'Something went wrong while confirming the order.', 'error');
-                }
-                }
-
-
-                
-            } catch (error) {
-                console.log(error.message);
-                Swal.fire('Error', error.response.data.message, 'error');
-                console.error('Error:', error);
-            }
-        });
-
-
-
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('options-dropdown').addEventListener('change', function () {
-                const customAddressForm = document.getElementById('custom-address-form');
-                
-                if (this.value === 'custom') {
-                    customAddressForm.style.display = 'block';
-                } else {
-                    customAddressForm.style.display = 'none';
-                }
-            });
-        });
 
     
-    </script>
 
 
 </body>

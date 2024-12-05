@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="/style/admin/sidebar.css">
+  <link rel="stylesheet" href="/style/admin/header.css">
+  <link rel="stylesheet" href="/style/admin/offer.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+<body>
+    
+
+  <div class="admin-layout">
+    <%- include('partial/sidebar') %> 
+    
+    <div class="main-content">
+      <%- include('partial/header') %> 
+      
+      <div class="page-content">
+        <h1>offers</h1>
+        <button id="add-offer" onclick="showModal()" class="add-btn">Add</button>
+        <table id="table" class="items-table">
+            <thead>
+                <tr>
+                    <th>NO</th>
+                    <th>Offer Name</th>
+                    <th>Type</th>
+                    <th>Max Discount</th>
+                    <th>Offer Value</th>
+                    <th>Valied To</th>
+                    <th>Offer Type</th>
+                    <th>Type Name</th>
+                    <th>Staus</th>
+                    <th>ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% offers.forEach((item, index) => { %>
+                <tr>
+                    <td><%= index + 1 %></td>
+                    <td><%= item.offName %></td>
+                    <td><%= item.type %></td>
+                    <td><%= item.maxDiscount %></td>
+                    <td><%= item.offValue %></td>
+                    <td><%= item.valiedTo %></td>
+                    <td><%= item.offType %></td>
+                    <td id="applicableFor-<%= item._id %>"><%= applicableFor[index] %></td>
+                    <td class="Staus-<%= item.isActive %>"><%= item.isActive %></td>
+                    <td>
+                        <button class="action-btn edit-btn" onclick="openEditModal('<%= item._id %>', '<%= applicableFor[index] %>')">✏️</button>
+                        <button class="action-btn delete-btn" onclick="deleteOffer('<%= item._id %>')">🗑️</button>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+            
+        </table>
+        <div class="pagination">
+            <% if (page > 1) { %>
+                <a href="?page= <%= page - 1 %>" class="pagination-button">Previous</a>
+            <% } %>
+            <% for(let i = 1;i <= toatlPages; i++) { %>
+                <a href="?page= <%= i %>" class="pagination-button <%= page === i ? 'active-page' : '' %>"><%= i %></a>
+            <% } %>
+            <% if (page < toatlPages) { %>
+                <a href="?page= <%= page + 1 %>" class="pagination-button">Next</a>
+            <% } %>
+        </div>
+    </div>
+    <style>
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .pagination-button {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            color: #333;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .pagination-button:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .active-page {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+
+<!-- modal -->
+<div id="offerModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h2>Add Offer</h2>
+        <form id="offerForm" method="post" action="/admin/add-offer">
+            <div class="form-group">
+                <label for="deal">Offer Name</label>
+                <input type="text" name="offName"  placeholder="Enter the offer name">
+            </div>
+            <div class="form-group">
+                <label for="type">Type</label>
+                <select id="type" name="type">
+                    <option value="" disabled selected>Select a type</option>
+                    <option value="fixed">Fixed</option>
+                    <option value="percentage">Percentage</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="productId">Max Discount</label>
+                <input type="number" name="maxDiscount" id="max-discount" placeholder="Enter max discount">
+            </div>
+            <div class="form-group">
+                <label for="endDate">End Date</label>
+                <input type="date" name="validTo" id="endDate">
+            </div>
+            <div class="form-group">
+                <label for="discount">offer value</label>
+                <input type="number" name="offValue" id="offer-value" placeholder="Enter offer value">
+            </div>
+            <div class="form-group">
+                <label for="off-type">Offer type</label>
+                <select id="off-type" name="offType">
+                    <option value="" disabled selected>Select a offer type</option>
+                    <option value="category">category</option>
+                    <option value="product">product</option>
+                </select>
+            </div>
+
+
+            <div class="form-group" id="category-select" style="display: none;">
+                <label for="off-type">category Name</label>
+                <select id="category" name="categoryId">
+                    <option value="" disabled selected>Select a category</option>
+                    <% categories.forEach(item => { %>
+                        <option value="<%= item._id %>"><%= item.categoryName %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="form-group" id="proudct-select" style="display: none;">
+                <label for="off-type">Proudct Name</label>
+                <select id="category" name="productId">
+                    <option value="" disabled selected>Select a product</option>
+                    <% products.forEach(item => { %>
+                    <option value="<%= item._id %>"><%= item.productName %></option>
+                    <% }) %>
+                </select>
+            </div>
+            
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
+</div>
+
+
+
+<!-- edit modal -->
+<div id="offerEditModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeEditModal()">&times;</span>
+        <h2>edit Offer</h2>
+        <form id="editOfferForm" method="post" action="">
+            <div class="form-group">
+                <label for="deal">Offer Name</label>
+                <input type="text" name="offName" id="off-name-edit"  placeholder="Enter the offer name">
+            </div>
+            <div class="form-group">
+                <label for="type">Type</label>
+                <select id="type-edit" name="type">
+                    <option value="" disabled selected>Select a type</option>
+                    <option value="fixed">Fixed</option>
+                    <option value="percentage">Percentage</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="productId">Max Discount</label>
+                <input type="number" name="maxDiscount" id="max-discount-edit" placeholder="Enter max discount">
+            </div>
+            <div class="form-group">
+                <label for="endDate">End Date</label>
+                <input type="date" name="validTo" id="End-date-edit">
+            </div>
+            <div class="form-group">
+                <label for="discount">offer value</label>
+                <input type="number" name="offValue" id="offer-value-edit" placeholder="Enter offer value">
+            </div>
+            <div class="form-group">
+                <label for="off-type">Offer type</label>
+                <select id="off-type-edit" disabled name="offType">
+                    <option value="" disabled selected>Select a offer type</option>
+                    <option value="category">category</option>
+                    <option value="product">product</option>
+                </select>
+            </div>
+
+
+            <div class="form-group" id="category-select-edit" style="display: none;">
+                <label for="off-type">category Name</label>
+                <select id="category-edit" name="categoryId">
+                    <option value="" id="category-edit1" disabled selected>Select a category</option>
+                    <% categories.forEach(item => { %>
+                        <option value="<%= item._id %>"><%= item.categoryName %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="form-group" id="proudct-select-edit" style="display: none;">
+                <label for="off-type">Proudct Name</label>
+                <select id="product-edit" name="productId">
+                    <option value="" id="product-edit1" disabled selected >Select a product</option>
+                    <% products.forEach(item => { %>
+                    <option value="<%= item._id %>"><%= item.productName %></option>
+                    <% }) %>
+                </select>
+            </div>
+            
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
+</div>
+
+
+
+    </div>
+  </div>
+  <script src="/script/admin/header.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+  <script>
+    function showModal() {
+        document.getElementById("offerModal").style.display = "block";
+    }
+
+    function closeModal() {
+        document.getElementById("offerModal").style.display = "none";
+    }
+
+    window.onclick = function (event) {
+        const modal = document.getElementById("offerModal");
+        if (event.target === modal) {
+            closeModal();
+        }
+    };
+
+
+    function closeEditModal(){
+        document.getElementById("offerEditModal").style.display = "none"
+    }
+
+    window.onclick = function (event) {
+        const modal = document.getElementById("offerEditModal")
+        if(event.target === modal){
+            closeEditModal()
+        }
+    }
+    
+    document.getElementById('off-type').addEventListener('change' , (event) => {
+        const offtype = event.target.value 
+        if(offtype === 'category'){
+            document.getElementById('category-select').style.display = 'flex'
+            document.getElementById('proudct-select').style.display = 'none'
+        }else if(offtype === 'product'){
+            document.getElementById('proudct-select').style.display = 'flex'
+            document.getElementById('category-select').style.display = 'none'
+        }     
+    })
+
+
+    // document.getElementById('off-type-edit').addEventListener('change', () => {
+    //     const offtype = event.target.value 
+    //     if(offtype === 'category'){
+    //         document.getElementById('category-select-edit').style.display = 'flex'
+    //         document.getElementById('proudct-select-edit').style.display = 'none'
+    //     }else if(offtype === 'product'){
+    //         document.getElementById('proudct-select-edit').style.display = 'flex'
+    //         document.getElementById('category-select-edit').style.display = 'none'
+    //     }
+    // })
+
+    async function openEditModal(couponId , applicableFor){
+        document.getElementById("offerEditModal").style.display = "block"
+        document.getElementById('off-type-edit')
+
+        axios.get(`/admin/edit-offer/${couponId}`)
+        .then(res => {
+            if(res.data.success){
+                const offer = res.data.offer
+                console.log(offer);
+                
+                document.getElementById('off-name-edit').value = offer.offName
+                document.getElementById('type-edit').value = offer.type
+                document.getElementById('max-discount-edit').value = offer.maxDiscount
+                document.getElementById('End-date-edit').value = new Date(offer.valiedTo).toISOString().split('T')[0]
+                document.getElementById('offer-value-edit').value = offer.offValue
+
+                let offtype = document.getElementById('off-type-edit')
+                offtype.value = offer.offType
+
+                
+
+                if(offtype.value === 'category'){
+                    document.getElementById('category-select-edit').style.display = 'flex'
+                    document.getElementById('proudct-select-edit').style.display = 'none'
+
+
+                    
+                    const categorySelect = document.getElementById('category-edit');
+                    [...categorySelect.options].forEach(option => {
+                        option.selected = option.text === applicableFor; 
+                    });
+                }else if(offtype.value === 'product'){
+                    document.getElementById('proudct-select-edit').style.display = 'flex'
+                    document.getElementById('category-select-edit').style.display = 'none'
+
+                    
+                    const productSelect = document.getElementById('product-edit');
+                    [...productSelect.options].forEach(option => {
+                        option.selected = option.text === applicableFor; 
+                    });
+                    console.log(productSelect);
+                    
+                }
+                
+
+                const form = document.querySelector('#editOfferForm')
+                
+                form.action = `/admin/edit-offer/${offer._id}`                
+
+            }
+            
+        })        
+    }
+
+    document.getElementById('table').rows[0].item
+
+
+    async function deleteOffer(offerId) {
+        Swal.fire({
+            title: 'Are you sure delete this offfer',
+            text: 'You won\'t be able to revert this!',
+            icon: 'warning',
+            showCancelButton:true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!'
+        })
+        .then(async (res) => {
+            if(res.isConfirmed){
+                await axios.delete('/admin/delete-offer',{data:{offerId}})
+                .then(response => {
+                    console.log(response);
+                    
+                    if(response.data.success){
+                        Swal.fire({
+                            title: 'Deleted success',
+                            text: response.data.message,
+                            icon: 'success',
+                            confirmButtonText: 'Ok',
+                        })
+                        .then(res => {
+                            location.reload()
+                        })
+                    }
+                })
+            }
+            
+        })        
+    }
+
+
+    
+  </script>
+</body>
+</html>

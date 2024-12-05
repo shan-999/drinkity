@@ -8,9 +8,7 @@ const loadLogin = async (req,res) => {
     res.render('admin/login',{msg:message})
 }
 
-const loadDashboard = async (req,res) => {
-    res.render('admin/dashboard')
-}
+
 
 const login = async (req,res) => {
     const {email,password} = req.body
@@ -49,6 +47,5 @@ const logout = (req, res) => {
 module.exports = {
     loadLogin,
     login,
-    loadDashboard,
     logout
 }

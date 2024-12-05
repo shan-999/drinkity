@@ -7,6 +7,10 @@ const categorySchema = new mongoose.Schema({
     listed:{
         type:Boolean,
         default:true
+    },
+    offer:{
+        offerApplied:{type:Boolean,default:false},
+        offerId:[{type: mongoose.Schema.Types.ObjectId, ref: 'offers'}]
     }
 })
 
