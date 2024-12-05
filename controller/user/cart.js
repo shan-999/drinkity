@@ -1,20 +1,20 @@
-const cartSchema = require('../../model/cart')
+    const cartSchema = require('../../model/cart')
 const productsSchema = require('../../model/products')
 const users = require('../../model/userModel')
 const category = require('../../model/category');
 const addressSchema = require('../../model/address')
 const orderSchema = require('../../model/order');
 const userModel = require('../../model/userModel');
+const wishlistSchema = require('../../model/wishlist')
+const couponSchema = require('../../model/coupon')
+const offerSchema = require('../../model/offers')
+const mongoose = require('mongoose');
 
 
 
-<<<<<<< HEAD
 
 
 
-
-=======
->>>>>>> fa130ed472eaafe5b602dbea4beeaf1885876b25
 const loadCart = async (req, res) => {
     const userId = req.session.userId;
     try {
@@ -22,11 +22,10 @@ const loadCart = async (req, res) => {
 
         const cart = await cartSchema.findOne({ userId }).populate('items.productId');
             
-        console.log(cart);
         const message = req.body.errorMessage || null
         
         if(!cart){
-            return res.render('user/cart', {categories, cart:null, message  })
+            return res.render('user/cart', {categories, cart:null, message})
         }
         res.render('user/cart', { categories, cart , message});
     } catch (error) {
@@ -40,7 +39,7 @@ const loadCart = async (req, res) => {
 
 
 const addToCart = async (req, res) => {
-    const {productId,quantity} = req.body
+    const {productId,quantity,price} = req.body
     const userId = req.session.userId
     try {
 
@@ -58,7 +57,7 @@ const addToCart = async (req, res) => {
         const product = await productsSchema.findById(productId);
         console.log(cart);
         
-        let amount = product.price * quantity
+        let amount = price * quantity
         const totalPrice = amount
         if(!cart){
             let cartTotalPrice = totalPrice
@@ -68,7 +67,7 @@ const addToCart = async (req, res) => {
 
             const newCart = new cartSchema({
                 userId,
-                items:[{ productId, quantity,totalPrice}],
+                items:[{ productId, quantity,totalPrice,price }],
                 cartTotalPrice
             })
             console.log(newCart);
@@ -95,6 +94,7 @@ const addToCart = async (req, res) => {
             }
 
             cart.items[itemIndex].quantity = newQuantity
+            cart.items[itemIndex].totalPrice = price * newQuantity
     
         }else{
 
@@ -106,7 +106,7 @@ const addToCart = async (req, res) => {
                 return res.status(404).json({success: false,message: 'Quantity exceed the quantity limit'})
             }
 
-            cart.items.push({productId,quantity,totalPrice})
+            cart.items.push({productId,quantity,totalPrice,price})
         }
 
         
@@ -150,7 +150,7 @@ const editCart = async (req, res) => {
 
     
     cartItem.quantity = quantity;
-    cartItem.totalPrice = product.price * quantity;
+    cartItem.totalPrice = cartItem.price * quantity;
 
    
     cart.cartTotalPrice = cart.items.reduce((sum, item) => sum + item.totalPrice, 0);
@@ -213,9 +213,197 @@ const removeItem = async (req,res) => {
 
 
 
+
+const addToWishList = async (req,res) => {
+    try {
+        const {productId} = req.body
+
+        const userId = req.session.userId
+        
+        
+        const wishlist = await wishlistSchema.findOne({userId:userId})
+        
+        
+        if(!wishlist ){
+            const newWishlist = new wishlistSchema({
+                userId,
+                products:[{productId}]
+            })
+            await newWishlist.save()
+
+            return res.status(200).json({success:true,message:'added success'})
+        }else{
+            const productIdObject = new mongoose.Types.ObjectId(productId)
+            
+            const exitstProduct = wishlist.products.some(id => id.productId.toString() === productId)
+
+            if(exitstProduct){
+                return res.status(400).json({success:false , message:'Product already added to wishlist'})
+            }
+            
+            
+            await wishlistSchema.findOneAndUpdate({userId:userId},
+                {$push:{products:{productId:productIdObject}}},
+                {upsert:true}
+            )
+
+            return res.status(200).json({success:true,message:'added success'})
+
+        }
+        
+    } catch (error) {
+        console.log(`error form add to wish list : ${error}`);
+        
+    }
+}
+
+
+
+
+const loadWishList = async (req,res) => {
+    try {
+        const userId = req.session.userId
+        
+        const categories = await category.find({ listed: true });
+        const wishlist = await wishlistSchema.findOne({userId:userId}).populate('products.productId').exec();
+        
+        
+        
+        const productIds = wishlist.products.map((product) => product.productId._id)
+        
+        const offProducts = await offerSchema.find(
+            {applicableFor:{$in:productIds}}
+        )
+
+        
+
+        res.render('user/wishlist',{wishlist,categories,offProducts})
+    } catch (error) {
+        console.log(`error form load cart : ${error}`);
+        
+    }
+}
+
+
+const removeWishListItem = async (req,res) => {
+    try {
+        const {productId} = req.body
+        const userId = req.session.userId
+
+        const wishlist = await wishlistSchema.findOneAndUpdate(
+            {userId},
+            {$pull: {products: { productId : productId }}},
+            {new:true}
+        )
+
+        res.status(200).json({success:true, wishlist})
+    } catch (error) {
+        console.log(`error form remove cart item : ${error}`);
+        
+    }
+}
+
+
+
+const applyCoupen = async (req,res) => {
+    try {
+        const {code,totalPrice,discount} = req.body
+        
+        const coupons = await couponSchema.find({})
+        
+        const macthedCoupon = coupons.find(item => item.code === code)
+
+        const dateNow = new Date()
+        const userId = req.session.userId
+        
+        
+        if(!macthedCoupon){
+            console.log('jek');
+            
+            return res.status(400).json({success:false, message:'Invalied coupon code'})
+        }
+        else if(macthedCoupon.validTo <= dateNow || macthedCoupon.usageLimit <= 0){
+            await couponSchema.findByIdAndUpdate(macthedCoupon._id,
+                {$set:{status:'Expired'}}
+            )
+
+            return res.status(400).json({success:true, message:'The coupon has expired or has reached its usage limit'})
+        }
+        else if(totalPrice < macthedCoupon.minValue){
+                return res.status(400).json({success:false, message:`Total price must be cover minimum value to apply the coupon.`})
+        }
+        else if(macthedCoupon.usedBy.length > 0){
+            const used = macthedCoupon.usedBy.some(item => item === userId.toString())
+            if(used){
+                return res.status(400).json({success:false, message:'this coupen you will alredy used'})
+            }
+        }
+
+        
+        if(macthedCoupon){
+            const couponDiscount = macthedCoupon.value
+            let totalDiscount = discount
+            
+            if(macthedCoupon.type === 'fixed'){
+                totalDiscount += couponDiscount
+            }else{
+                const discountPrice = (couponDiscount / 100) * totalPrice
+                totalDiscount += discountPrice              
+            }
+
+            req.session.couponDiscount = totalDiscount
+
+            res.status(200).json({success:true, totalDiscount})
+        }else {
+            res.status(400).json({success:false, message:'Invalied coupon code'})
+        }
+
+        
+        await couponSchema.findByIdAndUpdate(macthedCoupon._id,
+            {
+                $inc:{usageLimit:-1},
+                $push:{usedBy:userId}
+            }
+        )
+        
+    } catch (error) {
+        console.log(`error form apply coupen ${error}`);
+    }
+}
+
+
+
+const removeCoupen = async (req,res) => {
+    try {
+        const {code} = req.body 
+
+        const userId = req.session.userId
+        
+
+        const coupon = await couponSchema.findOneAndUpdate({code},
+            {$pull:{usedBy:userId.toString()}},
+            {new:true}
+        )
+        
+
+        req.session.couponDiscount = null
+
+        res.status(200).json({success:true})
+    } catch (error) {
+        console.log(`error form remove coupon :${error}`);
+        
+    }
+}
+
+
 module.exports = {
     loadCart,
     addToCart,
     editCart,
-    removeItem
+    removeItem,
+    addToWishList,
+    loadWishList,
+    removeWishListItem,
+    applyCoupen,
+    removeCoupen
 }

@@ -3,6 +3,9 @@ const orderSchema = require('../../model/order')
 const userSchema = require('../../model/userModel')
 const productsSchema = require('../../model/products');
 const order = require('../../model/order');
+const walletSchema = require('../../model/wallet');
+const wallet = require('../../model/wallet');
+const coupon = require('../../model/coupon');
 
 
 const loadAccountOrders = async (req, res) => {
@@ -43,14 +46,13 @@ const laodOrderDetais = async (req, res) => {
         
         const shippingFee = order.Totalprice > 500 ? 0 : 60
 
-<<<<<<< HEAD
         let estimatedTotal = Number(order.Totalprice) + shippingFee
 
         let subTotal = order.products.reduce((acc,item) => item.status === 'Cancelled' ? acc + 0 : acc + item.total ,0)
 
         const isCancelled = order.products.every(item => item.status === 'Cancelled')         
-        console.log(isCancelled);
 
+        
         if(isCancelled){
             estimatedTotal = order.products.reduce((acc,item) => acc + item.total ,0) + shippingFee
             subTotal = order.products.reduce((acc,item) => acc + item.total ,0)
@@ -66,16 +68,6 @@ const laodOrderDetais = async (req, res) => {
         }
         
 
-=======
-        const estimatedTotal = Number(order.Totalprice) + shippingFee
-
-        const subTotal = order.products.reduce((acc,item) => acc + item.total ,0)
-        console.log(subTotal);
-        
-        
-
-        res.render("user/order-details", { order ,categories, estimatedTotal ,subTotal}); 
->>>>>>> fa130ed472eaafe5b602dbea4beeaf1885876b25
     } catch (err) {
         console.log(`This is from load order details: ${err}`);
         res.status(500).send("Server error");
@@ -87,8 +79,8 @@ const laodOrderDetais = async (req, res) => {
 
 
 const cancelOrder = async (req,res) => {
-<<<<<<< HEAD
     const {productId,orderId} = req.body
+    const userId = req.session.userId
 
     try {
         const order = await orderSchema.findById(orderId)
@@ -96,6 +88,12 @@ const cancelOrder = async (req,res) => {
         if(!order){
             return res.status(400).json({success: false , message : 'order not fount'})
         }
+
+
+        if(order.coupenApplied.applied){
+            return res.status(400).json({success:false,message:'Coupon applied! Cancellation is not allowed.'})
+        }
+        
 
         const indexOfProduct = order.products.findIndex(item => item.productId.toString() === productId)
 
@@ -108,42 +106,103 @@ const cancelOrder = async (req,res) => {
             {$inc:{quantity:order.products[indexOfProduct].quantity}}
         )
 
+
+        const wallet = await walletSchema.findOne({userId})
+
+        
+
+        if(!wallet){
+
+            if(order.coupenApplied){
+                
+            }
+            
+            const balance = order.products[indexOfProduct].total
+
+            const newWallet = new walletSchema({
+                userId,
+                balance,
+                transactions:[
+                    {
+                        trascationDate:new Date(),
+                        trascationType:"Debit",
+                        description: 'For cancel product',
+                        amount:balance
+                    }
+                ]
+            })
+            await newWallet.save()
+
+            console.log(newWallet);
+            
+        }else{
+            const amount = order.products[indexOfProduct].total
+
+            const transactions = {
+                trascationDate:new Date(),
+                trascationType:"Debit",
+                description:'For cancel product',
+                amount
+            }
+
+            await walletSchema.findOneAndUpdate({userId},
+                {
+                    $push:{transactions},
+                    $inc:{balance:amount}
+                }
+            )
+
+            console.log('all done');
+            
+        }
+        
         return res.status(200).json({success : true , message : 'Your order canceled'})        
 
         
-=======
-    const {orderId} = req.body
-
-    try {
-        const order = await orderSchema.findById(orderId)
-        if(!order){
-            return res.status(400).json({message:'order not fount'})
-        }
-
-        order.status = 'Cancelled'
-        order.canceledBy = 'user'
-        await order.save()
-
-        for(let product of order.products){
-            await productsSchema.updateOne({_id:product.productId},{
-                $inc:{quantity:product.quantity}
-            })
-        }
-
-        res.status(200).json('')
->>>>>>> fa130ed472eaafe5b602dbea4beeaf1885876b25
 
     } catch (error) {
         console.log('this is from cancel order',error);
     }
 }
 
-<<<<<<< HEAD
-=======
 
->>>>>>> fa130ed472eaafe5b602dbea4beeaf1885876b25
+
+// for return order
+
+const returnOrder = async (req,res) => {
+    try {
+        const {reason,additionalInfo,productId,orderId} = req.body
+
+        const userId = req.session.userId
+
+        console.log(reason,additionalInfo);
+        
+
+        const order = await orderSchema.findById(orderId)
+        const productIndex  = order.products.findIndex(item => item.productId.toString() === productId )
+
+        const productName = order.products[productIndex].productName
+        order.products[productIndex].requst.requastName = `Requast for return product ${productName}`
+        order.products[productIndex].requst.reason = `${reason} :- ${additionalInfo}`
+        order.products[productIndex].requst.approve = false
+        
+
+        order.save()
+
+        res.status(200).json({success:true})
+                
+    } catch (error) {
+        console.log(`this error from return order ${error}`);
+        
+    }
+}
+
+
+
+
 module.exports = {
     loadAccountOrders,
     laodOrderDetais,
-    cancelOrder
+    cancelOrder,
+    returnOrder
 }

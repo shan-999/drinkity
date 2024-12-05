@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/style/admin/sidebar.css">
+    <link rel="stylesheet" href="/style/admin/header.css">
+    <link rel="stylesheet" href="/style/admin/coupon.css">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0/dist/sweetalert2.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-layout">
+        <%- include('partial/sidebar') %>
+    
+        <div class="main-content">
+          <%- include('partial/header') %>
+          
+    
+            
+            <div class="page-content">
+                <h1>Coupons</h1>
+                <button id="add-coupen" class="add-btn">Add</button>
+                <table class="coupons-table">
+                  <thead>
+                    <tr>
+                      <th>No</th>
+                      <th>Code</th>
+                      <th>Type</th>
+                      <th>Value</th>
+                      <th>Valied To</th>
+                      <th>Usage Limit</th>
+                      <th>Min Value</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% if(coupons && coupons.length > 0) { %>
+                        <% coupons.forEach((coupon,index) => { %>
+                            <tr>
+                                <td><%= index + 1 %></td>
+                                <td><%= coupon.code %></td>
+                                <td><%= coupon.type %></td>
+                                <td><%= coupon.value %></td>
+                                <td><%= new Date(coupon.validTo).toLocaleDateString('en-GB') %></td>
+                                <td><%= coupon.usageLimit %></td>
+                                <td><%= coupon.minValue %></td>
+                                <td class="coupon-<%= coupon.status === 'Valied' ? 'valied' : 'expired' %>"><%= coupon.status %></td> 
+                                <td>
+                                    <button class="edit-btn" data-couponId="<%= coupon._id %>">✏️</button>
+                                    <button class="delete-btn" onclick="deleteCoupon('<%= coupon._id %>')">🗑️</button>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="9">No coupons found</td>
+                        </tr>
+                    <% } %>
+                    <!--  -->
+                  </tbody>
+                </table>
+                
+
+
+                <div class="modal" id="add-modal">
+                    <div class="modal-content">
+                      <button class="close" id="closeModalBtn">&times;</button>
+                      <h1>Add Coupon</h1>
+                      <form method="post" action="/admin/add-coupon" class="coupon-form">
+                        <div class="form-group">
+                          <label for="code">Code</label>
+                          <input type="text" id="code" name="code" placeholder="Enter the code" />
+                        </div>
+                        <div class="form-group">
+                          <label for="discount">Type</label>
+                          <select name="type" id="">
+                            <option value="fixed" selected>Fixed</option>
+                            <option value="percentage">Percentage</option>
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label for="Value">Value</label>
+                          <input type="number" id="min-amount" name="value" placeholder="Enter value" />
+                        </div>
+                        <div class="form-group">
+                          <label for="validity">Validity</label>
+                          <input type="date" id="validity" name="validity" />
+                        </div>
+                        <div class="form-group">
+                            <label for="min-value">Min Value</label>
+                            <input type="number" name="minValue" id="validity" placeholder="Enter min value" />
+                        </div>
+                        <div class="form-group">
+                            <label for="usage-limit">Usage Limit</label>
+                            <input type="number" name="usageLimit" id="validity" placeholder="Enter usage limit" />
+                        </div>
+                        <button type="submit" class="add-coupon-btn">Add</button>
+                      </form>
+                    </div>
+                  </div>
+                  
+
+                  <div class="modal" id="edit-modal">
+                    <div class="modal-content">
+                      <button class="close-btn close" id="close-edit-modal">&times;</button>
+                      <h1>Edit Coupon</h1>
+                      <form method="post" action="/admin/edit-coupon/id" id="edit-from" class="coupon-form">
+                        <div class="form-group">
+                          <label for="code">Code</label>
+                          <input type="text" class="code" id="code" name="code" placeholder="Enter the code" />
+                        </div>
+                        <div class="form-group">
+                          <label for="discount">Type</label>
+                          <select name="type" class="type">
+                            <option value="fixed" selected>Fixed</option>
+                            <option value="percentage">Percentage</option>
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label for="Value">Value</label>
+                          <input type="number" class="value" name="value" placeholder="Enter value" />
+                        </div>
+                        <div class="form-group">
+                          <label for="validity">Validity</label>
+                          <input type="date" class="validity" name="validity" />
+                        </div>
+                        <div class="form-group">
+                            <label for="min-value">Min Value</label>
+                            <input type="number" name="minValue" class="minValue" placeholder="Enter min value" />
+                        </div>
+                        <div class="form-group">
+                            <label for="usage-limit">Usage Limit</label>
+                            <input type="number" name="usageLimit" class="usageLimit" placeholder="Enter usage limit" />
+                        </div>
+                        <button type="submit" class="add-coupon-btn">Edit</button>
+                      </form>
+                    </div>
+                  </div>
+                  
+                 
+                  
+            </div>
+          </div>
+            
+          <input type="hidden" id="error-message" value="<%= message %>">
+          
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0/dist/sweetalert2.min.js"></script>
+
+
+
+    <script>
+
+        const modal = document.getElementById("add-modal");
+        const openModalBtn = document.getElementById("add-coupen");
+        const closeModalBtn = document.getElementById("closeModalBtn");
+        const editModal = document.getElementById('edit-modal') 
+        const closeEditModal = document.querySelectorAll('.close-btn')
+        const editBtn = document.querySelectorAll('.edit-btn')
+
+        openModalBtn.addEventListener("click", () => {
+            modal.classList.add("show");
+        });
+
+        closeModalBtn.addEventListener("click", () => {
+            modal.classList.remove("show");
+        });
+
+        modal.addEventListener("click", (event) => {
+            if (event.target === modal) {
+            modal.classList.remove("show");
+            }
+        });
+
+        closeEditModal.forEach(btn => {
+          btn.addEventListener("click", () => {
+          editModal.classList.remove("show");
+        });
+        })
+
+        editModal.addEventListener("click", (event) => {
+            if (event.target === editModal) {
+              editModal.classList.remove("show");
+            }
+        });
+
+
+        //FOR edit coupon
+        editBtn.forEach(btn => {
+          btn.addEventListener("click",async (event) => {
+            editModal.classList.add("show")
+
+            const couponId = event.target.getAttribute('data-couponId')
+            
+            const respons = await axios.get(`/admin/edit-modal/${couponId}`)
+            if(respons.data.coupon){
+              const coupon = respons.data.coupon
+              console.log(coupon);
+              
+
+              document.querySelector('.code').value = coupon.code
+              document.querySelector('.type').value = coupon.type
+              document.querySelector('.value').value = coupon.value
+              document.querySelector('.validity').value = new Date(coupon.validTo).toISOString().split('T')[0]
+              document.querySelector('.minValue').value = coupon.minValue
+              document.querySelector('.usageLimit').value = coupon.usageLimit
+
+              let form = document.querySelector('#edit-from')
+              form.action = `/admin/edit-coupon/${coupon._id}`
+            }
+          });
+        })
+
+        // for delete coupon
+        function deleteCoupon(couponId) {
+          Swal.fire({
+            title: 'Are you sure delete this coupon',
+            text: 'You won\'t be able to revert this!',
+            icon: 'warning',
+            showCancelButton:true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!'
+        })
+        .then(result => {
+          if(result.isConfirmed){
+            axios.delete('/admin/delete-coupon',{data:{couponId}})
+            .then(res => {
+              if(res.data.success){
+                  Swal.fire({
+                  title: 'Deleted success',
+                  text: res.data.message,
+                  icon: 'success',
+                  confirmButtonText: 'Ok',
+                })
+                .then(respons => {
+                  location.reload()
+                })
+              }
+            })
+          }
+        })        
+        }
+
+        const message = document.getElementById('error-message').value
+        console.log(message);
+        
+
+
+        // document.addEventListener('DOMContentLoaded',()=>{
+        //   const error = document.getElementById('error-message').value
+        //   const errorShow = document.getElementById('error')
+        //   errorShow.innerHTML = error
+        //   setTimeout(() =>{
+        //     errorShow.innerHTML = ""
+        //   },2000)
+          
+        // })
+    </script>
+</body>
+</html>

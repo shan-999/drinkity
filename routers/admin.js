@@ -6,6 +6,9 @@ const adminUsers = require('../controller/admin/adminUser')
 const adminProducts = require('../controller/admin/adminProduct')
 const adminCategory = require('../controller/admin/category')
 const adminOrders = require('../controller/admin/orders')
+const adminCoupon = require('../controller/admin/coupon')
+const adminOffers = require('../controller/admin/offers')
+const adminDashbord = require('../controller/admin/sales-report')
 
 
 router.get('/login',adminAth.isLogin,adminController.loadLogin)
@@ -13,11 +16,15 @@ router.post('/login',adminController.login)
 
 router.get('/logout', adminController.logout);
 
-router.get('/dashboard',adminAth.checkSession,adminController.loadDashboard)
 
 router.get('/users',adminAth.checkSession,adminUsers.loadusers)
 router.post('/users/:action',adminAth.checkSession,adminUsers.userStatus);
 
+
+router.get('/sales-Report',adminAth.checkSession,adminDashbord.loadSalesReport)
+router.post('/filter-sales-report',adminAth.checkSession,adminDashbord.filterSalesReport)
+router.post('/dowload-excel',adminAth.checkSession,adminDashbord.dowloadExcel)
+router.post('/download-pdf',adminAth.checkSession,adminDashbord.dowloadPDF)
 
 
 
@@ -45,5 +52,23 @@ router.post('/soft-edit-category/:action',adminAth.checkSession,adminCategory.so
 router.get('/orders',adminAth.checkSession,adminOrders.loadOrder)
 router.post('/orders/:orderId', adminAth.checkSession,adminOrders.updateStats);
 router.get('/order-detils/:orderId',adminAth.checkSession,adminOrders.loadOrderDetails)
+router.post('/approve-return-requst',adminAth.checkSession,adminOrders.approveReturnRequst)
+
+
+router.get('/coupon',adminAth.checkSession,adminCoupon.loadCoupon)
+router.post('/add-coupon',adminAth.checkSession,adminCoupon.addCoupon)
+router.get('/edit-modal/:id',adminAth.checkSession,adminCoupon.loadEditModal)
+router.post('/edit-coupon/:id',adminAth.checkSession,adminCoupon.editCoupon)
+router.delete('/delete-coupon',adminAth.checkSession,adminCoupon.deleteCoupon)
+
+
+router.get('/offers',adminAth.checkSession,adminOffers.loadOffers)
+router.post('/add-offer',adminAth.checkSession,adminOffers.addOffer)
+router.get('/edit-offer/:id',adminAth.checkSession,adminOffers.loadEditoffer)
+router.post('/edit-offer/:offerId',adminAth.checkSession,adminOffers.editOffer)
+router.delete('/delete-offer',adminAth.checkSession,adminOffers.deleteOffer)
+
+
+
 
 module.exports  = router

@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/style/admin/header.css">
     <link rel="stylesheet" href="/style/admin/category.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0/dist/sweetalert2.min.css">
 </head>
 
 <body>
@@ -152,6 +153,24 @@
         .status-cancelled {
             background-color: #FF0000;
         }
+
+        .status-returned {
+            background-color: chocolate;
+        }
+
+        .status-requst{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .requst-btn{
+            background-color: #30acf9;
+            border-radius: 50%;
+            width: 15px;
+            height: 15px;
+            border: none;
+        }
     </style>
 
     <div class="admin-layout">
@@ -172,7 +191,7 @@
                         </div>
 
                         <div class="order-section">
-                            <!-- Transactions Section -->
+                            <!-- transactions  -->
                             <div class="order-items">
                                 <h3>Transactions</h3>
                                 <table class="order-table">
@@ -198,7 +217,7 @@
                                 </table>
                             </div>
 
-                            <!-- Customer Information Section -->
+                            <!-- Customer informtion -->
                             <div class="customer-info">
                                 <h3>Customer</h3>
                                 <p>
@@ -219,7 +238,7 @@
                             </div>
                         </div>
 
-                        <!-- Order Items Section -->
+                        <!-- Order items-->
                         <div class="order-details-section">
                             <div class="transactions">
                                 <h3>Order Items</h3>
@@ -246,12 +265,19 @@
                                                     <%= item.productName %>
                                                 </td>
                                                 <td>
-                                                    <select class="status-dropdown" data-order-id="<%= order._id %>" data-product-id="<%= item.productId %>" <% if (item.status === 'Cancelled' || item.status === 'Delivered') { %> disabled <% } %>>
-                                                        <option value="Pending" <%= item.status === 'Pending' ? 'selected' : '' %>>Pending</option>
-                                                        <option value="Shipped" <%= item.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
-                                                        <option value="Delivered" <%= item.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-                                                        <option value="Cancelled" <%= item.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
-                                                    </select>
+                                                    <div class="status-requst">
+                                                        <select class="status-dropdown" data-order-id="<%= order._id %>" data-product-id="<%= item.productId %>" <% if (item.status === 'Cancelled' || item.status === 'Delivered' || item.status === 'Returned') { %> disabled <% } %>>
+                                                            <option value="Pending" <%= item.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                                            <option value="Shipped" <%= item.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                                                            <option value="Delivered" <%= item.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                                                            <option value="Cancelled" <%= item.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                                            <option value="Returned" <%= item.status === 'Returned' ? 'selected' : '' %>>Returned</option>
+                                                        </select>
+    
+                                                        <% if(item.requst.approve === false) { %>
+                                                            <button class="requst-btn" id="data" data-requst='<%- JSON.stringify(item.requst) %>' data-order-id="<%= order._id %>" data-product-id="<%= item.productId %>">1</button>
+                                                        <% } %>
+                                                    </div>
                                                 </td>
                                                 <td>₹<%= item.price %>
                                                 </td>
@@ -266,14 +292,14 @@
                                 </table>
                             </div>
 
-                            <!-- Order Status Section -->
+                            <!-- Order status  -->
                             <div class="order-status">
                                 <h3>Order Details</h3>
                                 
                                     <% if (order.canceledBy==='user' ) { %>
                                         <span class="cancellation-message" style="color: red;">User canceled the
                                             order</span>
-                                        <% } %>
+                                    <% } %>
                                 </p>
                                 <p><strong>Date Created:</strong>
                                     <%= order.createdAt.toLocaleDateString() %>
@@ -293,7 +319,7 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-
+    
     <script>
         document.querySelectorAll('.status-dropdown').forEach(dropdown => {
             setColor(dropdown);
@@ -339,14 +365,49 @@
 
 
         function setColor(dropdown) {
-            dropdown.classList.remove('status-pending', 'status-shipped', 'status-delivered', 'status-cancelled');
+            dropdown.classList.remove('status-pending', 'status-shipped', 'status-delivered', 'status-cancelled','status-returned');
 
             const status = dropdown.value.toLowerCase();
             dropdown.classList.add(`status-${status}`);
         }
 
+        document.querySelectorAll('.requst-btn').forEach(item => {
+            item.addEventListener('click',(event) => {
+                const requst = JSON.parse(event.target.getAttribute('data-requst'))
+                const orderId = event.target.getAttribute('data-order-id')
+                const productId = event.target.getAttribute('data-product-id')
+                
+                Swal.fire({
+                    title: `Return requast`,
+                    html:`
+                    <p><strong>${requst.requastName}</strong></p>
+                    <p><strong>Reason : </strong>${requst.reason}</p>
+                    `,
+                    icon: 'info',
+                    confirmButtonText: 'Approve',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel'
+                })
+                .then(response => {
+                    if(response.isConfirmed){
+                        axios.post('/admin/approve-return-requst', { orderId, productId })
+                            .then(res => {
+                            location.reload();
+                        })
+                        .catch(err => {
+                            console.error('Axios error:', err); 
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Failed to approve the return request.',
+                                icon: 'error',
+                                confirmButtonText: 'Okay',
+                            });
+                        });
+                    }
+                })
+        })
 
-
+        })
 
     </script>
 </body>

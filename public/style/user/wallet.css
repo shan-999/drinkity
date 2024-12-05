@@ -1,0 +1,134 @@
+.main-div{
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.balance-content {
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 20px;
+    margin: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 1075px;
+}
+
+.balance-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.balance-title {
+    font-size: 16px;
+    color: #a0a0a0;
+}
+
+.balance-amount {
+    font-size: 32px;
+    font-weight: bold;
+    color: #4335d1;
+}
+
+.actions-row {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 30px;
+}
+
+.action {
+    text-align: center;
+}
+
+.action-icon {
+    font-size: 20px;
+    padding: 15px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 5px;
+    color: #ffffff;
+}
+
+.blue-icon {
+    background-color: #5daeff;
+}
+
+.purple-icon {
+    background-color: #b071ff;
+}
+
+.orange-icon {
+    background-color: #ff944d;
+}
+
+.green-icon {
+    background-color: #49d18d;
+}
+
+.transactions {
+    margin-top: 20px;
+}
+
+.transactions h3 {
+    font-size: 18px;
+    color: #333333;
+    margin-bottom: 15px;
+}
+
+.transaction {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f9f9f9;
+    border-radius: 12px;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.transaction-icon {
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 50%;
+    color: white;
+}
+
+.blue-bg {
+    background-color: #5daeff;
+}
+
+.purple-bg {
+    background-color: #b071ff;
+}
+
+.orange-bg {
+    background-color: #ff944d;
+}
+
+.green-bg {
+    background-color: #49d18d;
+}
+
+.transaction-details {
+    flex-grow: 1;
+    margin-left: 15px;
+}
+
+.transaction-title {
+    font-size: 16px;
+    color: #333333;
+    margin: 0;
+}
+
+.transaction-subtitle {
+    font-size: 14px;
+    color: #a0a0a0;
+    margin: 5px 0 0;
+}
+
+.transaction-amount {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333333;
+    margin-left: 80px
+}
