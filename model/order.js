@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const coupon = require('./coupon');
+const { strike } = require('pdfkit');
 
 const orderSchema = new mongoose.Schema({
     userId:{type:mongoose.Schema.Types.ObjectId,ref:'users',required: true},
@@ -15,7 +16,7 @@ const orderSchema = new mongoose.Schema({
         }
     },
     products: [{
-        productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+        productId: { type: mongoose.Schema.Types.ObjectId, ref: 'product', required: true },
         productName: { type: String, required: true },
         price: { type: Number, required: true },
         quantity: { type: Number, required: true, min: 1 },
@@ -45,7 +46,8 @@ const orderSchema = new mongoose.Schema({
         applied:{type:Boolean,default:false},
         discount:{type:Number,default:0}
     },
-    totalOfferPrice:{type:Number,default:0}
+    totalOfferPrice:{type:Number,default:0},
+    PaymentStatus:{type:String,enum:['Pending','Failed','Success','Refund'],default:'Pending'}
 
 },{ timestamps: true });
 

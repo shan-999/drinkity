@@ -104,7 +104,9 @@ const confirmOrder = async (req, res) => {
         if (!userId) {
             return res.status(401).json({ message: 'User not authenticated' });
         }
-        const {address,products,paymentMethod,totalPrice,coupenApplied,discountPrice} = req.body
+        const {address,paymentMethod,totalPrice,PaymentStatus} = req.body
+        let {products} = req.body
+        
         
         const productId = products.map(product => product.productId)
         
@@ -136,41 +138,55 @@ const confirmOrder = async (req, res) => {
                 });
             }
         }
-        
         let orderAddress
         if(address.custom === false){
             orderAddress = await addressSchema.findById(address.id)
         }else{
             orderAddress = address
         }
-        console.log('ii');
 
-        // if(!coupenApplied){
-        //     coupenApplied = false
-        // }
+
+       
 
         const prouductIds = products.map(item => new mongoose.Types.ObjectId(item.productId))
         const offers = await offerSchema.find({
             applicableFor:{$in:prouductIds}
         })
+
+        
         
         let totalOfferPrice = 0
-       if(offers){
-            for (const item of offers) {
-                if (item.type === 'fixed') {
-                    totalOfferPrice += item.offValue
-                } else {
-                    const product = await productsSchema.findById(item.applicableFor);
-                    const offval = (product.price * item.offValue) / 100; 
-                    totalOfferPrice += offval
+        if(offers){
+            const offProducts = []
+
+            for(let item of offers){
+                let offPrice = 0
+                if(item.type === 'fixed'){
+                    offPrice = item.offValue
+                }else{
+                    const product = await productsSchema.findById(item.applicableFor)
+                    const offval = (product.price * item.offValue) / 100
+                    offPrice = offval
                 }
+
+                offProducts.push({
+                    productId:item.applicableFor,
+                    offValue:offPrice
+                })
+            }
+            
+            totalOfferPrice = offProducts.reduce((sum,item) => sum + item.offValue,0)
+
+            for(let item of offProducts){
+                products.forEach(product => product.price = product.productId === item.productId.toString() ? product.price - item.offValue : product.price)
             }
 
-           
-``
-       }
-
+        }
         
+       const discountPrice = req.session.couponDiscount
+
+       const coupenApplied = discountPrice ? true : false
+       
        
         const user = await users.findById(req.session.userId)
         const newOrder = new orderSchema({
@@ -199,7 +215,8 @@ const confirmOrder = async (req, res) => {
             orderDate: new Date(),
             status: 'Pending',
             coupenApplied:{applied:coupenApplied,discount:discountPrice},
-            totalOfferPrice
+            totalOfferPrice,
+            PaymentStatus
         });
 
         await newOrder.save();
@@ -207,11 +224,13 @@ const confirmOrder = async (req, res) => {
         req.session.couponDiscount = null
 
      
+
         for (let item of products) {
             await productsSchema.findByIdAndUpdate(item.productId, {
                 $inc: { quantity: -item.quantity }
             });
         }
+        
 
         await cartSchema.deleteMany({ userId: req.session.userId });
       
@@ -259,6 +278,7 @@ const loadOrderConfirmed = async (req, res) => {
 // for razorpay
 
 const Razorpay = require("razorpay");
+const order = require('../../model/order');
 
 
 
@@ -271,7 +291,7 @@ const razorpay = new Razorpay({
 
 const createRazourPayOrder = async (req,res) => {
     const  {amount} = req.body;
-
+    
     try {
         const order = await razorpay.orders.create({
             amount : amount,
@@ -290,31 +310,46 @@ const createRazourPayOrder = async (req,res) => {
 const verifyPayment = async (req,res) => {
     try {
         const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+        console.log('hello');
+        
         
         const hmac = crypto.createHmac('sha256', "S5Ew9Qju67kwU7vzwhhoUklL");
         hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
         const generatedSignature = hmac.digest('hex');
 
-        console.log('ys');
         
         
         if (generatedSignature === razorpay_signature) {
             console.log(`verification success : generatedsig ${generatedSignature},  razorpay_signature ${razorpay_signature}`);
             
             res.send({success: true, status: 'Payment verified' });
-            console.log('yes here');
             
         } else {
             console.log(`verification faild : generatedsig ${generatedSignature},  razorpay_signature ${razorpay_signature}`);
             
             res.status(400).send({success: false, status: 'Payment verification failed' });
-            console.log('no here');
 
         }
     } catch (error) {
         console.log(`error from verify payment ${error}`);
-        res.send('yes get it')
     }
+}
+
+
+const retryPayment = async (req,res) => {
+    const {orderId} = req.body
+
+
+    const order = await orderSchema.findByIdAndUpdate(
+        orderId,
+        {$set:{PaymentStatus:'Success'}},
+        {new:true}
+    )
+ 
+
+
+    res.status(200).json({success:true})
+         
 }
 
 module.exports = {
@@ -323,6 +358,7 @@ module.exports = {
     checkout,
     selectedAddress,
     createRazourPayOrder,
-    verifyPayment
+    verifyPayment,
+    retryPayment
 }
 

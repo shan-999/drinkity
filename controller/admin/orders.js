@@ -107,6 +107,9 @@ const approveReturnRequst = async (req,res) =>{
 
             let amount =  order.products[indexOfProduct].total
 
+            console.log(`amoutbefor : ${amount}`);
+            
+
             if(order.coupenApplied.applied){
                 const discount = order.coupenApplied.discount
 
@@ -115,7 +118,12 @@ const approveReturnRequst = async (req,res) =>{
                 const discountPerProduct = discount / totalProducts 
                 
                 amount -= discountPerProduct
+
+                console.log(`amout : ${amount}    discount : ${discount}   totalProducts : ${totalProducts}  discountperproducts : ${discountPerProduct}`);
             }
+
+            
+            
             
 
             const newtrascation = {

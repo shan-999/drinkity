@@ -32,6 +32,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
 
+
 app.use('/', userRoutes)
 app.use('/admin', adminRoutes)
 

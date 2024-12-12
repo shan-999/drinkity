@@ -356,7 +356,7 @@
                                       <span class="price">₹<%= (product.price - asOffer.offValue).toFixed() %></span>
                                       <span class="price-off">₹<%= product.price.toFixed(2)  %></span>
                                       <% } else { %>
-                                        <% const offprice = (asOffer.offValue / product.price) * 100 %>
+                                        <% const offprice = (product.price * asOffer.offValue) / 100 %>
                                       <span class="price">₹<%= (product.price - offprice).toFixed(2) %></span>
                                       <span class="price-off">₹<%= product.price.toFixed(2)  %></span>
                                       <% } %>

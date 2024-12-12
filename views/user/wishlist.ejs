@@ -88,7 +88,7 @@
                       <% if(asOffer.type === 'fixed') { %>  
                       <span id="item-price" class="price item-prices">₹<%= (item.productId.price - asOffer.offValue).toFixed() %></span>
                       <% } else { %>
-                        <% const offprice = (asOffer.offValue / item.productId.price) * 100 %>
+                        <% const offprice = (item.productId.price * asOffer.offValue) / 100 %>
                         <span id="item-price" class="price item-prices">₹<%= (item.productId.price - offprice).toFixed(2) %></span>
                       <% } %>
                     <% } else { %>
@@ -98,7 +98,7 @@
                   <% } %>
                   <% if(item.productId.quantity > 0) { %>
                     <button class="add-to-cart-btn"
-                    data-price="<%= (asOffer ? (item.productId.price - (asOffer.type === 'fixed' ? asOffer.offValue : (asOffer.offValue / item.productId.price) * 100)) : item.productId.price).toFixed(2) %>"
+                    data-price="<%= (asOffer ? (item.productId.price - (asOffer.type === 'fixed' ? asOffer.offValue : (item.productId.price * asOffer.offValue) / 100)) : item.productId.price).toFixed(2) %>"
                      onclick="updateCart('<%= item.productId._id %>',event,'wishlist')">add to Cart</button> 
                   <% } else { %>
                     <button class="add-to-cart-btn1">out of stock</button>

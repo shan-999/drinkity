@@ -1,8 +1,10 @@
-const categorySchema = require('../../model/category');
+const categorySchema = require('../../model/category')
 const productsmodel = require('../../model/products');
 const cartSchema = require('../../model/cart')
 const offerSchema = require('../../model/offers');
-const category = require('../../model/category');
+const category = require('../../model/category')
+const orderSchema = require('../../model/order');
+const order = require('../../model/order');
 
 
 
@@ -51,7 +53,6 @@ const loadHome = async (req, res) => {
         })
         
 
-        console.log(productIds);
         
         // const categoryCount = {}
         // categoryoff.forEach(offer => {
@@ -108,10 +109,6 @@ console.log("not here");
         const offers = await offerSchema.find({offType:'product'}) 
         const asOffer = offers.find(item => item.applicableFor.toString() === productId.toString())
 
-        
-        
-
-        
 
         res.render('user/product-details', { product ,categories ,relatedProducts,userId :req.session.userId,asOffer});
     } catch (error) {
@@ -167,7 +164,7 @@ const loadCategory = async (req,res) => {
     try {
         const categoryName = req.params.categoryName
 
-        const products = await productsmodel.find({category:categoryName})
+        const products = await productsmodel.find({category:categoryName,listed:true})
         const categories = await categorySchema.find({listed:true})
 
         
@@ -181,29 +178,27 @@ const loadCategory = async (req,res) => {
 
 const filterCategory = async (req,res) => {
     try {
-        const {selectedValues} = req.body
-
-        sortValue = {}
+        const {selectedValues,category} = req.body
+        
+        let productName
 
         if(selectedValues.sort){
             if(selectedValues.sort === 'A - Z' || selectedValues.sort === 'All' ){
-                sortValue.productName = 1
+                productName = 1
             }else if(selectedValues.sort === 'Z - A'){
-                sortValue.productName = -1
+                productName = -1
             }
         }
 
+        let products = await productsmodel.find({category,listed:true}).sort({productName})
 
         if(selectedValues.price){
             if(selectedValues.price === 'High to Low'){
-                sortValue.price = -1
+                products = products.sort((a,b) => b.price - a.price)
             }else if(selectedValues.price === 'Low to High'){
-                sortValue.price = 1
+                products = products.sort((a,b) => a.price - b.price)
             }
         }
-
-        
-        const products = await productsmodel.find().sort(sortValue)
 
         res.status(200).json({success:true,products})
         
@@ -214,7 +209,72 @@ const filterCategory = async (req,res) => {
     }
 }
 
+const filterSearch = async (req,res) => {
+    try {
+        const {filterValue} = req.body
+        
+        const products = req.session.searchedProucts
 
+        let filterProducts 
+        
+        if(filterValue === 'popular'){
+            const productIds = products.map(item => item._id)
+
+            const orders = await orderSchema.find({'products.productId':{$in:productIds}})
+            
+            const popularity = {}
+            productIds.forEach(id => {
+                popularity[id] = 0
+            })
+
+            orders.forEach(item =>{
+                item.products.forEach(product => {
+                    if(product.productId in popularity){
+                        popularity[product.productId] += product.quantity
+                    }
+                })
+            })
+
+            const popular = Object.entries(popularity).sort((a,b) => (b[1] - a[1])).slice(0,5).map(entry => entry[0])
+            
+            filterProducts = await productsmodel.find({_id:{$in:popular},listed:true})
+
+        }else if(filterValue === 'uder100'){
+            filterProducts = products.filter(item => item.price <= 100)
+        }else if(filterValue === 'above100'){
+            filterProducts = products.filter(item => item.price >= 100)
+        }else if(filterValue === 'A-Z'){
+            filterProducts = products.sort((a, b) => {
+                if (a.productName.toLowerCase() < b.productName.toLowerCase()) {
+                  return -1;
+                }
+                if (a.productName.toLowerCase() > b.productName.toLowerCase()) {
+                  return 1;
+                }
+                return 0;
+            })
+        }else if(filterValue === 'Z-A'){
+            filterProducts = products.sort((a, b) => {
+                if (a.productName.toLowerCase() < b.productName.toLowerCase()) {
+                  return 1;
+                }
+                if (a.productName.toLowerCase() > b.productName.toLowerCase()) {
+                  return -1;
+                }
+                return 0;
+            })
+        }else if(filterValue === 'hign-low'){
+            filterProducts = products.sort((a,b) => b.price - a.price)
+        }else if(filterValue === 'low-high'){
+            filterProducts = products.sort((a,b) => a.price - b.price)
+        }
+        
+        res.status(200).json({success:true,filterProducts})
+        
+    } catch (error) {
+        console.log(`error from filter  search ${error}`);
+    }
+}
 
 
 module.exports = {
@@ -223,5 +283,6 @@ module.exports = {
     search,
     loadSearch,
     loadCategory,
-    filterCategory
+    filterCategory,
+    filterSearch
 };

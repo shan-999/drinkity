@@ -45,7 +45,7 @@
         
             <div class="transactions">
                 <h3>Transactions</h3>
-                <% wallet.transactions.forEach(item => { %>
+                <% wallet.transactions.findLast(item => { %>
                 <div class="transaction">
                     <div class="transaction-icon blue-bg">&#128722;</div>
                     <div class="transaction-details">

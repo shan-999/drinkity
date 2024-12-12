@@ -6,14 +6,12 @@ const laodWallet = async (req,res,) => {
 
     const  userId = req.session.userId
     
-    const wallet = await walletSchema.findOne({userId})
+    const wallet = await walletSchema.findOne({userId}).sort()
     const categories = await categorySchema.find({})
     const user = await userSchema.findById(userId)
 
-    console.log(wallet);
 
     res.render('user/wallet',{wallet,activePage:'Wallet',categories,user})
-    
 }
 
 

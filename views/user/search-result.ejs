@@ -76,7 +76,84 @@
     </svg>
 
 
+<style>
 
+
+.filter-bar {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #fff; 
+    border-radius: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); 
+    gap: 15px; 
+}
+
+.filter-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: #f1f1f1; 
+    border: 1px solid #ddd; 
+    border-radius: 8px; 
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    text-decoration: none;
+    color: inherit;
+    font: inherit;
+    font-size: 14px;
+    color: #333; 
+    text-transform: capitalize;
+}
+
+.filter-item:hover {
+    background-color: #e6e6e6; 
+    border-color: #bbb; 
+}
+
+.filter-icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+    border-radius: 4px; 
+    object-fit: cover; 
+}
+
+.filter-item span {
+    
+}
+
+
+.filter-select {
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0px 16px;
+    color: #333;
+    font-size: 14px;
+    cursor: pointer;
+    background-image: url(dropdown-arrow.svg);
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 12px;
+    width: 128px;
+    text-transform: capitalize;
+    transition: all 0.3s ease;
+
+}
+
+.filter-select:hover {
+    background-color: #e6e6e6;
+    border-color: #bbb; 
+}
+
+.filter-select option {
+    padding: 10px;
+    text-transform: capitalize;
+}
+
+</style>
 
     
     
@@ -93,8 +170,26 @@
     
 
     
-
-
+    <div class="filter-bar" onclick="applyFilter(event)">
+      <button value="popular" class="filter-item">
+          Popular
+      </button>
+      <button value="uder100" class="filter-item">
+          Under ₹100
+      </button>
+      <button value="above100" class="filter-item">
+          Above ₹100
+      </button>
+      <button class="filter-item">
+        <select class="filter-select">
+          <option value="null" data-image="dashboard.jpg" selected disabled>Sort</option>
+          <option value="A-Z" data-image="horizontal.jpg">A-Z</option>
+          <option value="Z-A" data-image="mobile.jpg">Z-A</option>
+          <option value="hign-low" data-image="material-design.jpg">High-Low</option>
+          <option value="low-high" data-image="material-design.jpg">Low-High</option>
+        </select>
+      </button>
+    </div>
     
 
     <section class="py-5">
@@ -134,7 +229,7 @@
                         <% } %>
                     </div>
                 </div>
-            </div>
+              </div>
                
             
             
@@ -169,7 +264,54 @@
 
 
 
+    <script>
+      function applyFilter(event){
+        const filterValue = event.target.value
+        if(filterValue === 'null') return false
+        
+        
+        axios.post('/filter-search',{filterValue})
+        .then(res => {
+          if(res.data.success){
+            const products = res.data.filterProducts
 
+            const productGrid = document.querySelector('.product-grid');
+            productGrid.innerHTML = ''
+
+            if (products.length > 0) {
+              products.forEach(product => {
+                  productGrid.innerHTML += `
+                      <div class="col">
+                          <div class="product-item">
+                              <span class="badge bg-success position-absolute m-3">-30%</span>
+                              <a data-productId="${product._id}" class="btn-wishlist">
+                                  <svg width="24" height="24"><use xlink:href="#heart"></use></svg>
+                              </a>
+                              <figure>
+                                  <a href="/product-details/${product._id}" title="${product.productName}">
+                                      <img src="${product.images[0]}" alt="${product.productName}" class="tab-image ${product.quantity <= 0 ? 'out-of-stock' : ''}">
+                                  </a>
+                              </figure>
+                              <h3>${product.productName}</h3>
+                              <span class="rating">
+                                  <svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg>
+                                  ${(Math.random() * 4 + 1).toFixed(1)}
+                              </span>
+                              <span class="price">₹${product.price.toFixed(2)}</span>
+                          </div>
+                      </div>
+                  `;
+              });
+            } else {
+              productGrid.innerHTML = '<div class="notfound-result"><h1>No filter result found</h1></div>';
+            }
+            
+          }
+          
+        })
+        
+      }
+    </script>
   
   </body>
 </html>
