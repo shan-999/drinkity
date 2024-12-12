@@ -154,6 +154,68 @@
     background-color: red;
 }
 
+
+.retry-button{
+    background-color: red;
+    border: solid #f10808;
+    border-radius: 15%;
+    padding: 5px;
+    color: white;
+}
+
+.download-button {
+    background-color: #4caf50; 
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.download-button:hover {
+    background-color: #45a049; 
+    transform: scale(1.05);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.download-button:active {
+    background-color: #3e8e41; 
+    transform: scale(0.98);
+}
+
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.pagination a {
+    margin: 0 5px;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #007bff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.pagination a.active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+.pagination a:hover {
+    background-color: #0056b3;
+    color: #fff;
+}
+
+
     </style>
 
 
@@ -197,33 +259,53 @@
                             <td>₹<%= product.price.toFixed(2) %> <span style="color: #b5aeae; font-size: 10px;">X</span> <%= product.quantity %></td>
                             <td><%= product.total.toFixed(2) %></td>
                             <td><img src="<%= product.image %>" alt="Product Image"></td>
-                            <% if(product.status != 'Cancelled' && product.status != 'Delivered' && product.status != 'Returned') { %>
-                                <td><a class="cancel-btn" data-product-id="<%= product.productId %>"  data-order-id="<%= order._id %>">Cancel</a></td>
+                            <% if(order.PaymentStatus === 'Failed') { %>
+                                <td style="color: #d9534f;">payment failed</td>
                             <% } else { %>
-                                <% if(product.status === 'Cancelled') { %>
-                                    <td style="color: rgb(214, 87, 87);"> cancelled</td>
+                                <% if(product.status != 'Cancelled' && product.status != 'Delivered' && product.status != 'Returned') { %>
+                                    <td><a class="cancel-btn" data-product-id="<%= product.productId %>"  data-order-id="<%= order._id %>">Cancel</a></td>
                                 <% } else { %>
-                                    <% console.log(product.requst.approve) %>
-                                    <% if (product.requst.approve === false){ %>
-                                        <td style="color: #ff9191;">Return requested</td>
-                                    <% } else if(product.requst.approve === true) { %>
-                                        <td style="color: #ff9191;">Returned</td>
+                                    <% if(product.status === 'Cancelled') { %>
+                                        <td style="color: rgb(214, 87, 87);"> cancelled</td>
                                     <% } else { %>
-                                        <td><a class="return-btn" data-product-id="<%= product.productId %>" data-order-id="<%= order._id %>">Return</a></td>
-                                    <% } %>
-                                <% } %> 
+                                        <% if (product.requst.approve === false){ %>
+                                            <td style="color: #ff9191;">Return requested</td>
+                                        <% } else if(product.requst.approve === true) { %>
+                                            <td style="color: #ff9191;">Returned</td>
+                                        <% } else { %>
+                                            <td><a class="return-btn" data-product-id="<%= product.productId %>" data-order-id="<%= order._id %>">Return</a></td>
+                                        <% } %>
+                                    <% } %> 
+                                <% } %>
                             <% } %> 
                           </tr>
                         <% }) %>
                     </tbody>
                 </table>
             </div>
+
+            <div class="pagination">
+                <% if (pagination.hasPrevPage) { %>
+                    <a href="?page=<%= pagination.currentPage - 1 %>&limit=5" class="prev">Previous</a>
+                <% } %>
+                <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+                    <a href="?page=<%= i %>&limit=5" class="<%= pagination.currentPage === i ? 'active' : '' %>">
+                        <%= i %>
+                    </a>
+                <% } %>
+                <% if (pagination.hasNextPage) { %>
+                    <a href="?page=<%= pagination.currentPage + 1 %>&limit=5" class="next">Next</a>
+                <% } %>
+            </div>
+
+
+
     
             <div class="order-summary">
                 <h3>Order Summary</h3>
 
                 <p>Subtotal : ₹<%= subTotal.toFixed(2) %></p>
-                <p>Quantity: <%= order.products.length %></p>
+                <p>Discount: -₹<%= order.coupenApplied.discount ? order.coupenApplied.discount.toFixed(2) : 0 %></p>
                 <p> 
                     <% if (order.Totalprice < 500) { %>
                         <p>Delivery: ₹60</p>
@@ -233,9 +315,16 @@
                 </p> 
                 <hr>
                 
-                <p>Estimated total: <strong>₹<%= estimatedTotal.toFixed(2) %></strong></p>
-                <p>Payment Method: <strong> <%= order.paymentMethourd === 'cod' ? 'Cash On Delivery' : order.paymentMethourd %></strong></p> 
-
+                <p>Estimated total: <strong id="total-price">₹<%= estimatedTotal.toFixed(2) %></strong></p>
+                <p>Payment Method: <strong> <%= order.paymentMethourd === 'cod' ? 'Cash On Delivery' : order.paymentMethourd %></strong></p>
+                
+                <% if(isDeliverd) { %>
+                    <button class="download-button" onclick="downloadInvoice('<%= order._id %>')">Download Invoice</button>
+                <% } %>
+                
+                <% if(order.PaymentStatus === 'Failed'){ %>
+                    <button class="retry-button" onclick="retryPayment('<%= order._id %>')">Retry Payment</button>
+                <% } %>
                 <% if(isCancelled) { %>
                     <p style="color: red;">All products in this order have been canceled.</p>
                 <% } %>
@@ -275,6 +364,9 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <!-- razorpay -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
    document.querySelectorAll('.cancel-btn').forEach(function(button) {
         button.addEventListener('click', function(event) {
@@ -389,7 +481,103 @@
             
         })
     })
+
+    // for retry payment 
+   async function retryPayment(orderId){
+    try {
+            const totalPrice = parseFloat(document.getElementById('total-price').textContent.replace(/[^0-9.-]/g, ''))
+            console.log(totalPrice);
+            
+            const response = await axios.post('/create-razourpay-order', { amount: Math.ceil(Number(totalPrice) * 100)});
+            const order = response.data;
+        
+            const options = {
+            key: "rzp_test_pp5Ul8PxlHsCpL",
+            amount: order.amount,
+            currency: "INR",
+            name: "Your Shop",
+            description: "Purchase Description",
+            order_id: order.id,
+            handler: async (response) => {
+                try {
+                const verifyResponse = await axios.post('/verify-payment', response)
+                    .then(res => {
+                        console.log('yes');
+                        
+                        if(res.data.success){
+                           axios.post('/retry-payment',{orderId})
+                            
+                            .then(res => {
+                                if(res.data.success){
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Success!',
+                                        text: 'payment completed successfully.',
+                                        confirmButtonText: 'okey!',
+                                        timer: 3000,
+                                        timerProgressBar: true,
+                                    })
+                                    .then(res => {
+                                        location.reload()
+                                    })
+                                }
+                            })
+                            
+
+                            
+
+                        }
+                    })
+                } catch (error) {
+                   
+                    
+                console.error('Payment verification failed:', error);
+                alert('Payment verification failed.');
+                }
+            }
+            };
+
+            const rzp = new Razorpay(options);
+
+            rzp.on('payment.failed', function (response) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Payment Failed',
+                    text: 'Your payment failed. Please try again.',
+                })
+            });
+    
+
+
+            rzp.open();
+
+
+        } catch (error) {
+            console.error('Error creating Razorpay order:', error);
+            Swal.fire('Error', 'Failed to initiate Razorpay payment.', 'error');
+        }
+    
+   }
+
+
+//    incvoice dowload
+function downloadInvoice(orderId){
+    axios.post('/invoice-dowload', { orderId }, { responseType: 'arraybuffer' })
+    .then(response => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'invoice.pdf');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+    })
+    .catch(error => {
+        console.error('Error downloading invoice:', error);
+    });
+}
 </script>
 
-</body>
+</body> 
 </html>

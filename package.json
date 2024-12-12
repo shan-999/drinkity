@@ -25,6 +25,7 @@
     "nodemailer": "^6.9.15",
     "otp-generator": "^4.0.1",
     "pdfkit": "^0.15.1",
+    "puppeteer": "^23.10.1",
     "razorpay": "^2.9.5"
   },
   "devDependencies": {

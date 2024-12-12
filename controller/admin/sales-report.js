@@ -18,7 +18,7 @@ const loadSalesReport = async (req,res) => {
     const totalAmount = orders.reduce((acc,item) => acc + item.Totalprice,0) 
     const totalDiscount = orders.reduce((acc,item) => acc + item.totalOfferPrice + ( item.coupenApplied && item.coupenApplied.discount ? item.coupenApplied.discount : 0) ,0)
 
-    res.render('admin/dashboard',{orders,totalAmount,totalDiscount})
+    res.render('admin/sales-report',{orders,totalAmount,totalDiscount})
 }
 
 
@@ -36,7 +36,10 @@ const filterSalesReport = async (req,res) => {
                     $lte: endDate
                 }
             })
-            return res.status(200).json({sucees:true,orders})
+            const totalAmount = orders.reduce((acc,item) => acc + item.Totalprice,0) 
+            const totalDiscount = orders.reduce((acc,item) => acc + item.totalOfferPrice + ( item.coupenApplied && item.coupenApplied.discount ? item.coupenApplied.discount : 0) ,0)
+
+            return res.status(200).json({sucees:true,orders,totalAmount,totalDiscount})
         }
 
 
@@ -66,18 +69,20 @@ const filterSalesReport = async (req,res) => {
                 return res.status(400).json({success:false})
         }
 
-        console.log("Start Date:", start.toDate());
-        console.log("End Date:", end.toDate());
         const orders = await orderSchema.find({
             orderDate:{
                 $gte: new Date(start),
                 $lte: new Date(end),
             }
         })
-        console.log(orders);
+
         
 
-        return res.status(200).json({success:true,orders})
+        const totalAmount = orders.reduce((acc,item) => acc + item.Totalprice,0) 
+        const totalDiscount = orders.reduce((acc,item) => acc + item.totalOfferPrice + ( item.coupenApplied && item.coupenApplied.discount ? item.coupenApplied.discount : 0) ,0)
+        
+
+        return res.status(200).json({success:true,orders,totalAmount,totalDiscount})
         
 
         
@@ -90,7 +95,8 @@ const filterSalesReport = async (req,res) => {
 
 const dowloadPDF = async (req,res) => {
     try {
-        const {data} = req.body
+        const {data,totalAmount,totalSales,totalDiscount} = req.body
+        
                 
         const doc = new PDFDocument()
 
@@ -101,52 +107,74 @@ const dowloadPDF = async (req,res) => {
         doc.pipe(res)
 
         doc.fontSize(16).text('Sales Report', { align: 'center' });
-        doc.moveDown(1.5)
+        doc.moveDown(1.5);
 
-        const tableTop = 100
-        const rowHeight = 25
-        const columnSpacing = 5
-        const columnWidth = 80
+        const pageHeight = 700;
+        const marginTop = 50;
+        const marginBottom = 50;
+        const tableTop = 100;
+        const rowHeight = 25;
+        const columnSpacing = 5;
+        const columnWidth = 80;
+        let y = tableTop;
 
-
-        const headers = Object.keys(data[0])
-        let x = 50
-        let y = tableTop
-
-        
+        const headers = Object.keys(data[0]);
+        let x = 50;
 
         headers.forEach((header) => {
             doc
                 .fontSize(10)
                 .text(header, x, y, { width: columnWidth, align: 'center' });
             x += columnWidth + columnSpacing;
-        })
+        });
 
         doc
             .moveTo(50, y + rowHeight - 10)
             .lineTo(50 + headers.length * (columnWidth + columnSpacing) - columnSpacing, y + rowHeight - 10)
-            .stroke()
+            .stroke();
 
-            
+        y += rowHeight;
 
-        y += rowHeight
+        function checkPageSpace(doc, currentY, heightNeeded) {
+            if (currentY + heightNeeded > pageHeight - marginBottom) {
+                doc.addPage();
+                return marginTop; 
+            }
+            return currentY;
+        }
+
         data.forEach((row) => {
+            y = checkPageSpace(doc, y, rowHeight); 
             x = 50; 
+
             Object.values(row).forEach((cell) => {
                 doc
                     .fontSize(8)
-                    .text(String(cell), x, y, { width: columnWidth, align: 'center' ,ellipsis: true});
+                    .text(String(cell), x, y, { width: columnWidth, align: 'center', ellipsis: true });
                 x += columnWidth + columnSpacing;
             });
+
             y += rowHeight;
 
             doc
                 .moveTo(50, y - 10)
                 .lineTo(50 + headers.length * (columnWidth + columnSpacing) - columnSpacing, y - 10)
                 .stroke();
-        })
+        });
 
-        doc.end()
+        y = checkPageSpace(doc, y, 100); 
+
+        doc.fontSize(12).text('Summary', 50, y);
+        y += 20;
+
+        doc
+            .fontSize(10)
+            .text(`Total Amount: ₹${totalAmount}`, 50, y)
+            .text(`Total Sales: ${totalSales}`, 50, y + 15)
+            .text(`Total Discount: ₹${totalDiscount}`, 50, y + 30);
+
+        doc.end();
+
         
     } catch (error) {
         console.log(`error form dowload pdf ${error}`);
@@ -157,7 +185,9 @@ const dowloadPDF = async (req,res) => {
 
 const dowloadExcel = async (req,res) => {
     try {
-        const {data} = req.body
+        const {data,totalAmount,totalSales,totalDiscount} = req.body
+        console.log(data,totalAmount,totalSales,totalDiscount);
+        
     
         const workbook = new ExcelJS.Workbook()
         const worksheet = workbook.addWorksheet("Orders")
@@ -172,18 +202,36 @@ const dowloadExcel = async (req,res) => {
         ]
         
         data.forEach((order) => {
-            worksheet.addRow(order);
+            worksheet.addRow(order)
         })
+
+        worksheet.addRow([]);
+
+        worksheet.addRow([
+            "Summary",
+        ]);
+
+        worksheet.mergeCells(`A${worksheet.lastRow.number}:F${worksheet.lastRow.number}`)
+        worksheet.getCell(`A${worksheet.lastRow.number}`).alignment = { horizontal: "center" }
+        worksheet.getCell(`A${worksheet.lastRow.number}`).font = { bold: true }
+
+        worksheet.addRow(["", "Total Amount", totalAmount])
+        worksheet.addRow(["", "Total Sales", totalSales])
+        worksheet.addRow(["", "Total Discount", totalDiscount])
+
+        const lastRow = worksheet.lastRow.number;
+        worksheet.getRow(lastRow - 2).font = { bold: true }
+        worksheet.getRow(lastRow - 1).font = { bold: true } 
+        worksheet.getRow(lastRow).font = { bold: true }
 
         res.setHeader(
             "Content-Type",
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         );
-        res.setHeader("Content-Disposition", "attachment; filename=drinkity-sales-report.xlsx");
+        res.setHeader("Content-Disposition", "attachment; filename=drinkity-sales-report.xlsx")
     
         await workbook.xlsx.write(res);
         res.end();
-        console.log('hell');
         
     } catch (error) {
         console.log(`error form dowload excel file : ${error}`);

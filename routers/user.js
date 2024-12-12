@@ -37,6 +37,7 @@ router.get('/password-reseted',auth.isLogin,userController.passwordReseted)
 
 router.get('/search-proudct',userHome.loadSearch)
 router.post('/search-product',userHome.search)
+router.post('/filter-search',userHome.filterSearch)
 router.get('/home', userHome.loadHome);
 router.get('/product-details/:id',userHome.LoadProductDetails)
 
@@ -51,6 +52,7 @@ router.get('/account-orders',auth.isAuthenticated,accountOrders.loadAccountOrder
 router.get('/order-details/:orderId',auth.isAuthenticated,accountOrders.laodOrderDetais)
 router.post('/cancel-order',auth.isAuthenticated,accountOrders.cancelOrder)
 router.post('/return-order',auth.isAuthenticated,accountOrders.returnOrder)
+router.post('/invoice-dowload',auth.isAuthenticated,accountOrders.downloadInvoice)
 
 
 
@@ -70,6 +72,8 @@ router.patch('/edit-password',auth.isAuthenticated,accountPersonlaInfo.changePas
 
 router.get('/account-wallet',auth.isAuthenticated,accountWallet.laodWallet)
 
+router.get('/terms-and-contion',auth.isAuthenticated,accountOrders.laodTermsAdnContion)
+
 
 router.get('/cart',auth.isAuthenticated,cart.loadCart)
 router.post('/addtocart',cart.addToCart)
@@ -88,6 +92,7 @@ router.get('/order-confirmed/:orderId',auth.isAuthenticated,orderConfirme.loadOr
 
 router.post('/create-razourpay-order',auth.isAuthenticated,orderConfirme.createRazourPayOrder)
 router.post('/verify-payment',auth.isAuthenticated,orderConfirme.verifyPayment)
+router.post('/retry-payment',auth.isAuthenticated,orderConfirme.retryPayment)
 
 router.post('/apply-coupon',auth.isAuthenticated,cart.applyCoupen)
 router.post('/remove-coupon',auth.isAuthenticated,cart.removeCoupen)

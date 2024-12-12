@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="/style/admin/sidebar.css">
+  <link rel="stylesheet" href="/style/admin/header.css">
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> -->
+  <!-- <link rel="stylesheet" href="/public/style/font-awesome.css"> -->
+  <link rel="stylesheet" href="/style/admin/sales-report.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <%- include('partial/sidebar') %> 
+    
+    <div class="main-content">
+      <%- include('partial/header') %> 
+      
+      <div class="page-content">
+        <h1>Sales Report</h1>
+        <div class="dowload-btns">
+          <button class="dowload-btn" id="download-exel">Download-Excel</button>
+          <button class="dowload-btn" id="download-pdf">Download-PDF</button>
+        </div>
+        <div class="filter-bar">
+          <span class="filter-label">Filter By</span>
+          <select class="filter-dropdown" id="date-filter">
+            <option value="today">Today</option>
+            <option value="this-week">This Week</option>
+            <option value="this-month">This Month</option>
+            <option value="this-year">This Year</option>
+            <option value="costom">costom</option>
+          </select>
+          <button class="reset-filter" id="genarate-filter">Genarate</button>
+        </div>
+        <div class="filter-bar coustom-bar" id="cous-filter" style="display: none;">
+          <label for="">start date</label>
+          <input type="date" id="start-date">
+          <label for="">end date</label>
+          <input type="date" id="end-date">
+        </div>
+        <div class="table-container">
+          
+
+          <table class="dashboard-table">
+            <thead class="table-head">
+              <tr>
+                <th>Order ID</th>
+                <th>Total Amount</th>
+                <th>Coupon Discount</th>
+                <th>Offer Discount</th>
+                <th>User Email</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% orders.forEach(order => { %>
+                <tr>
+                  <td><%= order._id %></td>
+                  <td><%= order.Totalprice.toFixed(2) %></td>
+                  <td><%= order.coupenApplied.applied ? order.coupenApplied.discount.toFixed(2) : "No coupon applied" %></td>
+                  <td><%= order.totalOfferPrice ? order.totalOfferPrice.toFixed(2) : 'No offers' %></td>
+                  <td><%= order.customer.email %></td>
+                  <td><%= order.orderDate.toLocaleDateString("en-IN", {day: "2-digit",month: "2-digit",year: "numeric" }); %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="stats-container">
+          <div class="stat-card">
+            <h3>Total Sales</h3>
+            <p id="total-sles"><%= orders.length %></p>
+          </div>
+          <div class="stat-card">
+            <h3>Total Amount</h3>
+            <p id="total-amount">₹<%= totalAmount.toFixed(2) %></p>
+          </div>
+          <div class="stat-card">
+            <h3>Total Discount</h3>
+            <p id="total-discount">₹<%= totalDiscount.toFixed(2) %></p>
+          </div>
+        </div>
+        
+      </div>
+      
+    </div>
+  </div>
+  <script src="/script/admin/header.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+  <script>
+    
+    document.getElementById("date-filter").addEventListener("change", function () {
+      const customBar = document.getElementById("cous-filter")
+        if (this.value === "costom") {
+          customBar.style.display = "flex"; 
+        } else {
+          customBar.style.display = "none"; 
+        }
+    });
+
+
+    document.getElementById('genarate-filter').addEventListener('click', () => {
+      const filterValue = document.getElementById('date-filter').value
+      
+      if(!filterValue){
+        return Swal.fire({
+          title: 'Error',
+          text: 'select a filter.',
+          icon: 'error',
+          confirmButtonText: 'ok'
+        });
+      }
+
+      let startDate 
+      let endDate 
+      if(filterValue === 'costom'){
+        let startDateDDMM = document.getElementById('start-date').value
+        let endDateDDMM = document.getElementById('end-date').value
+        startDate = new Date(startDateDDMM)
+        endDate = new Date(endDateDDMM)
+        
+        if(!startDate || !endDate){
+          return Swal.fire({
+            title: 'Error',
+            text: 'select a filter.',
+            icon: 'error',
+            confirmButtonText: 'ok'
+          });
+        }
+      }
+      
+
+      axios.post('/admin/filter-sales-report',{startDate,endDate,filterValue})
+      .then(res => {
+        
+        const orders = res.data.orders
+        
+        const tbody = document.querySelector('tbody');
+        tbody.innerHTML = ''
+
+        orders.forEach(order => {
+          const row = document.createElement('tr')
+
+          row.innerHTML = `
+          <td>${order._id}</td>
+          <td>${order.Totalprice.toFixed(2)}</td>
+          <td>${order.coupenApplied.applied ? order.coupenApplied.discount.toFixed(2) : "No coupon applied"}</td>
+          <td>${order.totalOfferPrice ? order.totalOfferPrice.toFixed(2) : 'No offers'}</td>
+          <td>${order.customer.email}</td>
+          <td>${new Date(order.orderDate).toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' })}</td>`
+          tbody.appendChild(row)
+        });
+
+
+        document.getElementById('total-sles').innerHTML = orders.length
+        document.getElementById('total-amount').innerHTML = `₹${(res.data.totalAmount).toFixed(2)}`
+        document.getElementById('total-discount').innerHTML = `₹${(res.data.totalDiscount).toFixed(2)}`
+        
+      })
+      .catch(error => {
+        console.log(`error:${error}`);
+
+      })
+
+            
+    })
+
+
+
+    document.getElementById('download-exel').addEventListener('click', () => {
+      const data = getTableData()
+      const totalSales = document.getElementById('total-sles').textContent.replace(/[^0-9]/g, '')
+      const totalAmount = document.getElementById('total-amount').textContent.replace(/[^0-9]/g, '')
+      const totalDiscount = document.getElementById('total-discount').textContent.replace(/[^0-9]/g, '')
+      
+      
+      
+      axios.post('/admin/dowload-excel', {data,totalAmount,totalSales,totalDiscount}, { responseType: 'arraybuffer' })
+      .then(response => {
+        const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'orders.xlsx';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      })
+      .catch(error => console.error('Error downloading file:', error));
+      
+    })
+
+
+    document.getElementById('download-pdf').addEventListener('click',async () => {
+      const data = getTableData()
+      const totalSales = document.getElementById('total-sles').textContent.replace(/[^0-9]/g, '')
+      const totalAmount = document.getElementById('total-amount').textContent.replace(/[^0-9]/g, '')
+      const totalDiscount = document.getElementById('total-discount').textContent.replace(/[^0-9]/g, '')
+
+      try {
+          const response = await axios.post('/admin/download-pdf', { data,totalAmount,totalSales,totalDiscount }, {
+              responseType: 'blob',
+          });
+
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', 'table-data.pdf');
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+      } catch (error) {
+          console.error('Error downloading PDF:', error);
+      }
+
+    })
+
+
+
+    function getTableData() {
+    const rows = document.querySelectorAll("tbody tr");
+    const tableData = [];
+
+    rows.forEach((row) => {
+      const cells = row.querySelectorAll("td");
+      const rowData = {
+        orderId: cells[0].innerText,
+        totalAmount: cells[1].innerText,
+        couponDiscount: cells[2].innerText,
+        offerDiscount: cells[3].innerText,
+        userEmail: cells[4].innerText,
+        orderDate: cells[5].innerText,
+      };
+      tableData.push(rowData);
+    });
+
+    return tableData;
+  }
+
+  
+  
+
+  </script>
+</body>
+</html>

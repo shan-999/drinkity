@@ -8,7 +8,8 @@ const adminCategory = require('../controller/admin/category')
 const adminOrders = require('../controller/admin/orders')
 const adminCoupon = require('../controller/admin/coupon')
 const adminOffers = require('../controller/admin/offers')
-const adminDashbord = require('../controller/admin/sales-report')
+const adminSalesReport = require('../controller/admin/sales-report')
+const adminDashbord = require('../controller/admin/dashbord')
 
 
 router.get('/login',adminAth.isLogin,adminController.loadLogin)
@@ -16,15 +17,18 @@ router.post('/login',adminController.login)
 
 router.get('/logout', adminController.logout);
 
+router.get('/dashboard',adminAth.checkSession,adminDashbord.loadDashbord)
+router.post('/chart',adminAth.checkSession,adminDashbord.loadChart)
+router.post('/filter-chart',adminAth.checkSession,adminDashbord.filterChart)
 
 router.get('/users',adminAth.checkSession,adminUsers.loadusers)
 router.post('/users/:action',adminAth.checkSession,adminUsers.userStatus);
 
 
-router.get('/sales-Report',adminAth.checkSession,adminDashbord.loadSalesReport)
-router.post('/filter-sales-report',adminAth.checkSession,adminDashbord.filterSalesReport)
-router.post('/dowload-excel',adminAth.checkSession,adminDashbord.dowloadExcel)
-router.post('/download-pdf',adminAth.checkSession,adminDashbord.dowloadPDF)
+router.get('/sales-Report',adminAth.checkSession,adminSalesReport.loadSalesReport)
+router.post('/filter-sales-report',adminAth.checkSession,adminSalesReport.filterSalesReport)
+router.post('/dowload-excel',adminAth.checkSession,adminSalesReport.dowloadExcel)
+router.post('/download-pdf',adminAth.checkSession,adminSalesReport.dowloadPDF)
 
 
 

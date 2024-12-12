@@ -67,12 +67,20 @@
 
 .transactions {
     margin-top: 20px;
+    overflow: auto;
+    max-height: 500px;
+}
+.transactions::-webkit-scrollbar {
+    display: none;
 }
 
 .transactions h3 {
     font-size: 18px;
     color: #333333;
     margin-bottom: 15px;
+    position: sticky;
+    top: 0;
+    background-color: white;
 }
 
 .transaction {

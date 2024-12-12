@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="/style/admin/sidebar.css">
+  <link rel="stylesheet" href="/style/admin/header.css">
+</head>
+<body>
+    <style>
+        /* General Styles */
+/* General Styles */
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f6fc;
+  color: #333;
+}
+
+.dashboard {
+    max-width: 1200px;
+    margin: 20px auto;
+    gap: 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Card Styles */
+.card {
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+h2 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #2c3e50;
+  border-bottom: 2px solid #f4f6fc;
+  padding-bottom: 5px;
+}
+
+/* Sales Summary */
+.sales-summary .sales-items {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.sales-item {
+  text-align: center;
+  flex: 1;
+  border: 1px solid #e6e6e6;
+  padding: 15px;
+  border-radius: 10px;
+  background: #f9f9f9;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.sales-item:hover {
+  background: #f0f0f0;
+  transform: translateY(-3px);
+}
+
+.sales-item p {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 10px 0;
+  color: #2c3e50;
+}
+
+.sales-item span {
+  display: block;
+  font-size: 14px;
+  color: #7f8c8d;
+}
+
+.sales-item small {
+  display: block;
+  font-size: 12px;
+  color: #27ae60;
+}
+
+/* Charts Placeholder */
+.chart-placeholder {
+  background: #f4f6fc;
+  height: 180px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #7f8c8d;
+  border: 1px dashed #e6e6e6;
+}
+
+/* Top Products */
+.top-products .products {
+  margin-top: 10px;
+}
+
+.product {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #e6e6e6;
+  font-size: 14px;
+}
+
+.product span {
+  flex: 1;
+  text-align: left;
+  color: #2c3e50;
+}
+
+.product span:last-child {
+  text-align: right;
+  font-weight: bold;
+}
+
+/* Earnings Section */
+.earnings p {
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.earnings p strong {
+  font-size: 16px;
+  color: #27ae60;
+}
+
+.progress-bar {
+  background: #e6e6e6;
+  border-radius: 15px;
+  height: 12px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.progress {
+  background: #3498db;
+  height: 100%;
+  border-radius: 15px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chart-filter-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.chart-filter-container label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+}
+
+.chart-filter {
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    color: #333;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+}
+
+.chart-filter:hover {
+    border-color: #0056b3;
+    background-color: #e9f5ff;
+}
+
+.chart-filter:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 5px rgba(0, 91, 187, 0.5);
+}
+
+.chart-filter option {
+    font-size: 16px;
+}
+
+
+
+    </style>
+  <div class="admin-layout">
+    <%- include('partial/sidebar') %> 
+    
+    <div class="main-content">
+      <%- include('partial/header') %> 
+      
+      <div class="page-content">
+        
+        
+            <div class="dashboard">
+                <!-- Today's Sales Section -->
+                <div class="card sales-summary">
+                  <h2>Today's Sales</h2>
+                  <div class="sales-items">
+                    <div class="sales-item">
+                      <p><%= totalPrice.toFixed(2) %></p>
+                      <span>Total Sales</span>
+                    </div>
+                    <div class="sales-item">
+                      <p><%= toatlOrders %></p>
+                      <span>Total Orders</span>
+                    </div>
+                    <div class="sales-item">
+                      <p><%= productSold %></p>
+                      <span>Sold Products</span>
+                    </div>
+                    <div class="sales-item">
+                      <p><%= totalUser %></p>
+                      <span>Total Customers</span>
+                    </div>
+                  </div>
+                </div>
+            
+                
+            
+               
+
+                <!-- Level Chart Section -->
+                <div class="card chart">
+                    <h2>Level</h2>
+                    <div class="chart-filter-container">
+                        <label for="chart-filter">Filter by:</label>
+                        <select name="chart-filter" id="chart-filter" class="chart-filter" onchange="getFilteredData(this.value)">
+                            <option value="yearly" selected>Yearly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="weekly">Weekly</option>
+                        </select>
+                    </div>
+                    <canvas id="salesChart"></canvas>
+                </div>
+                
+            
+                 <!-- top Products Section -->
+                 <div class="card top-products">
+                    <h2>Top Products</h2>
+
+                    <div class="products">
+                        <% bestProducts.forEach((item,index) => { %>
+                            <div class="product">
+                                <span><%= index + 1 %></span>
+                                <span><%= item.productName %></span>
+                                <span><%= item.quantity %></span>
+                            </div>
+                        <% }) %>
+                    </div>
+                  </div>
+
+                  <!-- top brand section -->
+                  <div class="card top-products">
+                    <h2>Top Brands</h2>
+
+                    <div class="products">
+                        <% bestSellingBrand.forEach((item,index) => { %>
+                            <div class="product">
+                                <span><%= index + 1 %></span>
+                                <span><%= item.brandName %></span>
+                                <span><%= item.quantity %></span>
+                            </div>
+                        <% }) %>
+                    </div>
+                  </div>
+
+
+                  <!-- top category section -->
+                  <div class="card top-products">
+                    <h2>Top Category</h2>
+
+                    <div class="products">
+                        <% bestSellingCategory.forEach((item,index) => { %>
+                            <div class="product">
+                                <span><%= index + 1 %></span>
+                                <span><%= item.categoryName %></span>
+                                <span><%= item.quantity %></span>
+                            </div>
+                        <% }) %>
+                    </div>
+                  </div>
+        
+      </div>
+      
+    </div>
+  </div>
+  <script src="/script/admin/header.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+    axios.post('/admin/chart')
+
+    .then(data => {
+        console.log(data);
+        
+        const labels = data.data.labels
+        const datas = data.data.data
+        getChart(labels,datas)
+        })
+    .catch(error => console.error('Error form fetching sales data:', error));
+
+
+
+    function getFilteredData(filterBy) {
+       axios.post('/admin/filter-chart',{filterBy})
+        
+       .then(data => {
+        console.log(data);
+        
+        const labels = data.data.labels
+        const datas = data.data.data
+        getChart(labels,datas)
+        })
+    .catch(error => console.error('Error form filter sales data:', error));
+    }
+
+
+    let salesChart;
+
+    function getChart(labels,data){
+        const ctx = document.getElementById('salesChart').getContext('2d');
+
+
+        if (salesChart) {
+            salesChart.destroy();
+        }
+
+        salesChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels, 
+                datasets: [{
+                    label: 'Sales ($)',
+                    data: data, 
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)'
+                    ], 
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)'
+                    ], 
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top', 
+                    },
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true 
+                    }
+                }
+            }
+        });
+    }
+</script>
+
+  
+</body>
+</html>

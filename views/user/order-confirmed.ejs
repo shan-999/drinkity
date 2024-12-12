@@ -153,11 +153,12 @@
 
 
     .products {
-      width: 520px;         
-      height: 350px;        
-      overflow-y: auto;     
-      overflow-x: hidden;   
-      border: 1px solid #ccc;      
+      width: 520px;
+      height: auto;
+      overflow-y: auto;
+      overflow-x: hidden;
+      border: 1px solid #ccc;
+      max-height: 350px;    
     }
     .products .order-item{
       padding: 10px;
@@ -172,8 +173,6 @@
     }
 
     .shippingFee{
-      display: flex;
-      justify-content: space-between;
       margin-top: 20px;
       font-size: 12px;
       
@@ -201,6 +200,10 @@
 
     .continue-shop-btn:hover {
       background-color: #de8e8e;
+    }
+    .summery-items{
+      display: flex;
+      justify-content: space-between;
     }
       </style>
    
@@ -230,12 +233,12 @@
             <div class="order-summary-section">
                 <h2>Order Summary</h2>
                 <p><strong>Order Date:</strong> <%= new Date(order.orderDate).toLocaleDateString() %></p>
-                <p><strong>Order ID:</strong> <%= order._id %></p>
+                <p><strong>Order ID:</strong> <%= order._id.toString().slice(-10) %></p>
                 <p><strong>Payment Method:</strong> 
-                    <% if (order.paymentMethod === 'cod') { %>
+                    <% if (order.paymentMethourd === 'cod') { %>
                         Cash on Delivery
                     <% } else { %>
-                        <%= order.paymentMethod %>
+                        <%= order.paymentMethourd %>
                     <% } %>
                 </p>
     
@@ -251,8 +254,14 @@
                     <% }) %>
                     <div class="total-summery">
                       <div class="shippingFee" >
-                        <p><strong>Shipping fee</strong></p>
-                        <p><strong>₹ <%= order.Totalprice < 500 ? '60.00' : '0.00' %></strong></p>
+                        <div class="summery-items">
+                          <p><strong>Shipping fee</strong></p>
+                          <p><strong>₹ <%= order.Totalprice < 500 ? '60.00' : '0.00' %></strong></p>
+                        </div>
+                        <div class="summery-items">
+                          <p><strong>Discount</strong></p>
+                          <p><strong>₹ -<%= order.coupenApplied.discount ? order.coupenApplied.discount.toFixed(2) : 0 %></strong></p>
+                        </div>
                       </div>
                       <div class="order-total">
                           <p><strong>Order Total</strong></p>

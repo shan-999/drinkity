@@ -93,16 +93,13 @@ addressDropdown.addEventListener('change', async (event) => {
         return;
     }
 
-    const coupenApplied = sessionStorage.getItem('coponapplyed')
-    const discountPrice = sessionStorage.getItem('discount')
 
-    const formData = {
+    let formData = {
         address: addresData,
         products, 
         paymentMethod,
         totalPrice,
-        coupenApplied,
-        discountPrice
+        PaymentStatus:'Pending'
     };
 
 
@@ -127,8 +124,9 @@ addressDropdown.addEventListener('change', async (event) => {
                     .then(res => {
                         
                         if(res.data.success){
+                            formData.PaymentStatus = 'Success'
                             
-                            axios.post('/confirm-order', formData, {
+                            axios.post('/confirm-order', formData ,{
                             headers: {
                                 'Content-Type': 'application/json'
                             }
@@ -150,23 +148,60 @@ addressDropdown.addEventListener('change', async (event) => {
                             }
 
                             })
-                            .catch((error) => {
-                                console.log(error);
-                                
-                            })
-                        } else {
-                            console.log('faild');
+
                             
+
                         }
                     })
                 } catch (error) {
-                    console.error('Payment verification failed:', error);
-                    alert('Payment verification failed.');
+                console.error('Payment verification failed:', error);
+                alert('Payment verification failed.');
                 }
             }
             };
 
             const rzp = new Razorpay(options);
+
+            rzp.on('payment.failed', function (response) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Payment Failed',
+                    text: 'Your payment failed. Please try again.',
+                })
+                .then(response => {
+                    formData.PaymentStatus = 'Failed'
+                            
+                    axios.post('/confirm-order', formData ,{
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                    }).then((response)=>{
+
+                    
+                        sessionStorage.removeItem('code')
+                        
+                        const data = response.data;
+                        
+
+                    if (data.showAlert) {
+                    Swal.fire('Error', data.message, 'error');
+                    } else if (data.redirect) {
+                    window.location.href = '/cart'
+                    } else {
+                    Swal.fire('Success', data.message, 'success');
+                    }
+
+                    })
+
+                    
+
+                })
+            
+               
+            });
+    
+
+
             rzp.open();
 
 
@@ -176,6 +211,7 @@ addressDropdown.addEventListener('change', async (event) => {
         }
         } else {
         try {
+            formData.PaymentStatus = "Success"
             const response = await axios.post('/confirm-order', formData, {
             headers: {
                 'Content-Type': 'application/json'
