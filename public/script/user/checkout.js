@@ -77,7 +77,7 @@ addressDropdown.addEventListener('change', async (event) => {
         acc[index] = acc[index] || {};
         acc[index][field] = input.value || ''; 
         return acc;
-    }, []);
+    }, []); 
 
 
 
