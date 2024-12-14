@@ -1,64 +1,60 @@
-<<<<<<< HEAD
 // document.addEventListener('DOMContentLoaded', () => {
 //     const timerElement = document.getElementById('timer');
 //     const resendLinkElement = document.querySelector('.resend-link');
 //     const resendButtonElement = document.querySelector('.resend');
 //     const countdownDuration = 60;
-=======
->>>>>>> fa130ed472eaafe5b602dbea4beeaf1885876b25
 
-function validateInput(current, nextFieldID) {
-    const value = current.value;
-    const isNumber = /^[0-9]+$/.test(value);  
+// function validateInput(current, nextFieldID) {
+    // const value = current.value;
+    // const isNumber = /^[0-9]+$/.test(value);  
 
-<<<<<<< HEAD
-//     let resetTimer = sessionStorage.getItem('resetTimer') === 'true';
-//     let otpTimerStarted = sessionStorage.getItem('otpTimerStarted');
+    // let resetTimer = sessionStorage.getItem('resetTimer') === 'true';
+    // let otpTimerStarted = sessionStorage.getItem('otpTimerStarted');
 
  
-//     const resetTimerForNewUser = () => {
-//         localStorage.removeItem('otp-timer');  
-//         sessionStorage.setItem('otpTimerStarted', 'true');
-//         sessionStorage.setItem('resetTimer', 'false');  
-//     };
+    // const resetTimerForNewUser = () => {
+    //     localStorage.removeItem('otp-timer');  
+    //     sessionStorage.setItem('otpTimerStarted', 'true');
+    //     sessionStorage.setItem('resetTimer', 'false');  
+    // };
 
   
-//     let timeLeft = localStorage.getItem('otp-timer')
-//         ? parseInt(localStorage.getItem('otp-timer'), 10)
-//         : countdownDuration;
+    // let timeLeft = localStorage.getItem('otp-timer')
+    //     ? parseInt(localStorage.getItem('otp-timer'), 10)
+    //     : countdownDuration;
 
     
-//     if (resetTimer) {
-//         resetTimerForNewUser();
-//         timeLeft = countdownDuration;
-//     } else if (!otpTimerStarted) {
-//         resetTimerForNewUser();
-//     }
+    // if (resetTimer) {
+    //     resetTimerForNewUser();
+    //     timeLeft = countdownDuration;
+    // } else if (!otpTimerStarted) {
+    //     resetTimerForNewUser();
+    // }
 
    
-//     timerElement.textContent = timeLeft;
+    // timerElement.textContent = timeLeft;
 
     
-//     const updateTimer = () => {
-//         timeLeft--;
-//         timerElement.textContent = timeLeft;
+    // const updateTimer = () => {
+    //     timeLeft--;
+    //     timerElement.textContent = timeLeft;
 
-//         if (timeLeft <= 0) {
-//             clearInterval(countdown);
-//             resendButtonElement.style.display = 'none'; 
-//             resendLinkElement.style.display = 'block';  
-//             localStorage.removeItem('otp-timer');       
-//         } else {
-//             localStorage.setItem('otp-timer', timeLeft);
-//         }
-//     };
+    //     if (timeLeft <= 0) {
+    //         clearInterval(countdown);
+    //         resendButtonElement.style.display = 'none'; 
+    //         resendLinkElement.style.display = 'block';  
+    //         localStorage.removeItem('otp-timer');       
+    //     } else {
+    //         localStorage.setItem('otp-timer', timeLeft);
+    //     }
+    // };
 
-//     const countdown = setInterval(updateTimer, 1000); 
+    // const countdown = setInterval(updateTimer, 1000); 
 
    
-//     if (timeLeft <= 0) {
-//         localStorage.removeItem('otp-timer');
-//     }
+    // if (timeLeft <= 0) {
+    //     localStorage.removeItem('otp-timer');
+    // }
 
     
     
@@ -74,15 +70,6 @@ function validateInput(current, nextFieldID) {
     }
 }
 
-=======
-    if (!isNumber) {
-        current.value = '';  
-    } else if (nextFieldID && value.length === 1) {
-        document.getElementById(nextFieldID).focus(); 
-    }
-}
-
->>>>>>> fa130ed472eaafe5b602dbea4beeaf1885876b25
 document.querySelectorAll('.code-inputs input').forEach((input, index, inputs) => {
     input.addEventListener('keydown', (event) => {
         if (event.key === 'Backspace' && input.value.length === 0 && index > 0) {
