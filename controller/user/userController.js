@@ -108,7 +108,7 @@ const sendOtp = async (email) => {
         service: 'Gmail',
         auth: {
             user: 'drinkity999@gmail.com',
-            pass: 'nxdp hcus aumy epmb', 
+            pass: 'nxdp hcus aumy epmb',
         },
     });
 

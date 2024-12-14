@@ -28,7 +28,7 @@ const orderSchema = new mongoose.Schema({
                 requastName:{type:String},
                 reason:{type:String},
                 approve:{type:Boolean}
-            } 
+            }
     }],
     Totalprice: {
         type: Number,
