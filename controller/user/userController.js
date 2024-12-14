@@ -108,7 +108,7 @@ const sendOtp = async (email) => {
         service: 'Gmail',
         auth: {
             user: 'drinkity999@gmail.com',
-            pass: 'nxdp hcus aumy epmb',
+            pass: 'yngm ryfi apzt dkbv',
         },
     });
 
@@ -204,7 +204,7 @@ const resendOtp = async (req, res) => {
             service: 'Gmail',
             auth: {
                 user: 'drinkity999@gmail.com',
-                pass: 'nxdp hcus aumy epmb',
+                pass: 'yngm ryfi apzt dkbv',
             },
         });
 
