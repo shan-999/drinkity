@@ -313,9 +313,9 @@ const verifyPayment = async (req,res) => {
         console.log('hello');
         
         
-        // const hmac = crypto.createHmac('sha256', "S5Ew9Qju67kwU7vzwhhoUklL");
-        // hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
-        // const generatedSignature = hmac.digest('hex');
+        const hmac = crypto.createHmac('sha256', "S5Ew9Qju67kwU7vzwhhoUklL");
+        hmac.update(razorpay_order_id + "|" + razorpay_payment_id);
+        const generatedSignature = hmac.digest('hex');
 
         
         
