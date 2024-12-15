@@ -240,7 +240,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% order.products.forEach(product => { %>
+                        <% paginatedProducts.forEach(product => { %>
                         <tr>
                             <td style="width: 200px;""><%= product.productName %></td>
                             <td><%= new Date(order.orderDate).toLocaleDateString() %></td>
@@ -297,7 +297,6 @@
                     <a href="?page=<%= pagination.currentPage + 1 %>&limit=5" class="next">Next</a>
                 <% } %>
             </div>
-
 
 
     
