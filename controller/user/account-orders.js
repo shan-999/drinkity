@@ -48,7 +48,7 @@ const laodOrderDetais = async (req, res) => {
 
 
         const page = parseInt(req.query.page) || 1
-        const limit = 2
+        const limit = 4
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit
 
@@ -120,7 +120,7 @@ const cancelOrder = async (req,res) => {
         }
         
 
-        const indexOfProduct = order.products.findIndex(item => item.productId.toString() === productId)
+            
 
         order.products[indexOfProduct].status = "Cancelled"
         order.Totalprice -= order.products[indexOfProduct].total
