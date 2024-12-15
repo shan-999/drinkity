@@ -104,10 +104,11 @@ const laodOrderDetais = async (req, res) => {
 
 const cancelOrder = async (req,res) => {
     const {productId,orderId} = req.body
-    const userId = req.session.userId
+    // const userId = req.session.userId
 
     try {
         const order = await orderSchema.findById(orderId)
+        const userId = order.userId
         
         if(!order){
             return res.status(400).json({success: false , message : 'order not fount'})
@@ -131,53 +132,51 @@ const cancelOrder = async (req,res) => {
         )
 
 
-        const wallet = await walletSchema.findOne({userId})
+        if(order.paymentMethourd === 'Razorpay' && order.PaymentStatus === 'Success'){
 
-        
+                const wallet = await walletSchema.findOne({userId})
 
-        if(!wallet){
 
-            if(order.coupenApplied){
-                
-            }
-            
-            const balance = order.products[indexOfProduct].total
+                if(!wallet){
+                    
+                    const balance = order.products[indexOfProduct].total
 
-            const newWallet = new walletSchema({
-                userId,
-                balance,
-                transactions:[
-                    {
+                    const newWallet = new walletSchema({
+                        userId,
+                        balance,
+                        transactions:[
+                            {
+                                trascationDate:new Date(),
+                                trascationType:"Debit",
+                                description: 'For cancel product',
+                                amount:balance
+                            }
+                        ]
+                    })
+                    await newWallet.save()
+
+                    
+                    
+                }else{
+                    const amount = order.products[indexOfProduct].total
+
+                    const transactions = {
                         trascationDate:new Date(),
                         trascationType:"Debit",
-                        description: 'For cancel product',
-                        amount:balance
+                        description:'For cancel product',
+                        amount
                     }
-                ]
-            })
-            await newWallet.save()
 
-            
-            
-        }else{
-            const amount = order.products[indexOfProduct].total
+                    await walletSchema.findOneAndUpdate({userId},
+                        {
+                            $push:{transactions},
+                            $inc:{balance:amount}
+                        }
+                    )
 
-            const transactions = {
-                trascationDate:new Date(),
-                trascationType:"Debit",
-                description:'For cancel product',
-                amount
-            }
-
-            await walletSchema.findOneAndUpdate({userId},
-                {
-                    $push:{transactions},
-                    $inc:{balance:amount}
+                    
+                    
                 }
-            )
-
-            
-            
         }
         
         return res.status(200).json({success : true , message : 'Your order canceled'})        
@@ -198,9 +197,6 @@ const returnOrder = async (req,res) => {
         const {reason,additionalInfo,productId,orderId} = req.body
 
         const userId = req.session.userId
-
-        
-        
 
         const order = await orderSchema.findById(orderId)
         const productIndex  = order.products.findIndex(item => item.productId.toString() === productId )

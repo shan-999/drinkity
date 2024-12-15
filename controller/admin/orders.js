@@ -33,6 +33,63 @@ const updateStats = async (req,res) => {
         
         order.products[productIndex].status = status
 
+        if(status === 'Cancelled'){
+            if(order.coupenApplied.applied){
+                return res.status(400).json({success:false,message:'Coupon applied! Cancellation is not allowed.'})
+            }
+
+            const product = await productsSchema.findOneAndUpdate({_id:productId},
+                {$inc:{quantity:order.products[productIndex].quantity}}
+            )
+
+            if(order.paymentMethourd === "Razorpay" && order.PaymentStatus === 'Success'){
+                const userId = order.userId
+                const wallet = await walletSchema.findOne({userId})
+                
+                
+                if(!wallet){
+                    
+                    const balance = order.products[productIndex].total
+    
+                    const newWallet = new walletSchema({
+                        userId,
+                        balance,
+                        transactions:[
+                            {
+                                trascationDate:new Date(),
+                                trascationType:"Debit",
+                                description: 'For cancel product',
+                                amount:balance
+                            }
+                        ]
+                    })
+                    await newWallet.save()
+                    
+                }else{
+                    const amount = order.products[productIndex].total
+    
+                    const transactions = {
+                        trascationDate:new Date(),
+                        trascationType:"Debit",
+                        description:'For cancel product',
+                        amount
+                    }
+    
+                    await walletSchema.findOneAndUpdate({userId},
+                        {
+                            $push:{transactions},
+                            $inc:{balance:amount}
+                        }
+                    )
+    
+                    
+                    
+                }
+            }
+        }
+
+
+
         await order.save()
         
         res.status(200).json({ message: 'Order status updated successfully', });
