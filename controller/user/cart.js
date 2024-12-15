@@ -267,19 +267,18 @@ const loadWishList = async (req,res) => {
         const categories = await category.find({ listed: true });
         const wishlist = await wishlistSchema.findOne({userId:userId}).populate('products.productId').exec();
         
-        
-        
+        if(!wishlist)return res.render('user/wishlist',{wishlist:null,categories,offProducts:null})
+            
         const productIds = wishlist.products.map((product) => product.productId._id)
-        
+
         const offProducts = await offerSchema.find(
             {applicableFor:{$in:productIds}}
         )
-
         
 
         res.render('user/wishlist',{wishlist,categories,offProducts})
     } catch (error) {
-        console.log(`error form load cart : ${error}`);
+        console.log(`error form load wishlist : ${error}`);
         
     }
 }

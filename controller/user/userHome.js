@@ -179,18 +179,18 @@ const loadCategory = async (req,res) => {
 const filterCategory = async (req,res) => {
     try {
         const {selectedValues,category} = req.body
-        
-        let productName
+
+        let products = await productsmodel.find({category,listed:true})
 
         if(selectedValues.sort){
             if(selectedValues.sort === 'A - Z' || selectedValues.sort === 'All' ){
-                productName = 1
+                products = products.sort((a,b) => a.productName - b.productName)
             }else if(selectedValues.sort === 'Z - A'){
-                productName = -1
+                products = products.sort((a,b) => b.productName - a.productName)
             }
         }
 
-        let products = await productsmodel.find({category,listed:true}).sort({productName})
+        
 
         if(selectedValues.price){
             if(selectedValues.price === 'High to Low'){
