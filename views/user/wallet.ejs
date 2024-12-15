@@ -38,26 +38,34 @@
         <div class="balance-content">
             <div class="balance-header">
                 <p class="balance-title">Your Balance</p>
-                <p class="balance-amount">Rp <%= wallet.balance.toFixed(2) %></p>
+                <% if(!wallet){ %>
+                    <p class="balance-amount ">₹ 0</p>
+                <% } else { %>
+                    <p class="balance-amount">₹ <%= wallet.balance.toFixed(2) %></p>
+                <% } %>
             </div>
         
             
         
             <div class="transactions">
                 <h3>Transactions</h3>
-                <% wallet.transactions.findLast(item => { %>
-                <div class="transaction">
-                    <div class="transaction-icon blue-bg">&#128722;</div>
-                    <div class="transaction-details">
-                        <p class="transaction-title"><%= item.description %></p>
-                        <p class="transaction-subtitle"><%= item.trascationType %></p>
-                    </div>
-                    <div class="amount-date">
-                        <div class="transaction-amount"><%= item.amount.toFixed(2) %></div>
-                        <p class="transaction-subtitle"><%= item.trascationDate.toDateString() %></p>
-                    </div>
-                </div>
-                <% }) %>
+                <% if(wallet) { %>
+                    <% wallet.transactions.findLast(item => { %>
+                        <div class="transaction">
+                            <div class="transaction-icon blue-bg">&#128722;</div>
+                            <div class="transaction-details">
+                                <p class="transaction-title"><%= item.description %></p>
+                                <p class="transaction-subtitle"><%= item.trascationType %></p>
+                            </div>
+                            <div class="amount-date">
+                                <div class="transaction-amount"><%= item.amount.toFixed(2) %></div>
+                                <p class="transaction-subtitle"><%= item.trascationDate.toDateString() %></p>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p class="balance-error"> Wallet balance is zero. Add credits to continue your adventure!</p>
+                <% } %>
                 
             </div>
         </div>

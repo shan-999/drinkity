@@ -5,10 +5,10 @@ const walletSchema = require('../../model/wallet');
 const loadOrder = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1; 
-        const limit = 4; 
+        const limit = 7; 
         const skip = (page - 1) * limit;
 
-        const orders = await orderSchema.find().populate('userId').skip(skip).limit(limit).exec();
+        const orders = await orderSchema.find().populate('userId').skip(skip).limit(limit).sort({orderDate:-1})
 
         const totalProducts = await orderSchema.countDocuments();
         const totalPages = Math.ceil(totalProducts / limit);

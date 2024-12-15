@@ -140,3 +140,10 @@
     color: #333333;
     margin-left: 80px
 }
+
+.balance-error{
+    display: flex;
+    align-items: center;
+    color: rgb(157, 157, 157);
+    font-size: 24px;
+}
