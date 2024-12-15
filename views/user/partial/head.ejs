@@ -51,9 +51,7 @@
                 <ul class="dropdown-menu" aria-labelledby="userDropdown">
                   <form action="#"><li><a type="submit" class="dropdown-item" href="/account-orders">Account</a></li></form>
                   <li>
-                    <form action="/logout" method="post" id="logoutForm">
-                      <button type="submit" class="dropdown-item" id="logout">Logout</button>
-                    </form>
+                    <button onclick="logout()" type="submit" class="dropdown-item" id="logout">Logout</button>
                   </li>
                   
                 </ul>
@@ -166,6 +164,26 @@
 
     function getCategory(event){
       location.href = `/category/${event.target.value}`
-      
     }
+
+    function logout()  {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You will be logged out!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, log out',
+        cancelButtonText: 'Cancel'
+    })
+    .then(res => {
+      if(res.isConfirmed){
+        axios.post('/logout')
+        .then(response => {
+          location.reload()
+        })
+      }
+    })
+  }
    </script>
