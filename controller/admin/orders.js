@@ -67,10 +67,12 @@ const approveReturnRequst = async (req,res) =>{
     try {
         
         const {orderId,productId} = req.body
-        const userId = req.session.userId
+        // const userId = req.session.userId
         
         const order = await orderSchema.findById(orderId)
         const wallet = await walletSchema.find({userId:userId})
+
+        const userId = order.userId
 
         const indexOfProduct = order.products.findIndex(item => item.productId.toString() === productId)
         
