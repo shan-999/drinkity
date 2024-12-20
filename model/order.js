@@ -4,16 +4,12 @@ const { strike } = require('pdfkit');
 
 const orderSchema = new mongoose.Schema({
     userId:{type:mongoose.Schema.Types.ObjectId,ref:'users',required: true},
-    customer: {
-        userName: { type: String, required: true },
-        email: { type: String, required: true },
-        address: {
-            landMark: { type: String, required: true },
-            city: { type: String, required: true },
-            state: { type: String, required: true },
-            postalCode: { type: String, required: true },
-            phonNumber: { type: String, required: true } 
-        }
+    address: {
+        landMark: { type: String, required: true },
+        city: { type: String, required: true },
+        state: { type: String, required: true },
+        postalCode: { type: String, required: true },
+        phonNumber: { type: String, required: true } 
     },
     products: [{
         productId: { type: mongoose.Schema.Types.ObjectId, ref: 'product', required: true },

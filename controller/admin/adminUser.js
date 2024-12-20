@@ -21,7 +21,7 @@ const loadusers = async (req,res) => {
         if(error) console.log(`Error from loadUser : ${error}`);
     }
 }
-
+ 
 
 
 

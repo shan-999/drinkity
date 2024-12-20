@@ -150,19 +150,7 @@
             <div class="container">
                 <h1 class="page-title">Orders</h1>
                 
-                <!-- <div class="filter-bar">
-                    <button class="filter-button">Filter By</button>
-                    <select class="filter-dropdown">
-                        <option>Date</option>
-                    </select>
-                    <select class="filter-dropdown">
-                        <option>Order Type</option>
-                    </select>
-                    <select class="filter-dropdown">
-                        <option>Order Status</option>
-                    </select>
-                    <a href="#" class="reset-filter">Reset Filter</a>
-                </div> -->
+                
     
                 <table class="orders-table">
                     <thead>
@@ -178,7 +166,8 @@
                         <% orders.forEach(order => { %>
                             <tr>
                                 <td><%= order._id %></td>
-                                <td><%= order.customer.email %></td>
+
+                                <td><%= order.userId.email %></td>
                                 <td>
                                     <% order.products.forEach(product => { %>
                                         <div><%= product.productName %></div>

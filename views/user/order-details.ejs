@@ -333,10 +333,10 @@
                 
                     <div class="address">
                         <h4>Shipping Address</h4>
-                        <p><strong>Name:</strong> <%= order.customer.userName %></p>
-                        <p><strong>Email:</strong> <%= order.customer.email %></p>
-                        <p><strong>Phone:</strong> <%= order.customer.address.phonNumber %></p>
-                        <p><strong>Address:</strong> <%= order.customer.address.landMark %>, <%= order.customer.address.city %>, <%= order.customer.address.state %>, <%= order.customer.address.postalCode %></p>
+                        <p><strong>Name:</strong> <%= user.userName %></p>
+                        <p><strong>Email:</strong> <%= user.email %></p>
+                        <p><strong>Phone:</strong> <%= order.address.phonNumber %></p>
+                        <p><strong>Address:</strong> <%= order.address.landMark %>, <%= order.address.city %>, <%= order.address.state %>, <%= order.address.postalCode %></p>
                     </div>
             </div>
         </div>

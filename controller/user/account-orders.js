@@ -79,9 +79,12 @@ const laodOrderDetais = async (req, res) => {
             hasNextPage: endIndex < totalProducts,
             hasPrevPage: startIndex > 0,
         };
+
+        const user = await userSchema.findById(order.userId)
         
         res.render("user/order-details", {
             order,
+            user,
             categories,
             paginatedProducts,
             estimatedTotal,

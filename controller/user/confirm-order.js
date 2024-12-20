@@ -191,16 +191,12 @@ const confirmOrder = async (req, res) => {
         const user = await users.findById(req.session.userId)
         const newOrder = new orderSchema({
             userId:req.session.userId,
-            customer: {
-                userName: user.userName,
-                email: user.email,
-                address: {
-                    landMark: orderAddress.landmark,
-                    city: orderAddress.city,
-                    state: orderAddress.state,
-                    postalCode: orderAddress.PINCode,
-                    phonNumber:orderAddress.phonNumber
-                }
+            address: {
+                landMark: orderAddress.landmark,
+                city: orderAddress.city,
+                state: orderAddress.state,
+                postalCode: orderAddress.PINCode,
+                phonNumber:orderAddress.phonNumber
             },
             products: products.map(item => ({
                 productId: item.productId,
@@ -262,12 +258,13 @@ const loadOrderConfirmed = async (req, res) => {
         const categories = await category.find({ listed: true });
         const orderId = req.params.orderId; 
         const order = await orderSchema.findById(orderId); 
+        const user = await users.findById(order.userId)
 
         if (!order) {
             return res.status(404).send("Order not found");
         }
 
-        res.render('user/order-confirmed', { categories, order });
+        res.render('user/order-confirmed', { categories, order ,userName:user.userName, userEmail:user.email});
     } catch (error) {
         console.log(`Error in loadOrderConfirmed: ${error.message}`);
     }

@@ -1,4 +1,4 @@
-    const cartSchema = require('../../model/cart')
+const cartSchema = require('../../model/cart')
 const productsSchema = require('../../model/products')
 const users = require('../../model/userModel')
 const category = require('../../model/category');

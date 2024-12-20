@@ -218,10 +218,10 @@
                 <p>Your order will be processed within 24 hours during working days. You will receive your order and tracking details once the items have been shipped.</p>
                 <div class="billing-address">
                     <h3>Billing address</h3>
-                    <p><strong>Name:</strong> <%= order.customer.userName %></p>
-                    <p><strong>Address:</strong> <%= order.customer.address.landMark %>, <%= order.customer.address.city %>, <%= order.customer.address.state %></p>
-                    <p><strong>PIN Code:</strong> <%= order.customer.address.postalCode %></p>
-                    <p><strong>Email:</strong> <%= order.customer.email %></p>
+                    <p><strong>Name:</strong> <%= userName %></p>
+                    <p><strong>Address:</strong> <%= order.address.landMark %>, <%= order.address.city %>, <%= order.address.state %></p>
+                    <p><strong>PIN Code:</strong> <%= order.address.postalCode %></p>
+                    <p><strong>Email:</strong> <%= userEmail %></p>
                 </div>
                 <div style="display: flex; gap: 20px;">
                   <a href="/order-details/<%= order._id %>"><button class="track-order-button">Order Details</button></a>
