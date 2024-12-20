@@ -1,5 +1,6 @@
 const orderSchema = require('../../model/order');
 const productsSchema = require('../../model/products');
+const userModel = require('../../model/userModel');
 const walletSchema = require('../../model/wallet');
 
 const loadOrder = async (req, res) => {
@@ -9,6 +10,9 @@ const loadOrder = async (req, res) => {
         const skip = (page - 1) * limit;
 
         const orders = await orderSchema.find().populate('userId').skip(skip).limit(limit).sort({orderDate:-1})
+        // const users = await userModel.aggregate([{ $group:{ _id: "$_id",userName:{ $first:"$userName" },email:{$first:"$email" }}}])
+
+        
 
         const totalProducts = await orderSchema.countDocuments();
         const totalPages = Math.ceil(totalProducts / limit);
@@ -106,7 +110,8 @@ const updateStats = async (req,res) => {
 const loadOrderDetails = async (req, res) => {
     try {
         const orderId = req.params.orderId; 
-        const order = await orderSchema.findById(orderId).populate('customer').populate('products');
+        const order = await orderSchema.findById(orderId).populate('userId').populate('products');
+
         
         if (!order) {
             return res.status(404).send("Order not found");
