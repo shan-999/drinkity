@@ -15,7 +15,9 @@ const loadProducts = async (req, res) => {
         const limit = 4; 
         const skip = (page - 1) * limit;
 
-        const product = await products.find({}).skip(skip).limit(limit);
+        const product = await products.find({}).skip(skip).limit(limit).populate('category')
+        console.log(product);
+        
         
             
 
@@ -87,6 +89,8 @@ const addProduct = async (req, res) => {
         const { productName, brand, price, ingredients, quantity, category ,description} = req.body;
 
         console.log(productName, brand, price,ingredients, quantity, category ,description);
+
+        
         
 
         const imagePaths = req.files.map(file => `/uploads/${file.filename}`);
@@ -128,6 +132,8 @@ const editProduct = async (req, res) => {
     try {
         const { productName, brand, price, ingredients, quantity, category ,description} = req.body;
         const productId = req.params.id;
+        console.log(category);
+        
         
         
         const product = await products.findById(productId);

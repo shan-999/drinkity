@@ -275,7 +275,7 @@
             <div class="category-carousel swiper">
               <div class="swiper-wrapper">
                 <% categories.forEach(category => { %>
-                  <a href="/category/<%= category.categoryName %>" class="nav-link category-item swiper-slide">
+                  <a href="/category/<%= category._id %>" class="nav-link category-item swiper-slide">
                     
                     <% const isOffer = categoryoff.find(item => item.applicableFor.toString() === category._id.toString()) %>
 

@@ -124,7 +124,7 @@
               <select id="category" name="category">
                 <option value="" disabled>Select Category</option>
                 <% categories.forEach(category => { %>
-                  <option value="<%= category.categoryName %>" <%= product.category === category.categoryName ? 'selected' : '' %>>
+                  <option value="<%= category._id %>" <%= product.category === category.categoryName ? 'selected' : '' %>>
                     <%= category.categoryName %>
                   </option>
                 <% }) %>

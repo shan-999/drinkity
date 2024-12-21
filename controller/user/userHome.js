@@ -5,29 +5,11 @@ const offerSchema = require('../../model/offers');
 const category = require('../../model/category')
 const orderSchema = require('../../model/order');
 const order = require('../../model/order');
+const mongoose = require('mongoose')
 
 
 
-// const loadHome = async (req, res) => {
-//     try {
-//         const categories = await category.find({ listed: true });
 
-//         const products = await productsmodel.find({ listed: true }); 
-
-//         const cart = await cartSchema.findOne({userId:req.session.userId})
-
-//         res.render('user/home', { 
-//             categories,
-//             products,
-//             userId : req.session.userId ,
-            
-//         }); 
-
-//     } catch (error) {
-//         console.error('Error fetching data:', error);
-//         res.status(500).send('Server Error');
-//     }
-// };
 
 
 
@@ -35,8 +17,8 @@ const loadHome = async (req, res) => {
     try {
         const categories = await categorySchema.find({ listed: true });
 
-        const products = await productsmodel.find({ listed: true });
-
+        let products = (await productsmodel.find({ listed: true }).populate('category')).filter(item => item.category.listed === true)
+        
 
 
         const categoryIds = categories.map(item => item._id)        
@@ -122,6 +104,7 @@ console.log("not here");
 const search = async (req,res) => {
     try {
         const {searchQuary} = req.body
+        
         const products = await productsmodel.find(
             {$and:[
                 {productName:{$regex: new RegExp(searchQuary,'i')}},
@@ -164,50 +147,56 @@ const loadCategory = async (req,res) => {
     try {
         const categoryName = req.params.categoryName
 
-        const products = await productsmodel.find({category:categoryName,listed:true})
+        const products = await productsmodel.find({category:categoryName,listed:true}).populate('category')
         const categories = await categorySchema.find({listed:true})
+        const category = categories.find(item => item._id.toString() === categoryName)
+        
+        
 
         
         
-        res.render('user/category',{products,categories,userId: req.session.userId,categoryName})
+        res.render('user/category',{products,categories,userId: req.session.userId,category})
     } catch (error) {
         console.log(`error form load caterfory : ${error}`);
     }
 }
 
 
-const filterCategory = async (req,res) => {
+
+
+
+const filterCategory = async (req, res) => {
     try {
-        const {selectedValues,category} = req.body
+        const { selectedValues, category } = req.body;
+        const categoryId = new mongoose.Types.ObjectId(category);
 
-        let products = await productsmodel.find({category,listed:true})
+        const pipeline = [
+            { $match: { category: categoryId, listed: true } }
+        ];
 
-        if(selectedValues.sort){
-            if(selectedValues.sort === 'A - Z' || selectedValues.sort === 'All' ){
-                products = products.sort((a,b) => a.productName - b.productName)
-            }else if(selectedValues.sort === 'Z - A'){
-                products = products.sort((a,b) => b.productName - a.productName)
+        if (selectedValues.sort) {
+            const sortField = selectedValues.sort === 'A - Z' ? 1 : selectedValues.sort === 'Z - A' ? -1 : null;
+            if (sortField !== null) {
+                pipeline.push({ $sort: { productName: sortField } });
             }
         }
 
-        
-
-        if(selectedValues.price){
-            if(selectedValues.price === 'High to Low'){
-                products = products.sort((a,b) => b.price - a.price)
-            }else if(selectedValues.price === 'Low to High'){
-                products = products.sort((a,b) => a.price - b.price)
+        if (selectedValues.price) {
+            const priceOrder = selectedValues.price === 'High to Low' ? -1 : selectedValues.price === 'Low to High' ? 1 : null;
+            if (priceOrder !== null) {
+                pipeline.push({ $sort: { price: priceOrder } });
             }
         }
 
-        res.status(200).json({success:true,products})
-        
+        const products = await productsmodel.aggregate(pipeline);
 
+        res.status(200).json({ success: true, products });
     } catch (error) {
-        console.log(`error form category filter :${error}`);
-        
+        console.log(`Error from category filter: ${error}`);
     }
-}
+};
+
+
 
 const filterSearch = async (req,res) => {
     try {
