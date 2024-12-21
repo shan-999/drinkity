@@ -77,7 +77,7 @@
               <select id="category" name="category" onchange="validateCategory()">
                   <option value="">Select Category</option>
                   <% categories.forEach(category => { %>
-                      <option value="<%= category.categoryName %>"><%= category.categoryName %></option>
+                      <option value="<%= category._id %>"><%= category.categoryName %></option>
                   <% }) %>
               </select>
             </div>

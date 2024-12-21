@@ -6,7 +6,7 @@ const loadcategory = async (req,res) =>{
         if(!adminId) return res.redirect('/admin/login?message=sumthing errore')
 
         const page = parseInt(req.query.page) || 1; 
-        const limit = 4; 
+        const limit = 10; 
         const skip = (page - 1) * limit;
         
         const categories = await categoryModel.find().skip(skip).limit(limit)

@@ -16,7 +16,7 @@
               <select onchange="getCategory(event)" class="form-select border-0 bg-transparent">
                 <option selected disabled>All Categories</option>
                 <% categories.forEach(category => { %>
-                  <option value="<%= category.categoryName %>"><%= category.categoryName %></option>
+                  <option value="<%= category._id %>"><%= category.categoryName %></option>
                 <% }) %>  
               </select>
             </div>
