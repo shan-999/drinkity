@@ -122,8 +122,10 @@ const cancelOrder = async (req,res) => {
             return res.status(400).json({success:false,message:'Coupon applied! Cancellation is not allowed.'})
         }
         
-
-            
+        
+        const indexOfProduct = order.products.findIndex(item => item.productId.toString() === productId ) 
+        
+        
 
         order.products[indexOfProduct].status = "Cancelled"
         order.Totalprice -= order.products[indexOfProduct].total

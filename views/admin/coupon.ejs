@@ -96,7 +96,7 @@
                             <label for="usage-limit">Usage Limit</label>
                             <input type="number" name="usageLimit" id="validity" placeholder="Enter usage limit" />
                         </div>
-                        <button type="submit" class="add-coupon-btn">Add</button>
+                        <button type="submit" class="add-coupon-btn" onsubmit="addcoupen()">Add</button>
                       </form>
                     </div>
                   </div>
@@ -246,20 +246,10 @@
         })        
         }
 
-        const message = document.getElementById('error-message').value
-        console.log(message);
+      function addcoupen() {
+        console.log('hhhgh');
         
-
-
-        // document.addEventListener('DOMContentLoaded',()=>{
-        //   const error = document.getElementById('error-message').value
-        //   const errorShow = document.getElementById('error')
-        //   errorShow.innerHTML = error
-        //   setTimeout(() =>{
-        //     errorShow.innerHTML = ""
-        //   },2000)
-          
-        // })
+      }
     </script>
 </body>
 </html>
