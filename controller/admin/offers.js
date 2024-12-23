@@ -35,7 +35,7 @@ const loadOffers = async (req,res) => {
         
         
 
-        res.render('admin/offers', {offers,categories,products,applicableFor,toatlPages,page})
+        res.render('admin/offers', {offers,categories,products,applicableFor,toatlPages,page,skip})
     } catch (error) {
         console.log(`error form load offers ${error}`);
         
@@ -45,21 +45,30 @@ const loadOffers = async (req,res) => {
 
 const addOffer = async (req,res) => {
     try {
-        const {offName,type,maxDiscount,validTo,offValue,offType,categoryId,productId} = req.body
+        const {offName,type,validTo,offValue,offType,categoryId,productId} = req.body
         
         console.log(productId,categoryId);
-        if(!offName || !type || !maxDiscount || !validTo || !offValue || !offType ){
+        if(!offName || !type || !validTo || !offValue || !offType ){
+            return res.redirect('/admin/offers')
+        }
+        else if (offValue < 5){
+            return res.redirect('/admin/offers')
+        }
+        else if (new Date(validTo) < new Date()){
+            return res.redirect('/admin/offers')
+        }
+        else if (!categoryId && !productId){
             return res.redirect('/admin/offers')
         }
         
-        if(offType === 'category' && maxDiscount > 20){
+ 
+        
+        if(offType === 'category' && offValue > 20){
             return res.redirect('/admin/offers')       
         }else if(offType === 'product'){
-            console.log(productId);
             const id = new mongoose.Types.ObjectId(productId)
-            const product = await productSchema.find(id)
-            
-            if(type === 'fixed' && maxDiscount > (product[0].price/2)){
+            const product = await productSchema.find(id)    
+            if(type === 'fixed' && offValue  > (product[0].price/2)){
                 return res.redirect('/admin/offers')
             }else if(type === 'percentage' && offValue > 50){
                 return res.redirect('/admin/offers')                
@@ -91,7 +100,6 @@ const addOffer = async (req,res) => {
         const newoffer = new offerSchema({
             offName,
             type,
-            maxDiscount,
             offValue,
             valiedTo:validTo,
             valideFrom:new Date(),
