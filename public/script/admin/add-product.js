@@ -98,9 +98,10 @@ async function submitProduct(isEditMode, productId = null) {
     const allowedExtensions = ['png', 'jpg', 'jpeg', 'webp'];
 
 for (let i = 1; i <= 3; i++) {
-    const blob = imageBlobs[i]; // Assuming imageBlobs contains blobs for images.
+    const blob = imageBlobs[i]; 
     if (blob) {
-        const fileType = blob.type.split('/')[1]; // Get the file extension (e.g., 'png', 'jpeg')
+        const fileType = blob.type.split('/')[1];
+        
         if (allowedExtensions.includes(fileType)) {
             formData.append('images', blob, `productImage${i}.${fileType}`);
         } else {

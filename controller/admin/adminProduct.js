@@ -16,10 +16,6 @@ const loadProducts = async (req, res) => {
         const skip = (page - 1) * limit;
 
         const product = await products.find({}).skip(skip).limit(limit).populate('category')
-        console.log(product);
-        
-        
-            
 
         const totalProducts = await products.countDocuments();
         const totalPages = Math.ceil(totalProducts / limit);
