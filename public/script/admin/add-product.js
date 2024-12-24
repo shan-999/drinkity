@@ -86,14 +86,28 @@ async function submitProduct(isEditMode, productId = null) {
     formData.append('category', document.getElementById('category').value);
     formData.append('description', document.getElementById('description').value);
 
+
+  
    
-    for (let i = 1; i <= 3; i++) {
-        const blob = imageBlobs[i];
-        if (blob) {
-            formData.append('images', blob, `productImage${i}.png`);
+    // for (let i = 1; i <= 3; i++) {
+    //     const blob = imageBlobs[i];
+    //     if (blob) {
+    //         formData.append('images', blob, `productImage${i}.png`) 
+    //     }
+    // }
+    const allowedExtensions = ['png', 'jpg', 'jpeg', 'webp'];
+
+for (let i = 1; i <= 3; i++) {
+    const blob = imageBlobs[i]; // Assuming imageBlobs contains blobs for images.
+    if (blob) {
+        const fileType = blob.type.split('/')[1]; // Get the file extension (e.g., 'png', 'jpeg')
+        if (allowedExtensions.includes(fileType)) {
+            formData.append('images', blob, `productImage${i}.${fileType}`);
+        } else {
+            console.warn(`Unsupported file type for blob at index ${i}`);
         }
     }
-
+}
     
 
     try {
