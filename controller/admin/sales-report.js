@@ -5,6 +5,7 @@ const ExcelJS = require("exceljs")
 const PDFDocument = require("pdfkit")
 const path = require("path")
 const fs = require("fs")
+const userSchema = require('../../model/userModel')
 
 
 
@@ -13,7 +14,8 @@ const fs = require("fs")
 
 const loadSalesReport = async (req,res) => {
     
-    const orders = await orderSchema.find({}) 
+    const orders = await orderSchema.find({}).populate('userId')
+
     
     const totalAmount = orders.reduce((acc,item) => acc + item.Totalprice,0) 
     const totalDiscount = orders.reduce((acc,item) => acc + item.totalOfferPrice + ( item.coupenApplied && item.coupenApplied.discount ? item.coupenApplied.discount : 0) ,0)
