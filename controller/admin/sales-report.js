@@ -15,6 +15,8 @@ const userSchema = require('../../model/userModel')
 const loadSalesReport = async (req,res) => {
     
     const orders = await orderSchema.find({}).populate('userId')
+    console.log(orders);
+    
 
     
     const totalAmount = orders.reduce((acc,item) => acc + item.Totalprice,0) 
