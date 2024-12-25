@@ -59,7 +59,7 @@
                 <tr>
                   <td><%= order._id %></td>
                   <td><%= order.Totalprice.toFixed(2) %></td>
-                  <td><%= order.coupenApplied.applied ? order.coupenApplied.discount.toFixed(2) : "No coupon applied" %></td>
+                  <td><%= order.coupenApplied?.applied ? order.coupenApplied?.discount.toFixed(2) : "No coupon applied" %></td>
                   <td><%= order.totalOfferPrice ? order.totalOfferPrice.toFixed(2) : 'No offers' %></td>
                   <td><%= order.userId.email %></td>
                   <td><%= order.orderDate.toLocaleDateString("en-IN", {day: "2-digit",month: "2-digit",year: "numeric" }); %></td>
