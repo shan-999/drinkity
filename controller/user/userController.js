@@ -7,7 +7,7 @@ const { find } = require('../../model/adminModel');
 require('dotenv').config();
 const { OAuth2Client } = require('google-auth-library');
 
-const client = new OAuth2Client('534928979090-nv4sgitnntqdoa0o6b61b6a2irpesmqa.apps.googleusercontent.com');
+const client = new OAuth2Client(process.env.CLIENT_ID);
 
 
 
@@ -107,13 +107,13 @@ const sendOtp = async (email) => {
     let transporter = nodemailer.createTransport({
         service: 'Gmail',
         auth: {
-            user: 'drinkity999@gmail.com',
-            pass: 'yngm ryfi apzt dkbv',
+            user: process.env.EMAIL_MAILER,
+            pass: process.env.PASSWORD_MAILER,
         },
     });
 
     let mailOptions = {
-        from: 'drinkity999@gmail.com',
+        from: process.env.EMAIL_MAILER,
         to: email,
         subject: 'Your OTP Code',
         text: `Your OTP code is ${otp}`,
@@ -203,13 +203,13 @@ const resendOtp = async (req, res) => {
         let transporter = nodemailer.createTransport({
             service: 'Gmail',
             auth: {
-                user: 'drinkity999@gmail.com',
-                pass: 'yngm ryfi apzt dkbv',
+                user: process.env.EMAIL_MAILER,
+                pass: process.env.PASSWORD_MAILER,
             },
         });
 
         let mailOptions = {
-            from: 'drinkity999@gmail.com',
+            from: process.env.EMAIL_MAILER,
             to: userEmail,
             subject: 'Your New OTP Code',
             text: `Your new OTP code is ${newOtp}`,
@@ -367,7 +367,7 @@ const googelSingin = async (req,res) => {
 
         const ticket = await client.verifyIdToken({
             idToken: token,
-            audience:"534928979090-nv4sgitnntqdoa0o6b61b6a2irpesmqa.apps.googleusercontent.com"
+            audience:process.env.CLIENT_ID
         });
 
 
