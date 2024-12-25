@@ -167,7 +167,7 @@
                             <tr>
                                 <td><%= order._id %></td>
 
-                                <td><%= order.userId.email %></td>
+                                <td><%= order.userId?.email %></td>
                                 <td>
                                     <% order.products.forEach(product => { %>
                                         <div><%= product.productName %></div>
